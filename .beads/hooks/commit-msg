@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+# commit-msg: check that the message is a Conventional Commit (commitlint).
+# This file is not managed by beads; bd installs the other hooks in this
+# directory and leaves this one alone. core.hooksPath points here after
+# `bd init` or `bd hooks install`.
+#
+# The hook is soft: without node_modules/ (fresh clone, no `npm install`) it
+# warns and lets the commit through. CI (.github/workflows/commitlint.yml) is
+# the gate that always runs.
+set -u
+root=$(git rev-parse --show-toplevel)
+if [ ! -x "$root/node_modules/.bin/commitlint" ]; then
+  echo "commit-msg: commitlint not installed; run 'npm install' to lint commit messages locally" >&2
+  exit 0
+fi
+exec "$root/node_modules/.bin/commitlint" --config "$root/commitlint.config.mjs" --edit "$1"

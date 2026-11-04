@@ -1,0 +1,32 @@
+name: commitlint
+
+# Every commit on a PR, and every push to main, must be a Conventional Commit:
+# release-please reads them to compute the next version and the changelog.
+# The local commit-msg hook in .beads/hooks/ runs the same check before CI.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Lint PR commits
+        if: github.event_name == 'pull_request'
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
+      - name: Lint pushed commits
+        if: github.event_name == 'push'
+        run: npx commitlint --last
