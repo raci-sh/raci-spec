@@ -1,0 +1,34 @@
+name: Release Please
+
+# On every push to main, release-please reads the Conventional Commits since
+# the last release and keeps a release PR open. Merging that PR bumps the
+# version in .release-please-manifest.json, updates CHANGELOG.md, tags
+# vX.Y.Z and creates the GitHub release. Only feat: and fix: bump the version;
+# chore:, ci: and docs: do not open a PR.
+#
+# The workflow uses GITHUB_TOKEN. It needs the repo setting Settings > Actions
+# > General > "Allow GitHub Actions to create and approve pull requests". Its
+# commits are made through the API, so GitHub signs them and the enterprise
+# "Signed Commit" ruleset accepts them. PRs opened with GITHUB_TOKEN do not
+# trigger other workflows, so commitlint does not run on the release PR; swap
+# in a GitHub App token if the release PR ever needs CI.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          target-branch: main
