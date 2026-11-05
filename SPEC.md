@@ -27,7 +27,7 @@ Strictness is a customer choice. It is expressed as a set of named constraints, 
 
 A `separation-of-duties` constraint is a list of **conflict pairs**, each a structured declaration: a party that holds `roles` on (`activity`, `resource`) A must not hold `roles` on (`activity`, `resource`) B. Example (Alice): R on Acme conflicts with A on Emca.
 
-- **Scope is one realm.** A conflict is evaluated only among entries of the realm that declares it. There are no cross-realm conflicts.
+- **Scope is the declaring realm and its descendants.** A conflict pair declared in a realm is evaluated among the entries of that realm and of its sub-realms (the effective realm path), so an inherited pair is enforced on entries created in a child. It is never evaluated across siblings or unrelated realms: there are no cross-realm conflicts.
 - **Deterministic.** The `raci` CLI evaluates conflict pairs itself, so a violating change is rejected like any other constraint violation.
 - **Tighten-only applies**: a sub-realm may add conflict pairs, never remove an inherited one.
 - Open: selector syntax for activities and resources in a pair (names, wildcards, resource types).
@@ -62,7 +62,7 @@ Two ESIS semantics to keep:
 
 Inferred changes pass through the section 2 constraints like any other change and are audited with the rule that produced them.
 
-Inference is **non-recursive**: a change produced by an inference rule does not fire further inference rules. Only the original (user or agent) change is evaluated against the rule set, once. This makes loops impossible by construction, so no cycle detection is needed. Chains such as module to audit to recommendation must be written as separate rules, each triggered by the original change, not by another rule's output.
+Inference is **non-recursive**: a change produced by an inference rule does not fire further inference rules. Only the original (user or agent) change is evaluated against the rule set, once. This makes loops impossible by construction, so no cycle detection is needed. All rules see the same input: the original change and the state before any inference. A rule therefore cannot depend on what another rule produced. A chain such as module to audit to recommendation is expressed by a direct rule on the final target, triggered by the module change and mapping module roles straight to recommendation roles (e.g. `map(module, R, A)` on recommendation), not via the audit's inferred roles. If a target's roles genuinely need another target's inferred result, that is out of scope for inference; the party must change the intermediate entry explicitly, which is a new original change.
 
 **Evaluation order.** Rules are evaluated in rule-id order, with a deterministic tie-break (realm depth, then name). Rule evaluation is therefore reproducible and auditable.
 
@@ -76,19 +76,37 @@ Every change is an append-only event. Policy and rule changes (constraints, infe
 
 ### 4.1 Event shape
 
-One JSON object per entry change:
+One JSON object per event. Every event has a common envelope and a `type` discriminator, `entry`, `constraint` or `rule`, which selects the payload.
 
-- `id`, `seq` (per realm), `ts`, `realm`
+Envelope (all types):
+
+- `id`, `seq` (per realm), `ts`, `realm`, `type`
 - `change_id`: groups the original change with every inferred change it produced (the transaction).
 - `actor`: the party, and how the change arrived: `user`, `agent`, `import` or `inference`.
-- `op`: `add`, `update`, `remove` or `replace`.
-- `target`: activity, resource and party.
-- `before`, `after`: the role sets.
 - `cause`: for inferred events, the rule id and the originating event id. Inferred events are never causes, which makes non-recursion verifiable from the log.
 - `constraints`: each enabled constraint that was evaluated, with its result.
-- `conflict`: both rule ids, when stricter-wins resolution applied.
 - `outcome`: `applied` or `rejected`, with a reason.
 - `prev_hash`: hash of the previous event in the realm.
+
+Payload for `type: entry`:
+
+- `op`: `add`, `update`, `remove` or `replace`.
+- `target`: activity, resource and party.
+- `before`, `after`: the role sets. A `remove` has an empty `after`; materialisation and replay treat the entry as absent from that point, and the earlier events stay in the log.
+- `conflict`: both rule ids, when stricter-wins resolution applied.
+- `replace` is not a single event: it is linked `entry` events (the one losing the role and the one gaining it) sharing one `change_id`, applied atomically or not at all.
+
+Payload for `type: constraint`:
+
+- `constraint`: the constraint name (e.g. `single-accountable`, `separation-of-duties`).
+- `op`: `enable` or `add-pair` (tighten-only, so there is no disable or remove).
+- `params`: for `add-pair`, the conflict pair.
+
+Payload for `type: rule`:
+
+- `rule_id`, `revision`.
+- `transition`: the SteerSpec lifecycle state change (`from` and `to`), or `supersedes` naming the rule it replaces.
+- `body_hash`: hash of the structured rule body, so replay can verify the rule that was in force.
 
 ### 4.2 Rules
 
