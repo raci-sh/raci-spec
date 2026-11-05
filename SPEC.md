@@ -5,15 +5,18 @@ Prior art: jRACI, raci.ai, ESIS (RACI auth/inference rules). See BRAINDUMP.md.
 
 ## 1. Core model
 
-- A **realm** matches a SteerSpec realm. Realms nest (realm, sub-realm, ruleset).
+- A **realm** matches a SteerSpec realm. Realms nest (realm, sub-realm). Rules live in **entities** within a realm, and entities inherit from other entities (`inherits`), as in SteerSpec.
 - A **RACI entry** binds a **party** (human or agent) to a set of **roles**, a subset of {R, A, C, I}, for an **activity** on a **resource** within a realm.
 - The data model is always the permissive one: a party may hold several roles on the same activity and resource. Strictness is validation (section 2), not schema, so one `.raci` format serves every mode.
+- A **resource** has a type, a realm, and an optional parent resource (e.g. an audit's parent is a module). Resource creation and deletion are audited events (section 4.1).
 - Role precedence, for display and "best role": A > R > C > I.
-- Changes are soft: entries are never destroyed, only superseded (see section 4).
+- Entries are never erased. A removal is an event, and the full history stays in the audit log (section 4).
 
 ## 2. Constraints and strictness
 
 Strictness is a customer choice. It is expressed as a set of named constraints, each of which is a rule that can be switched on per realm.
+
+Constraints are evaluated against the **effective entries** of the realm in which a change lands: the entries visible there after inheritance and overrides are resolved (section 3). This is what lets a parent's separation-of-duties pair apply to a child's entries. (Proposal, not decided.)
 
 | Constraint | Meaning |
 | --- | --- |
@@ -39,6 +42,8 @@ A change that violates an enabled constraint is **rejected**. There is no silent
 ## 3. Inheritance
 
 - Constraint policy is **tighten-only**: a sub-realm may add constraints but never relax or disable one set by an ancestor. The effective policy is the union along the realm path.
+- Two hierarchies are involved. The **realm tree** decides which entries and which constraint policy apply to a change (entry scope and separation-of-duties scope follow the realm path). **Rules** (constraints, inference rules) live in entities and inherit through `inherits`; that is the chain the override lint below acts on.
+- Only rules in state `P` (Published) or `I` (Implemented) are in force. Rules in `D`, `A`, `R` or `T` are not evaluated.
 - SteerSpec lets a rule `overrides` an inherited one, which could relax it. RACI.sh therefore **lints** every override of a constraint rule and rejects any whose effect is weaker than the rule it replaces.
 - RACI entries resolve most-specific-first. Merge versus override per role (proposal, not decided): C and I merge across levels; A and R override.
 - Beyond static resolution, RACI is derived by **inference rules**, as in ESIS (`raci_infer_rules.xml`). Inference rules are themselves SteerSpec-style rules, shipped as a default set that a realm can customise.
@@ -48,16 +53,20 @@ A change that violates an enabled constraint is **rejected**. There is no silent
 A rule has:
 
 - **target type**: the resource type whose RACI is being derived (e.g. audit).
-- **operation**: `new`, `add`, `update` or `delete`, the change to the target or to a source that fires the rule.
+- **operation**: the change that fires the rule. `new` or `delete` are resource events; `add`, `update` or `remove` are entry events (on the trigger type, or on the target itself when there is no trigger type).
 - **trigger type** (optional): the source resource type whose RACI change fired the rule (e.g. module, location). Absent for a change on the target itself.
 - **actions**, from a small vocabulary (taken from ESIS):
   - `map(source-type, from-role, to-role)`: parties holding `from-role` on the source get `to-role` on the target. ESIS example: module R becomes audit A, module A becomes audit I.
   - `add-issuer(role)`: the party creating the target gets `role`.
   - `strip(held-role, role)`: parties holding `held-role` on the source lose `role` on the target (ESIS: a module I loses A and R on the audit).
 
+Any action may carry the attribute `add-only`: it then adds missing entries and never changes an existing one.
+
+**Source binding.** `map` and `strip` locate the source resource by following the target's parent links to the nearest ancestor of the trigger type, unless the rule names a selector (open: selector syntax).
+
 Two ESIS semantics to keep:
 
-- Some rules **add only** and never overwrite an existing entry (e.g. location updates add missing stakeholders as C or I).
+- Some rules are **add-only** (the attribute above), e.g. location updates add missing stakeholders as C or I without touching existing entries.
 - If no rule matches a new target, ESIS left it with an empty RACI (a "zombie" object). In RACI.sh the originating change is still evaluated against the section 2 constraints. Where `min-ra` is enabled, an empty RACI violates it and the change is rejected. Otherwise the target is created with an empty RACI and the commit marker lists a `findings` entry (`no-matching-rule`), so the condition is audited and reportable.
 
 Inferred changes pass through the section 2 constraints like any other change and are audited with the rule that produced them.
@@ -66,7 +75,7 @@ Inference is **non-recursive**: a change produced by an inference rule does not 
 
 **Evaluation order.** Rules are evaluated in rule-id order, with a deterministic tie-break (realm depth, then name). Rule evaluation is therefore reproducible and auditable.
 
-**Conflicts.** If two rules set different roles for the same party on the same resource, the stricter outcome wins, and the conflict is recorded in the audit log together with both rule ids. "Stricter" means the result that satisfies more enabled constraints; ties go to the earlier rule.
+**Conflicts.** The outputs of all matching rules are first merged (union of roles per party, since a party may hold several roles). A conflict exists only if the merged result violates an enabled constraint. Then the stricter outcome wins: the output of the losing rule is discarded and recorded in the audit log with both rule ids. "Stricter" means the result that satisfies more enabled constraints; ties go to the earlier rule. If the result still violates a constraint, the change is rejected (all or nothing, section 4.1).
 
 **`strip` and tighten-only.** Tighten-only governs constraints (section 2), not entries. `strip` changes entries, so it is allowed as a rule action. It is never a way to relax a constraint, and its result still has to satisfy every enabled constraint (e.g. `min-ra`).
 
@@ -76,7 +85,7 @@ Every change is an append-only event. Policy and rule changes (constraints, infe
 
 ### 4.1 Event shape
 
-One JSON object per event. Every event has a common envelope and a `type` discriminator, `entry`, `constraint`, `rule` or `commit`, which selects the payload.
+One JSON object per event. Every event has a common envelope and a `type` discriminator, `entry`, `resource`, `constraint`, `rule` or `commit`, which selects the payload.
 
 Envelope (all types):
 
@@ -99,9 +108,17 @@ Payload for `type: entry`:
 Payload for `type: commit`:
 
 - `change_id` and `events`: the ids of the events of that change. The commit marker is appended last, after all other events of the change.
-- Replay applies a change only if its commit marker is present. Events of a `change_id` without a marker (for example after a crash) are incomplete and are ignored, and the CLI reports them.
+- `outcome`: `applied` or `rejected`, with a reason when rejected.
+- `findings` (optional): a list of non-blocking findings, each `{code, detail}`, e.g. `no-matching-rule`.
+- Replay applies a change only if its commit marker is present **and** has `outcome: applied`. Events of a rejected marker are ignored for materialisation but stay in the log as the record of the rejection. Events of a `change_id` without any marker (for example after a crash) are incomplete: they are ignored and the CLI reports them.
 
 A change is **all or nothing**. If the original change or any change inferred from it violates an enabled constraint, the whole `change_id` is rejected: nothing applies, the rejection is logged with the violating event and constraint, and the commit marker has `outcome: rejected`.
+
+Payload for `type: resource`:
+
+- `op`: `new` or `delete`.
+- `resource`: id, type, realm and optional parent resource.
+- A resource event can be the `cause` of inferred entries (e.g. `add-issuer` on `new`).
 
 Payload for `type: constraint`:
 
@@ -120,7 +137,8 @@ Payload for `type: rule`:
 - **Rejected changes are logged** (`outcome: rejected`), not only applied ones.
 - **Tamper evidence:** a per-realm hash chain via `prev_hash`, identical for the offline log and the cloud store.
 - **Source of truth:** the log is the source and the `.raci` file is a materialised view that can be rebuilt and verified by replay.
-- **Offline storage:** a JSONL log next to the `.raci` file; the CLI is its only writer. Git history is not a substitute, as it does not record rejected attempts or causes.
+- **One realm per change:** a change and everything inferred from it are written to the log of the realm where the original change lands. Resources in ancestor realms can be read as sources but are never written by that change. So a `change_id`, its commit marker and the hash chain never span two realms.
+- **Offline storage:** one JSONL log per realm, next to the `.raci` file; the CLI is its only writer. Offline mode is single-writer per realm. Concurrent clones diverge the hash chain, and merging them is deferred (open); multi-writer is the cloud mode's job. Git history is not a substitute, as it does not record rejected attempts or causes.
 
 ## 5. Out of scope
 
@@ -131,9 +149,9 @@ RACI.sh manages RACI. Enforcing it is the customer's job. The service can answer
 - RACI.sh rules (constraints, inference rules, default rule-management rules) have a **structured source** that the `raci` CLI evaluates deterministically. It is the authoring format. The canonical record of which rule was in force is the audit log (section 4.2): loading a new or changed rule source appends a `rule` event carrying the full structured body, and the CLI evaluates only rules recorded in the log. A source that differs from the log's latest rule event is reported as unrecorded and not evaluated.
 - The specification and those rules are **rendered into SteerSpec rules** in a `sh.raci` realm: prose `MUST` bodies with SteerSpec ids, lifecycle states and supersession, plus notes carrying the structured form. The rendered rules are derived, never hand-edited.
 - Rendering to prose gives the SteerSpec/LLM path (CI gates, advisory review of rule changes) without making enforcement depend on an LLM. Deterministic checks reject; the LLM path only reviews.
-- Customer realms depend on `sh.raci` like any SteerSpec realm and customise by adding or superseding rules, subject to the override lint in section 3.
+- Customer realms depend on `sh.raci` like any SteerSpec realm and customise by authoring structured rules in their own realm, which are rendered to SteerSpec rules like the defaults. They add or supersede rules, subject to the override lint in section 3.
 - Open: realm id and versioning of `sh.raci`, and the exact mapping of structured fields into rule bodies and notes.
 
 ## Open questions
 
-Tracked in beads (`bd list`): default SteerSpec rule-management rule set, separation-of-duties semantics, `.raci` file format.
+Tracked in beads (`bd list`): default SteerSpec rule-management rule set, selector syntax for activities and resources, `.raci` file format, the `sh.raci` realm and rendering, and merging concurrent offline logs. Also undecided: merge-versus-override of roles across realm levels, and evaluating constraints against effective entries (sections 2 and 3).
