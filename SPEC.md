@@ -160,6 +160,60 @@ RACI.sh manages RACI. Enforcing it is the customer's job. The service can answer
 - Customer realms depend on `sh.raci` like any SteerSpec realm and customise by authoring structured rules in their own realm, which are rendered to SteerSpec rules like the defaults. They add or supersede rules, subject to the override lint in section 3.
 - Open: realm id and versioning of `sh.raci`, and the exact mapping of structured fields into rule bodies and notes.
 
+## 7. The `.raci` file
+
+The `.raci` file is a **materialised view** of one realm's audit log (section 4.2). It holds RACI and nothing else: no findings, no history. The CLI is its only writer and it is never hand-edited.
+
+- **Encoding:** one canonical JSON document: sorted keys, no insignificant whitespace, the same canonical form that the event hashes use (section 4.1). Output is deterministic, so the same log always yields byte-identical files.
+- **Scope:** the realm's own state only. Ancestor realms and descendant realms are read at load time (effective entries, revalidation) and never embedded, so the file cannot drift from its source.
+- **Staleness:** `log.head_seq` and `log.head_hash` identify the log state the view reflects. A view whose head differs from the log's is stale and is rebuilt by replay.
+
+Shape:
+
+```json
+{
+  "raci": "1",
+  "realm": "<realm id>",
+  "log": { "file": "<log path>", "head_seq": 412, "head_hash": "<hash of the head event>" },
+  "pins": [ { "realm": "<dependency realm>", "version": "<pinned version>" } ],
+  "rules_in_force": [ { "rule_id": "<id>", "revision": 2, "body_hash": "<hash>" } ],
+  "constraints": {
+    "enabled": [ "single-accountable", "min-ra" ],
+    "pairs": [ { "a": { "roles": "R", "activity": "<selector>", "resource": "<selector>" },
+                 "b": { "roles": "A", "activity": "<selector>", "resource": "<selector>" } } ]
+  },
+  "resources": [ { "id": "<id>", "type": "<type>", "parent": "<id or absent>" } ],
+  "entries": [ { "activity": "<activity>", "resource": "<id>", "party": "<party>", "roles": "AR" } ]
+}
+```
+
+- `roles` is a string of the held roles in the fixed precedence order A, R, C, I (section 1), so `"AR"`, never `"RA"`. An entry with no roles is absent, not stored empty.
+- Ordering is canonical: `resources` by `id`; `entries` by (`resource`, `activity`, `party`); `rules_in_force` by `rule_id`; `enabled` alphabetically; `pairs` by their canonical JSON.
+- `rules_in_force` lists every rule recorded in force in this realm's log (section 6, including inherited ones) with its `body_hash`. Verification compares these with the log's `rule` events and with the rule sources without replaying the whole log.
+- `pins` records the dependency versions the log was evaluated against (e.g. the `sh.raci` version).
+- Selectors in `pairs` follow the selector syntax, which is open (section 2.1).
+
+### 7.1 Verification report
+
+Findings are not part of `.raci`. `raci verify` computes them on demand and emits a separate report, and nothing about it is persisted in the view.
+
+```json
+{ "realm": "<realm id>", "log_head": { "seq": 412, "hash": "<hash>" },
+  "findings": [ { "code": "<code>", "severity": "error", "realm": "<realm id>", "detail": "<text>" } ] }
+```
+
+| Code | Severity | Meaning |
+| --- | --- | --- |
+| `hash-mismatch` | error | A recomputed `hash` or a `prev_hash` link of the log fails (section 4.2). |
+| `view-mismatch` | error | Replaying the log gives a different state than the `.raci` file. |
+| `stale-view` | warning | The view's log head differs from the log's; rebuild by replay. |
+| `unrecorded-rule` | error | A rule source differs from the log's latest `rule` event, so it is not evaluated (section 6). |
+| `incomplete-change` | warning | A `change_id` has events but no commit marker (section 4.1). |
+| `no-matching-rule` | warning | A target was created with an empty RACI because no inference rule matched. |
+| `descendant-violation` | error | A realm outside the change's tree, which depends on this one, now violates a constraint (section 2). |
+
+A commit marker's `findings` (section 4.1) are the subset recorded at change time. The report carries them with `severity` and `realm` added, next to the findings that only a fresh verification can produce.
+
 ## Open questions
 
-Tracked in beads (`bd list`): default SteerSpec rule-management rule set, selector syntax for activities and resources, `.raci` file format, the `sh.raci` realm and rendering, and merging concurrent offline logs. Also undecided: merge-versus-override of roles across realm levels, and evaluating constraints against effective entries (sections 2 and 3).
+Tracked in beads (`bd list`): default SteerSpec rule-management rule set, selector syntax for activities and resources, the `sh.raci` realm and rendering, and merging concurrent offline logs. Also undecided: merge-versus-override of roles across realm levels, and evaluating constraints against effective entries (sections 2 and 3).
