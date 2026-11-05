@@ -46,7 +46,7 @@ A change that violates an enabled constraint is **rejected**. There is no silent
 - Constraint policy is **tighten-only**: a sub-realm may add constraints but never relax or disable one set by an ancestor. The effective policy is the union along the realm path.
 - Two hierarchies are involved. The **realm tree** decides which entries and which constraint policy apply to a change (entry scope and separation-of-duties scope follow the realm path). **Rules** (constraints, inference rules) live in entities and inherit through `inherits`; that is the chain the override lint below acts on.
 - Only rules in state `P` (Published) or `I` (Implemented) are in force. Rules in `D`, `A`, `R` or `T` are not evaluated.
-- SteerSpec lets a rule `overrides` an inherited one, which could relax it. RACI.sh therefore **lints** every override of a constraint rule and rejects any whose effect is weaker than the rule it replaces.
+- SteerSpec lets a rule `overrides` an inherited one, which could relax it. RACI.sh therefore **lints** every override of a constraint rule and rejects any whose effect is weaker than the rule it replaces. For constraint rules, an override is **not weaker** only if its enabled constraints and conflict pairs are a superset of the overridden rule's. Inference rules are not compared for strength (they set entries, not policy, and their output passes the constraints anyway). Any override the lint cannot prove not-weaker is rejected.
 - RACI entries resolve most-specific-first. Merge versus override per role (proposal, not decided): C and I merge across levels; A and R override.
 - Beyond static resolution, RACI is derived by **inference rules**, as in ESIS (`raci_infer_rules.xml`). Inference rules are themselves SteerSpec-style rules, shipped as a default set that a realm can customise.
 
@@ -80,7 +80,7 @@ Inference is **non-recursive**: a change produced by an inference rule does not 
 **Composition.** Each rule action produces **deltas**, not states: `map`, `add-issuer` produce role additions, `strip` produces role removals. An `add-only` action produces additions only for missing entries and never a removal or a change to an existing entry. Deltas are composed per (party, resource, role) on top of the state before inference:
 
 1. Non-contradicting deltas compose directly: the result is the prior roles plus all additions, minus all removals.
-2. Two deltas contradict when one adds and another removes the same role for the same party and resource. The stricter outcome wins: the one whose resulting state satisfies more enabled constraints. Ties go to the earlier rule (section 3.1 evaluation order). The losing delta is discarded and recorded in the audit log with both rule ids.
+2. Two deltas contradict when one adds and another removes the same role for the same party and resource. The stricter outcome wins: the one whose resulting state satisfies more enabled constraints. Ties go to the earlier rule (section 3.1 evaluation order). An `add-only` addition takes part in this like any other addition. The losing delta is discarded and recorded in the audit log with both rule ids.
 3. If the composed result still violates an enabled constraint, the change is rejected (all or nothing, section 4.1).
 
 **`strip` and tighten-only.** Tighten-only governs constraints (section 2), not entries. `strip` changes entries, so it is allowed as a rule action. It is never a way to relax a constraint, and its result still has to satisfy every enabled constraint (e.g. `min-ra`).
@@ -101,7 +101,7 @@ Envelope (all types):
 - `cause`: for inferred events, the rule id and the originating event id. Inferred events are never causes, which makes non-recursion verifiable from the log.
 - `constraints`: each enabled constraint that was evaluated, with its result.
 - `outcome`: `applied` or `rejected`, with a reason.
-- `prev_hash`: hash of the previous event in the realm.
+- `hash`, `prev_hash`: `hash` is blake3 over the canonical JSON of the event (sorted keys, no whitespace) without the `hash` field and with `prev_hash` included. The first event of a realm has an all-zero `prev_hash`.
 
 Payload for `type: entry`:
 
@@ -141,7 +141,7 @@ Payload for `type: rule`:
 ### 4.2 Rules
 
 - **Rejected changes are logged** (`outcome: rejected`), not only applied ones.
-- **Tamper evidence:** a per-realm hash chain via `prev_hash`, identical for the offline log and the cloud store.
+- **Tamper evidence:** a per-realm hash chain via `prev_hash`, identical for the offline log and the cloud store. Verification recomputes every `hash` and checks each `prev_hash` link, failing at the first mismatch. It also checks each `rule` event's `body_hash` against its `body`, and against the rendered SteerSpec rule and the authoring source (section 6).
 - **Source of truth:** the log is the source and the `.raci` file is a materialised view that can be rebuilt and verified by replay.
 - **One realm per change:** a change and everything inferred from it are written to the log of the realm where the original change lands. Resources in ancestor realms can be read as sources, and descendant realms are read for revalidation (section 2), but neither is written by that change. So a `change_id`, its commit marker and the hash chain never span two realms.
 - **Offline storage:** one JSONL log per realm, next to the `.raci` file; the CLI is its only writer. Offline mode is single-writer per realm. Concurrent clones diverge the hash chain, and merging them is deferred (open); multi-writer is the cloud mode's job. Git history is not a substitute, as it does not record rejected attempts or causes.
@@ -153,6 +153,8 @@ RACI.sh manages RACI. Enforcing it is the customer's job. The service can answer
 ## 6. SteerSpec mapping
 
 - RACI.sh rules (constraints, inference rules, default rule-management rules) have a **structured source** that the `raci` CLI evaluates deterministically. It is the authoring format. The canonical record of which rule was in force is the audit log (section 4.2): loading a new or changed rule source appends a `rule` event carrying the full structured body, and the CLI evaluates only rules recorded in the log. A source that differs from the log's latest rule event is reported as unrecorded and not evaluated.
+
+**Bootstrap.** A realm's log starts empty, and until rules are recorded nothing is in force, so entry changes are rejected with `no-rules-in-force`. An explicit init appends `rule` events (actor `import`) for the in-force rules of the pinned `sh.raci` version and of the realm's own entities. Every later change of the pinned `sh.raci` version appends the corresponding `rule` events, so inherited rules are recorded in the log of the realm that uses them.
 - The specification and those rules are **rendered into SteerSpec rules** in a `sh.raci` realm: prose `MUST` bodies with SteerSpec ids, lifecycle states and supersession, plus notes carrying the structured form. The rendered rules are derived, never hand-edited.
 - Rendering to prose gives the SteerSpec/LLM path (CI gates, advisory review of rule changes) without making enforcement depend on an LLM. Deterministic checks reject; the LLM path only reviews.
 - Customer realms depend on `sh.raci` like any SteerSpec realm and customise by authoring structured rules in their own realm, which are rendered to SteerSpec rules like the defaults. They add or supersede rules, subject to the override lint in section 3.
