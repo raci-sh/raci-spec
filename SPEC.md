@@ -101,7 +101,7 @@ Envelope (all types):
 - `cause`: for inferred events, the rule id and the originating event id. Inferred events are never causes, which makes non-recursion verifiable from the log.
 - `constraints`: each enabled constraint that was evaluated, with its result.
 - `outcome`: `applied` or `rejected`, with a reason.
-- `hash`, `prev_hash`: `hash` is blake3 over the canonical JSON of the event without the `hash` field and with `prev_hash` included. **Canonical JSON** throughout this specification is RFC 8785 (JCS): keys sorted, no insignificant whitespace, defined string escaping and number formatting. The first event of a realm has an all-zero `prev_hash`.
+- `hash`, `prev_hash`: `hash` is blake3 over the canonical JSON of the event without the `hash` field and with `prev_hash` included. **Canonical JSON** throughout this specification is RFC 8785 (JCS): keys sorted, no insignificant whitespace, defined string escaping and number formatting. Every digest in the log and in the `.raci` file (`hash`, `prev_hash`, `body_hash`, `head_hash`) is the string `blake3:` followed by 64 lowercase hexadecimal characters, as in SteerSpec's `rule_set.hash`. The first event of a realm has the all-zero `prev_hash`, `blake3:` followed by 64 zeros.
 
 Payload for `type: entry`:
 
@@ -140,8 +140,8 @@ Payload for `type: rule`:
 
 Payload for `type: pin`:
 
-- `realm`, `version`: the dependency realm (e.g. `sh.raci`) and the version this realm's rules are evaluated against from this event on.
-- `op`: `set`. A later `pin` event for the same realm replaces the earlier one. Replay derives the realm's current pins from these events, so `pins` in the `.raci` file (section 7) is reconstructible and verifiable. The `rule` events that follow a version change record the rules that the pin brings in.
+- `dependency_realm`, `version`: the dependency realm (e.g. `sh.raci`; distinct from the envelope's `realm`, which is the realm that owns the event) and the version this realm's rules are evaluated against from this event on.
+- `op`: `set`. A later `pin` event for the same `dependency_realm` replaces the earlier one. Replay derives the realm's current pins from these events, so `pins` in the `.raci` file (section 7) is reconstructible and verifiable. The `rule` events that follow a version change record the rules that the pin brings in.
 
 ### 4.2 Rules
 
@@ -171,7 +171,8 @@ The `.raci` file is a **materialised view** of one realm's audit log (section 4.
 
 - **Encoding:** one canonical JSON document (RFC 8785, the same canonical form that the event hashes use, section 4.1). Output is deterministic, so the same log always yields byte-identical files. The example below is pretty-printed for reading; the stored file has no insignificant whitespace.
 - **Scope:** the realm's own state. The entries and resources of ancestor and descendant realms are read at load time (effective entries, revalidation) and never embedded, so the file cannot drift from its source. What is embedded about other realms is derived from this realm's own log: `pins` and `rules_in_force`, both recorded there (sections 4.1 and 6).
-- **Staleness:** `log.head_seq` and `log.head_hash` identify the log state the view reflects. A view whose head differs from the log's is stale and is rebuilt by replay. For an empty log the head is `head_seq` 0 and `head_hash` all zeros, the same sentinel as the first event's `prev_hash`.
+- **No paths:** the view carries no filesystem paths, so the same log yields the same bytes in any checkout. The log is found by convention, next to the `.raci` file (section 4.2).
+- **Staleness:** `log.head_seq` and `log.head_hash` identify the log state the view reflects. A view whose head differs from the log's is stale and is rebuilt by replay. For an empty log the head is `head_seq` 0 and `head_hash` the all-zero digest, the same sentinel as the first event's `prev_hash`.
 
 Shape:
 
@@ -183,8 +184,8 @@ Shape:
                  "b": { "activity": "<selector>", "resource": "<selector>", "roles": "A" } } ]
   },
   "entries": [ { "activity": "<activity>", "party": "<party>", "resource": "<id>", "roles": "AR" } ],
-  "log": { "file": "<log path>", "head_hash": "<hash of the head event>", "head_seq": 412 },
-  "pins": [ { "realm": "<dependency realm>", "version": "<pinned version>" } ],
+  "log": { "head_hash": "<hash of the head event>", "head_seq": 412 },
+  "pins": [ { "dependency_realm": "<dependency realm>", "version": "<pinned version>" } ],
   "raci": "1",
   "realm": "<realm id>",
   "resources": [ { "id": "<id>", "parent": "<id or absent>", "type": "<type>" } ],
@@ -193,7 +194,7 @@ Shape:
 ```
 
 - `roles` is a string of the held roles in the fixed precedence order A, R, C, I (section 1), so `"AR"`, never `"RA"`. An entry with no roles is absent, not stored empty.
-- Object members are in the canonical (sorted) order, as in the example. Array ordering is canonical too: `resources` by `id`; `entries` by (`resource`, `activity`, `party`); `rules_in_force` by `rule_id`; `pins` by (`realm`, `version`); `enabled` alphabetically; `pairs` by their canonical JSON.
+- Object members are in the canonical (sorted) order, as in the example. Array ordering is canonical too: `resources` by `id`; `entries` by (`resource`, `activity`, `party`); `rules_in_force` by `rule_id`; `pins` by (`dependency_realm`, `version`); `enabled` alphabetically; `pairs` by their canonical JSON.
 - `rules_in_force` lists every rule recorded in force in this realm's log (section 6, including inherited ones) with its `body_hash`. Verification compares these with the log's `rule` events and with the rule sources without replaying the whole log.
 - `pins` is derived from the log's `pin` events (section 4.1): the current version of each dependency realm the log was evaluated against (e.g. the `sh.raci` version). Verification recomputes it by replay.
 - `constraints` lists the constraints recorded by this realm's own `constraint` events. The effective set (the union along the realm path, section 3) is computed at load and not embedded.
