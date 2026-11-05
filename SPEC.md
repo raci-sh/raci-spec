@@ -18,6 +18,8 @@ Strictness is a customer choice. It is expressed as a set of named constraints, 
 
 Constraints are evaluated against the **effective entries** of the realm in which a change lands: the entries visible there after inheritance and overrides are resolved (section 3). This is what lets a parent's separation-of-duties pair apply to a child's entries. (Proposal, not decided.)
 
+**Revalidation of descendants.** A change that lands in a realm also revalidates the descendant realms of the same realm tree that its effective entries reach: a change to a parent entry, or a new or tightened constraint. The change reads those descendants but writes only its own realm's log. If any descendant would be left in violation, the whole change is rejected, and the rejection reason names the descendant realm and the constraint. Realms outside the tree (separate realms that merely depend on this one) are not revalidated; the CLI's verification reports their violations as findings when they next load.
+
 | Constraint | Meaning |
 | --- | --- |
 | `single-accountable` | At most one A per activity and resource. |
@@ -75,7 +77,11 @@ Inference is **non-recursive**: a change produced by an inference rule does not 
 
 **Evaluation order.** Rules are evaluated in rule-id order, with a deterministic tie-break (realm depth, then name). Rule evaluation is therefore reproducible and auditable.
 
-**Conflicts.** The outputs of all matching rules are first merged (union of roles per party, since a party may hold several roles). A conflict exists only if the merged result violates an enabled constraint. Then the stricter outcome wins: the output of the losing rule is discarded and recorded in the audit log with both rule ids. "Stricter" means the result that satisfies more enabled constraints; ties go to the earlier rule. If the result still violates a constraint, the change is rejected (all or nothing, section 4.1).
+**Composition.** Each rule action produces **deltas**, not states: `map`, `add-issuer` produce role additions, `strip` produces role removals. An `add-only` action produces additions only for missing entries and never a removal or a change to an existing entry. Deltas are composed per (party, resource, role) on top of the state before inference:
+
+1. Non-contradicting deltas compose directly: the result is the prior roles plus all additions, minus all removals.
+2. Two deltas contradict when one adds and another removes the same role for the same party and resource. The stricter outcome wins: the one whose resulting state satisfies more enabled constraints. Ties go to the earlier rule (section 3.1 evaluation order). The losing delta is discarded and recorded in the audit log with both rule ids.
+3. If the composed result still violates an enabled constraint, the change is rejected (all or nothing, section 4.1).
 
 **`strip` and tighten-only.** Tighten-only governs constraints (section 2), not entries. `strip` changes entries, so it is allowed as a rule action. It is never a way to relax a constraint, and its result still has to satisfy every enabled constraint (e.g. `min-ra`).
 
@@ -137,7 +143,7 @@ Payload for `type: rule`:
 - **Rejected changes are logged** (`outcome: rejected`), not only applied ones.
 - **Tamper evidence:** a per-realm hash chain via `prev_hash`, identical for the offline log and the cloud store.
 - **Source of truth:** the log is the source and the `.raci` file is a materialised view that can be rebuilt and verified by replay.
-- **One realm per change:** a change and everything inferred from it are written to the log of the realm where the original change lands. Resources in ancestor realms can be read as sources but are never written by that change. So a `change_id`, its commit marker and the hash chain never span two realms.
+- **One realm per change:** a change and everything inferred from it are written to the log of the realm where the original change lands. Resources in ancestor realms can be read as sources, and descendant realms are read for revalidation (section 2), but neither is written by that change. So a `change_id`, its commit marker and the hash chain never span two realms.
 - **Offline storage:** one JSONL log per realm, next to the `.raci` file; the CLI is its only writer. Offline mode is single-writer per realm. Concurrent clones diverge the hash chain, and merging them is deferred (open); multi-writer is the cloud mode's job. Git history is not a substitute, as it does not record rejected attempts or causes.
 
 ## 5. Out of scope
