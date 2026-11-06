@@ -1,0 +1,71 @@
+{
+  "$schema": "./_schema/entity.v1.schema.json",
+  "entity": {
+    "id": "RACIDCNS",
+    "title": "RACI default constraints",
+    "description": "Inheritable default constraint configuration shipped for customer realms; structured bodies live in reference notes (SPEC.md sections 2 and 6)."
+  },
+  "rule_set": {
+    "version": "0.1.7",
+    "timestamp": "2026-11-06T16:31:17Z",
+    "hash": "blake3:e320a5193fb8ba40f4da5250cf9694f428148af995e266c82398fb55541c80b6"
+  },
+  "rules": [
+    {
+      "id": "RACIDCNS-001",
+      "revision": 0,
+      "state": "D",
+      "body": "The strict preset MUST enable the constraints single-accountable, single-responsible, one-role-per-party and min-ra.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACIDCNS-002",
+      "revision": 1,
+      "state": "D",
+      "body": "The constraint separation-of-duties MUST be opt-in, enabled only together with a list of conflict pairs and excluded from the strict preset.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    }
+  ],
+  "notes": [
+    {
+      "id": "RACIDCNS-001/01",
+      "rule_ref": "RACIDCNS-001",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACIDCNS-001/02",
+      "rule_ref": "RACIDCNS-001",
+      "type": "reference",
+      "content": "raci/1:{\"enable\":[\"min-ra\",\"one-role-per-party\",\"single-accountable\",\"single-responsible\"],\"kind\":\"preset\",\"name\":\"strict\"}",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACIDCNS-002/01",
+      "rule_ref": "RACIDCNS-002",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACIDCNS-002/02",
+      "rule_ref": "RACIDCNS-002",
+      "type": "reference",
+      "content": "raci/1:{\"kind\":\"constraint-default\",\"name\":\"separation-of-duties\",\"requires\":\"pairs\",\"preset\":false}",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    }
+  ]
+}

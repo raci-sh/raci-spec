@@ -1,0 +1,143 @@
+{
+  "$schema": "./_schema/entity.v1.schema.json",
+  "entity": {
+    "id": "RACI",
+    "title": "RACI core model",
+    "description": "The RACI.sh data model: realms, parties, roles, activities, resources and entries (SPEC.md section 1)."
+  },
+  "rule_set": {
+    "version": "0.1.18",
+    "timestamp": "2026-11-06T16:31:17Z",
+    "hash": "blake3:d01da2a02d420db2892c3db3879d8205a7f641d489da3a75910fe3d94cf7ae5b"
+  },
+  "rules": [
+    {
+      "id": "RACI-001",
+      "revision": 1,
+      "state": "D",
+      "body": "A RACI.sh realm MUST correspond to a SteerSpec realm, including its nesting into sub-realms.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-002",
+      "revision": 0,
+      "state": "D",
+      "body": "A RACI entry MUST bind a party, human or agent, to a set of roles drawn from R, A, C and I, for an activity on a resource within a realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-003",
+      "revision": 1,
+      "state": "D",
+      "body": "The RACI data model MUST be permissive, with strictness expressed as validation constraints and never as schema.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-004",
+      "revision": 1,
+      "state": "D",
+      "body": "A resource MUST have a type and a realm, with an optional parent resource.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-005",
+      "revision": 0,
+      "state": "D",
+      "body": "Role precedence for display and for the best role of a party MUST be A, then R, then C, then I.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-006",
+      "revision": 1,
+      "state": "D",
+      "body": "An entry MUST NOT be erased: a removal is an event and the full history stays in the audit log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-007",
+      "revision": 0,
+      "state": "D",
+      "body": "The creation and deletion of a resource MUST be audited events.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    }
+  ],
+  "notes": [
+    {
+      "id": "RACI-001/01",
+      "rule_ref": "RACI-001",
+      "type": "reference",
+      "content": "SPEC.md section 1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACI-002/01",
+      "rule_ref": "RACI-002",
+      "type": "reference",
+      "content": "SPEC.md section 1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACI-003/01",
+      "rule_ref": "RACI-003",
+      "type": "reference",
+      "content": "SPEC.md section 1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACI-004/01",
+      "rule_ref": "RACI-004",
+      "type": "reference",
+      "content": "SPEC.md section 1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACI-005/01",
+      "rule_ref": "RACI-005",
+      "type": "reference",
+      "content": "SPEC.md section 1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACI-006/01",
+      "rule_ref": "RACI-006",
+      "type": "reference",
+      "content": "SPEC.md section 1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACI-007/01",
+      "rule_ref": "RACI-007",
+      "type": "reference",
+      "content": "SPEC.md section 1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    }
+  ]
+}
