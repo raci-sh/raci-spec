@@ -1,0 +1,305 @@
+{
+  "$schema": "./_schema/entity.v1.schema.json",
+  "entity": {
+    "id": "RACICNS",
+    "title": "RACI constraints",
+    "description": "The named constraints that express strictness, and how a violating change is handled (SPEC.md section 2)."
+  },
+  "rule_set": {
+    "version": "0.1.38",
+    "timestamp": "2026-11-06T16:31:17Z",
+    "hash": "blake3:c5a66abd4af119bc6bee42422de05a5e921c932d1db0aa20df68fa861a42ab91"
+  },
+  "rules": [
+    {
+      "id": "RACICNS-001",
+      "revision": 0,
+      "state": "D",
+      "body": "Strictness MUST be expressed as a set of named constraints, each switchable per realm: single-accountable, single-responsible, one-role-per-party, min-ra and separation-of-duties.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-002",
+      "revision": 0,
+      "state": "D",
+      "body": "When single-accountable is enabled, there MUST be at most one A per activity and resource.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-003",
+      "revision": 0,
+      "state": "D",
+      "body": "When single-responsible is enabled, there MUST be at most one R per activity and resource.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-004",
+      "revision": 0,
+      "state": "D",
+      "body": "When one-role-per-party is enabled, a party MUST hold at most one role per activity and resource.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-005",
+      "revision": 1,
+      "state": "D",
+      "body": "When min-ra is enabled, at least one R or A MUST remain per activity and resource, so removing the last one needs a named substitute.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-006",
+      "revision": 1,
+      "state": "D",
+      "body": "When separation-of-duties is enabled, a party that holds the roles of one side of a declared conflict pair MUST NOT hold the roles of the other side.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-007",
+      "revision": 1,
+      "state": "D",
+      "body": "A change that violates an enabled constraint MUST be rejected, with no silent demotion or alteration of roles.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-008",
+      "revision": 1,
+      "state": "D",
+      "body": "Constraint evaluation MUST be deterministic and performed by the raci CLI.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-009",
+      "revision": 1,
+      "state": "D",
+      "body": "A change that lands in a realm MUST also revalidate, read-only, the descendant realms of its realm tree that its effective entries reach.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-010",
+      "revision": 1,
+      "state": "D",
+      "body": "Realms outside the realm tree of a change MUST NOT be revalidated by it.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-011",
+      "revision": 0,
+      "state": "D",
+      "body": "Conflict pairs MUST be evaluated among the entries of the declaring realm and its descendants, and never between sibling or unrelated realms.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-012",
+      "revision": 0,
+      "state": "D",
+      "body": "An explicit, logged replace action MAY transfer a role within one audited change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-013",
+      "revision": 0,
+      "state": "D",
+      "body": "An LLM-based review of a change MUST be advisory only.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-014",
+      "revision": 0,
+      "state": "D",
+      "body": "A change MUST be rejected, naming the descendant realm and the constraint, if revalidation leaves any descendant realm in violation.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-015",
+      "revision": 0,
+      "state": "D",
+      "body": "Violations in realms outside the realm tree of a change MUST be reported as findings when those realms next load.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "supersedes": null
+    }
+  ],
+  "notes": [
+    {
+      "id": "RACICNS-001/01",
+      "rule_ref": "RACICNS-001",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-002/01",
+      "rule_ref": "RACICNS-002",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-003/01",
+      "rule_ref": "RACICNS-003",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-004/01",
+      "rule_ref": "RACICNS-004",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-005/01",
+      "rule_ref": "RACICNS-005",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-006/01",
+      "rule_ref": "RACICNS-006",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-006/02",
+      "rule_ref": "RACICNS-006",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-007/01",
+      "rule_ref": "RACICNS-007",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-008/01",
+      "rule_ref": "RACICNS-008",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-009/01",
+      "rule_ref": "RACICNS-009",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-010/01",
+      "rule_ref": "RACICNS-010",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-008/02",
+      "rule_ref": "RACICNS-008",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-011/01",
+      "rule_ref": "RACICNS-011",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-012/01",
+      "rule_ref": "RACICNS-012",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-013/01",
+      "rule_ref": "RACICNS-013",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-014/01",
+      "rule_ref": "RACICNS-014",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-015/01",
+      "rule_ref": "RACICNS-015",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-06",
+      "revision": 0
+    }
+  ]
+}
