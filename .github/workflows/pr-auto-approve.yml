@@ -251,7 +251,7 @@ jobs:
           # CI-triggered run wait for Copilot's check instead of skipping. Free on
           # public repos; consumes billable Actions minutes on private ones, hence
           # 0 by default.
-          wait-for-copilot-seconds: ${{ vars.STRSPC_PR_AUTO_APPROVE_WAIT_FOR_COPILOT_SECONDS }}
+          wait-for-copilot-seconds: ${{ vars.STRSPC_PR_AUTO_APPROVE_WAIT_FOR_COPILOT_SECONDS || '300' }}
 
           # Slack channel for notifications (default: alert-pr-notifications).
           # Used only when slack-bot-token is set.
