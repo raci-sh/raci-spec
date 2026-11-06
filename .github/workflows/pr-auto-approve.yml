@@ -243,7 +243,8 @@ jobs:
           # 0 above are skipped. Disable the ruleset's automatic review first.
           request-copilot-review: ${{ vars.STRSPC_PR_AUTO_APPROVE_REQUEST_COPILOT_REVIEW }}
 
-          # STRONGLY RECOMMENDED if Copilot reviews your PRs: set it to 600.
+          # STRONGLY RECOMMENDED if Copilot reviews your PRs: set it to 600. This repo
+          # defaults to 600 here; the variable overrides it (0 turns the wait off).
           # Without it, a PR whose Copilot review lands AFTER CI is never
           # re-evaluated and sits unapproved forever: Copilot's check_run is
           # GITHUB_TOKEN-created, and any workflow run Copilot itself triggers is
@@ -251,7 +252,7 @@ jobs:
           # CI-triggered run wait for Copilot's check instead of skipping. Free on
           # public repos; consumes billable Actions minutes on private ones, hence
           # 0 by default.
-          wait-for-copilot-seconds: ${{ vars.STRSPC_PR_AUTO_APPROVE_WAIT_FOR_COPILOT_SECONDS || '300' }}
+          wait-for-copilot-seconds: ${{ vars.STRSPC_PR_AUTO_APPROVE_WAIT_FOR_COPILOT_SECONDS || '600' }}
 
           # Slack channel for notifications (default: alert-pr-notifications).
           # Used only when slack-bot-token is set.
