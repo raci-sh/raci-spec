@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.47",
-    "timestamp": "2026-11-07T08:35:19Z",
-    "hash": "blake3:851983f48c6d0a0dfd97d475a29266109456a8d47efd0e3038da59274728b8e8"
+    "timestamp": "2026-11-07T08:38:49Z",
+    "hash": "blake3:1e7fed62a010695afe95d8f3ea719a64d688d46f5f412210e0d66485bfe2840b"
   },
   "rules": [
     {
@@ -22,7 +22,7 @@
     },
     {
       "id": "RACIINF-002",
-      "revision": 1,
+      "revision": 0,
       "state": "D",
       "body": "The operations new and delete MUST denote resource events.",
       "added_by": "github:pleberre",
@@ -78,7 +78,7 @@
       "id": "RACIINF-008",
       "revision": 0,
       "state": "D",
-      "body": "The map and strip actions MUST locate the source by following the target's parent links to the nearest ancestor of the trigger type, unless the rule names a selector.",
+      "body": "The map and strip actions MUST locate the source by following the target's parent links to the nearest ancestor of the trigger type, or take the target itself as the source when the rule has no trigger type, unless the rule names a selector.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -159,7 +159,7 @@
       "id": "RACIINF-017",
       "revision": 0,
       "state": "D",
-      "body": "Each inference action MUST produce deltas, role additions or removals, composed per party, resource and role on top of the state before inference.",
+      "body": "Each inference action MUST produce deltas, role additions or removals, composed per party, activity, resource and role on top of the state before inference.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -168,7 +168,7 @@
       "id": "RACIINF-018",
       "revision": 0,
       "state": "D",
-      "body": "When one delta adds and another removes the same role for the same party and resource, the stricter outcome MUST win, with ties going to the earlier rule.",
+      "body": "When one delta adds and another removes the same role for the same party, activity and resource, the stricter outcome MUST win, with ties going to the earlier rule.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
