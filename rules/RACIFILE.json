@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.68",
-    "timestamp": "2026-11-07T16:01:19Z",
-    "hash": "blake3:75dcfcc13cd614793813470c9ec69c3f9dbebe8b662f39bc360480f1b3ba7788"
+    "timestamp": "2026-11-07T16:06:10Z",
+    "hash": "blake3:bb1eda53df518a84b44d27f28704d7c303d47ab8343a907e8173256195e37df2"
   },
   "rules": [
     {
@@ -267,7 +267,7 @@
       "id": "RACIFILE-029",
       "revision": 0,
       "state": "D",
-      "body": "Verification MUST report an unrecorded-rule finding of severity error when a structured rule source differs from the latest rule event for the same rule id in the log, or has none.",
+      "body": "Verification MUST report an unrecorded-rule finding of severity error for a structured rule source that differs from the latest rule event for the same rule id in the log, or for which the log has no rule event for that rule id.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
