@@ -1,0 +1,467 @@
+{
+  "$schema": "./_schema/entity.v1.schema.json",
+  "entity": {
+    "id": "RACIINF",
+    "title": "RACI inference",
+    "description": "Triggered inference rules, ESIS style: shape, actions, non-recursion, evaluation order and composition of deltas (SPEC.md section 3.1)."
+  },
+  "rule_set": {
+    "version": "0.1.51",
+    "timestamp": "2026-11-07T08:51:41Z",
+    "hash": "blake3:ad67b2f1cefb5ea4dff519a5d3d5aaa38fe291fe8aecd6e2af471b8bbcd6ced8"
+  },
+  "rules": [
+    {
+      "id": "RACIINF-001",
+      "revision": 0,
+      "state": "D",
+      "body": "An inference rule MUST consist of a target type, an operation, an optional trigger type, an optional selector and a list of actions.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-002",
+      "revision": 0,
+      "state": "D",
+      "body": "The operations new and delete MUST denote resource events.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-003",
+      "revision": 0,
+      "state": "D",
+      "body": "The inference action vocabulary MUST be map, add-issuer and strip.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-004",
+      "revision": 0,
+      "state": "D",
+      "body": "The map action MUST give the parties holding the from-role on the source the to-role on the target.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-005",
+      "revision": 0,
+      "state": "D",
+      "body": "The add-issuer action MUST give the party creating the target the named role.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-006",
+      "revision": 0,
+      "state": "D",
+      "body": "The strip action MUST remove a role on the target from the parties holding a named role on the source of the action's source type.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-007",
+      "revision": 0,
+      "state": "D",
+      "body": "An action carrying the add-only attribute MUST add missing entries only, leaving existing entries unchanged.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-008",
+      "revision": 0,
+      "state": "D",
+      "body": "The map and strip actions MUST locate their source as the nearest resource of the action's source type, searching the target itself and then its parent links, unless the rule names a selector.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-009",
+      "revision": 0,
+      "state": "D",
+      "body": "When no rule matches a new target and min-ra is enabled, the originating change MUST be rejected.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-010",
+      "revision": 0,
+      "state": "D",
+      "body": "When no rule matches a new target and min-ra is not enabled, the target MUST be created with an empty RACI and a no-matching-rule finding recorded in the commit marker.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-011",
+      "revision": 0,
+      "state": "D",
+      "body": "Inferred changes MUST pass through the enabled constraints like any other change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-012",
+      "revision": 0,
+      "state": "D",
+      "body": "Inferred changes MUST be audited with the rule that produced them.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-013",
+      "revision": 0,
+      "state": "D",
+      "body": "Inference MUST be non-recursive, so that only the original change is evaluated against the rule set, once.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-014",
+      "revision": 0,
+      "state": "D",
+      "body": "All inference rules MUST see the same input: the original change and the state before any inference.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-015",
+      "revision": 0,
+      "state": "D",
+      "body": "A derivation across several levels MUST be expressed as a direct rule on the final target, triggered by the original change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-016",
+      "revision": 0,
+      "state": "D",
+      "body": "Inference rules MUST be evaluated in rule-id order, with ties broken by realm depth and then by name.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-017",
+      "revision": 0,
+      "state": "D",
+      "body": "Each inference action MUST produce deltas, role additions or removals, composed per party, activity, resource and role on top of the state before inference.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-018",
+      "revision": 0,
+      "state": "D",
+      "body": "When one delta adds and another removes the same role for the same party, activity and resource, the stricter outcome MUST win, with ties going to the earlier rule.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-019",
+      "revision": 0,
+      "state": "D",
+      "body": "The stricter outcome MUST be the one whose resulting state satisfies more enabled constraints.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-020",
+      "revision": 0,
+      "state": "D",
+      "body": "The losing delta MUST be discarded and recorded in the audit log with both rule ids.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-021",
+      "revision": 0,
+      "state": "D",
+      "body": "If the composed result violates an enabled constraint, the whole change MUST be rejected.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-022",
+      "revision": 0,
+      "state": "D",
+      "body": "The result of a strip action MUST satisfy every enabled constraint.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-023",
+      "revision": 0,
+      "state": "D",
+      "body": "The operations add, update and remove MUST denote entry events.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-024",
+      "revision": 0,
+      "state": "D",
+      "body": "A rule with a trigger type MUST have the operation add, update or remove, and fires on entry events of that type with that operation, for each target whose source binds to the changed resource.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-025",
+      "revision": 0,
+      "state": "D",
+      "body": "The add-issuer action MUST be used only in rules whose operation is new.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    }
+  ],
+  "notes": [
+    {
+      "id": "RACIINF-001/01",
+      "rule_ref": "RACIINF-001",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-002/01",
+      "rule_ref": "RACIINF-002",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-003/01",
+      "rule_ref": "RACIINF-003",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-004/01",
+      "rule_ref": "RACIINF-004",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-005/01",
+      "rule_ref": "RACIINF-005",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-006/01",
+      "rule_ref": "RACIINF-006",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-007/01",
+      "rule_ref": "RACIINF-007",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-008/01",
+      "rule_ref": "RACIINF-008",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-009/01",
+      "rule_ref": "RACIINF-009",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-010/01",
+      "rule_ref": "RACIINF-010",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-011/01",
+      "rule_ref": "RACIINF-011",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-012/01",
+      "rule_ref": "RACIINF-012",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-013/01",
+      "rule_ref": "RACIINF-013",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-014/01",
+      "rule_ref": "RACIINF-014",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-015/01",
+      "rule_ref": "RACIINF-015",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-016/01",
+      "rule_ref": "RACIINF-016",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-017/01",
+      "rule_ref": "RACIINF-017",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-018/01",
+      "rule_ref": "RACIINF-018",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-019/01",
+      "rule_ref": "RACIINF-019",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-020/01",
+      "rule_ref": "RACIINF-020",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-021/01",
+      "rule_ref": "RACIINF-021",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-022/01",
+      "rule_ref": "RACIINF-022",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-023/01",
+      "rule_ref": "RACIINF-023",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-024/01",
+      "rule_ref": "RACIINF-024",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-025/01",
+      "rule_ref": "RACIINF-025",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "$schema": "./_schema/entity.v1.schema.json",
+  "entity": {
+    "id": "RACIINH",
+    "title": "RACI inheritance",
+    "description": "Tighten-only inheritance of constraint policy, the override lint, and entry resolution across realm levels (SPEC.md section 3)."
+  },
+  "rule_set": {
+    "version": "0.1.20",
+    "timestamp": "2026-11-07T08:35:11Z",
+    "hash": "blake3:e55bc2cb33aaa13a2f98d559b743d715d77f7ce62fbbf05fb2efe3a3f2e7545d"
+  },
+  "rules": [
+    {
+      "id": "RACIINH-001",
+      "revision": 0,
+      "state": "D",
+      "body": "A sub-realm MUST NOT relax or disable a constraint set by an ancestor realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-002",
+      "revision": 0,
+      "state": "D",
+      "body": "The effective constraint policy of a realm MUST be the union of the constraints along its realm path.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-003",
+      "revision": 0,
+      "state": "D",
+      "body": "A sub-realm MUST NOT remove a separation-of-duties conflict pair inherited from an ancestor realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-004",
+      "revision": 0,
+      "state": "D",
+      "body": "The realm tree MUST decide which entries and which constraint policy apply to a change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-005",
+      "revision": 0,
+      "state": "D",
+      "body": "RACI.sh rules MUST inherit through the inherits chain of their entities.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-006",
+      "revision": 0,
+      "state": "D",
+      "body": "RACI.sh MUST lint every override of a constraint rule and reject an override whose effect is weaker than the rule it replaces.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-007",
+      "revision": 0,
+      "state": "D",
+      "body": "A constraint override MUST count as not weaker only if its enabled constraints and conflict pairs are a superset of those of the overridden rule.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-008",
+      "revision": 0,
+      "state": "D",
+      "body": "An override that the lint cannot prove not weaker MUST be rejected.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-009",
+      "revision": 0,
+      "state": "D",
+      "body": "The override lint MUST NOT compare inference rules for strength, since they set entries and not policy.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-010",
+      "revision": 0,
+      "state": "D",
+      "body": "RACI entries MUST resolve most-specific-first across realm levels.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    }
+  ],
+  "notes": [
+    {
+      "id": "RACIINH-001/01",
+      "rule_ref": "RACIINH-001",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-002/01",
+      "rule_ref": "RACIINH-002",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-003/01",
+      "rule_ref": "RACIINH-003",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-004/01",
+      "rule_ref": "RACIINH-004",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-005/01",
+      "rule_ref": "RACIINH-005",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-006/01",
+      "rule_ref": "RACIINH-006",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-007/01",
+      "rule_ref": "RACIINH-007",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-008/01",
+      "rule_ref": "RACIINH-008",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-009/01",
+      "rule_ref": "RACIINH-009",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-010/01",
+      "rule_ref": "RACIINH-010",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    }
+  ]
+}

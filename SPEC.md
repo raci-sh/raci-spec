@@ -56,15 +56,16 @@ A rule has:
 
 - **target type**: the resource type whose RACI is being derived (e.g. audit).
 - **operation**: the change that fires the rule. `new` or `delete` are resource events; `add`, `update` or `remove` are entry events (on the trigger type, or on the target itself when there is no trigger type).
-- **trigger type** (optional): the source resource type whose RACI change fired the rule (e.g. module, location). Absent for a change on the target itself.
+- **trigger type** (optional): the resource type whose entry change fires the rule (e.g. module, location). Absent for a change on the target itself. A rule with a trigger type must have an entry operation (`add`, `update` or `remove`), never `new` or `delete`, and fires on entry events of that type with that operation, for each target whose source (below) binds to the changed resource.
+- **selector** (optional): names the source resource explicitly, instead of the default search below (open: selector syntax).
 - **actions**, from a small vocabulary (taken from ESIS):
   - `map(source-type, from-role, to-role)`: parties holding `from-role` on the source get `to-role` on the target. ESIS example: module R becomes audit A, module A becomes audit I.
-  - `add-issuer(role)`: the party creating the target gets `role`.
-  - `strip(held-role, role)`: parties holding `held-role` on the source lose `role` on the target (ESIS: a module I loses A and R on the audit).
+  - `add-issuer(role)`: the party creating the target gets `role`. Only valid in rules whose operation is `new`, the one operation that has a creating party.
+  - `strip(source-type, held-role, role)`: parties holding `held-role` on the source of `source-type` lose `role` on the target (ESIS: a module I loses A and R on the audit).
 
 Any action may carry the attribute `add-only`: it then adds missing entries and never changes an existing one.
 
-**Source binding.** `map` and `strip` locate the source resource by following the target's parent links to the nearest ancestor of the trigger type, unless the rule names a selector (open: selector syntax).
+**Source binding.** `map` and `strip` locate their source as the nearest resource of the action's `source-type`, searching the target itself first and then its parent links. So an action whose source type is the target's own type reads the target (the case of an entry event on the target with no trigger type), and `map(module, R, A)` on a new audit reads the audit's parent module. A rule that names a selector uses it instead.
 
 Two ESIS semantics to keep:
 
@@ -77,10 +78,10 @@ Inference is **non-recursive**: a change produced by an inference rule does not 
 
 **Evaluation order.** Rules are evaluated in rule-id order, with a deterministic tie-break (realm depth, then name). Rule evaluation is therefore reproducible and auditable.
 
-**Composition.** Each rule action produces **deltas**, not states: `map`, `add-issuer` produce role additions, `strip` produces role removals. An `add-only` action produces additions only for missing entries and never a removal or a change to an existing entry. Deltas are composed per (party, resource, role) on top of the state before inference:
+**Composition.** Each rule action produces **deltas**, not states: `map`, `add-issuer` produce role additions, `strip` produces role removals. An `add-only` action produces additions only for missing entries and never a removal or a change to an existing entry. Deltas are composed per (party, activity, resource, role) on top of the state before inference:
 
 1. Non-contradicting deltas compose directly: the result is the prior roles plus all additions, minus all removals.
-2. Two deltas contradict when one adds and another removes the same role for the same party and resource. The stricter outcome wins: the one whose resulting state satisfies more enabled constraints. Ties go to the earlier rule (section 3.1 evaluation order). An `add-only` addition takes part in this like any other addition. The losing delta is discarded and recorded in the audit log with both rule ids.
+2. Two deltas contradict when one adds and another removes the same role for the same party, activity and resource. The stricter outcome wins: the one whose resulting state satisfies more enabled constraints. Ties go to the earlier rule (section 3.1 evaluation order). An `add-only` addition takes part in this like any other addition. The losing delta is discarded and recorded in the audit log with both rule ids.
 3. If the composed result still violates an enabled constraint, the change is rejected (all or nothing, section 4.1).
 
 **`strip` and tighten-only.** Tighten-only governs constraints (section 2), not entries. `strip` changes entries, so it is allowed as a rule action. It is never a way to relax a constraint, and its result still has to satisfy every enabled constraint (e.g. `min-ra`).
