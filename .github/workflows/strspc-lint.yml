@@ -1,0 +1,20 @@
+name: strspc lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  rules:
+    uses: SteerSpec/.github/.github/workflows/strspc-lint.yml@8aaccf4f890389006b2222b7f99b0bbe62c6ae58  # v1
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      path: rules/
+      strict: true
