@@ -158,7 +158,7 @@ RACI.sh manages RACI. Enforcing it is the customer's job. The service can answer
 
 ## 6. SteerSpec mapping
 
-- RACI.sh rules (constraints, inference rules, default rule-management rules) have a **structured source** that the `raci` CLI evaluates deterministically. It is the authoring format. The canonical record of which rule was in force is the audit log (section 4.2): loading a new or changed structured rule source appends a `rule` event carrying the full structured body, and the CLI evaluates only rules recorded in the log. A source that differs from the log's latest rule event is reported as unrecorded and not evaluated.
+- RACI.sh rules (constraints, inference rules, default rule-management rules) have a **structured source** that the `raci` CLI evaluates deterministically. It is the authoring format. The canonical record of which rule was in force is the audit log (section 4.2): loading a new or changed structured rule source appends a `rule` event carrying the full structured body, and the CLI evaluates only rules recorded in the log. A structured source that differs from the latest `rule` event for the same rule id in the log is reported as unrecorded and not evaluated.
 
 **Bootstrap.** A realm's log starts empty, and until rules are recorded nothing is in force, so entry changes are rejected with `no-rules-in-force`. An explicit init appends a `pin` event for each dependency realm (e.g. `sh.raci`), then `rule` events (actor `import`) for the in-force rules that have a structured source, of the pinned versions and of the realm's own entities. Every later change of a pinned version appends a `pin` event and the `rule` events of the rules with a structured source that the new version brings in, so inherited rules are recorded in the log of the realm that uses them.
 - The specification is **hand-authored as normative prose rules** in the `sh.raci` realm (`RACI`, `RACICNS`, `RACIINH`, `RACIINF`, `RACIAUD`, `RACIFILE`, `RACIMGT`), with SteerSpec ids, lifecycle states and supersession. The default configuration rules (the strict preset, separation of duties, default inference and rule-management rules) are **rendered into SteerSpec rules** from their structured source: prose `MUST` bodies, plus notes carrying the structured form. A rendered rule is derived, never hand-edited.
@@ -215,7 +215,7 @@ Findings are not part of `.raci`. `raci verify` computes them on demand and emit
 | `hash-mismatch` | error | A recomputed `hash` or a `prev_hash` link of the log fails (section 4.2). |
 | `view-mismatch` | error | Replaying the log gives a different state than the `.raci` file. |
 | `stale-view` | warning | The view's log head differs from the log's; rebuild by replay. |
-| `unrecorded-rule` | error | A structured rule source differs from the log's latest `rule` event, so it is not evaluated (section 6). |
+| `unrecorded-rule` | error | A structured rule source differs from the latest `rule` event for the same rule id in the log, or has none, so it is not evaluated (section 6). |
 | `incomplete-change` | warning | A `change_id` has events but no commit marker (section 4.1). |
 | `no-matching-rule` | warning | A target was created with an empty RACI because no inference rule matched. |
 | `descendant-violation` | error | A realm outside the change's tree, which depends on this one, now violates a constraint (section 2). |

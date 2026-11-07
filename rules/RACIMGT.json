@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.42",
-    "timestamp": "2026-11-07T15:56:38Z",
-    "hash": "blake3:c8a316ef72cc29695bc0ab04866e859fae900608ecb282233823cb89904eeef5"
+    "timestamp": "2026-11-07T16:01:19Z",
+    "hash": "blake3:84a8481a4b964184a9afa90e8442612c2ace288519af46ca07be920c1f7a77b3"
   },
   "rules": [
     {
@@ -60,7 +60,7 @@
       "id": "RACIMGT-006",
       "revision": 0,
       "state": "D",
-      "body": "A structured rule source that differs from the latest rule event of the log MUST be reported as unrecorded.",
+      "body": "A structured rule source that differs from the latest rule event for the same rule id in the log, or has none, MUST be reported as unrecorded.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
