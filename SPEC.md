@@ -61,7 +61,7 @@ A rule has:
 - **actions**, from a small vocabulary (taken from ESIS):
   - `map(source-type, from-role, to-role)`: parties holding `from-role` on the source get `to-role` on the target. ESIS example: module R becomes audit A, module A becomes audit I.
   - `add-issuer(role)`: the party creating the target gets `role`. Only valid in rules whose operation is `new`, the one operation that has a creating party.
-  - `strip(held-role, role)`: parties holding `held-role` on the source lose `role` on the target (ESIS: a module I loses A and R on the audit).
+  - `strip(source-type, held-role, role)`: parties holding `held-role` on the source of `source-type` lose `role` on the target (ESIS: a module I loses A and R on the audit).
 
 Any action may carry the attribute `add-only`: it then adds missing entries and never changes an existing one.
 

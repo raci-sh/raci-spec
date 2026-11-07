@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.51",
-    "timestamp": "2026-11-07T08:47:33Z",
-    "hash": "blake3:f5df6d14d176017ff8a56e318d38d393bb764166dd43382d28e3093ae55aea90"
+    "timestamp": "2026-11-07T08:51:41Z",
+    "hash": "blake3:ad67b2f1cefb5ea4dff519a5d3d5aaa38fe291fe8aecd6e2af471b8bbcd6ced8"
   },
   "rules": [
     {
@@ -60,7 +60,7 @@
       "id": "RACIINF-006",
       "revision": 0,
       "state": "D",
-      "body": "The strip action MUST remove a role on the target from the parties holding a named role on the source.",
+      "body": "The strip action MUST remove a role on the target from the parties holding a named role on the source of the action's source type.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
