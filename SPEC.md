@@ -56,7 +56,7 @@ A rule has:
 
 - **target type**: the resource type whose RACI is being derived (e.g. audit).
 - **operation**: the change that fires the rule. `new` or `delete` are resource events; `add`, `update` or `remove` are entry events (on the trigger type, or on the target itself when there is no trigger type).
-- **trigger type** (optional): the resource type whose entry change fires the rule (e.g. module, location). Absent for a change on the target itself. A rule with a trigger type fires on entry events of that type, for each target whose source (below) binds to the changed resource.
+- **trigger type** (optional): the resource type whose entry change fires the rule (e.g. module, location). Absent for a change on the target itself. A rule with a trigger type must have an entry operation (`add`, `update` or `remove`), never `new` or `delete`, and fires on entry events of that type with that operation, for each target whose source (below) binds to the changed resource.
 - **selector** (optional): names the source resource explicitly, instead of the default search below (open: selector syntax).
 - **actions**, from a small vocabulary (taken from ESIS):
   - `map(source-type, from-role, to-role)`: parties holding `from-role` on the source get `to-role` on the target. ESIS example: module R becomes audit A, module A becomes audit I.

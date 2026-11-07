@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.51",
-    "timestamp": "2026-11-07T08:43:06Z",
-    "hash": "blake3:fa02a570594f8d7c2212571b0b3e59cce2ae33e2f7210cf841af043467232613"
+    "timestamp": "2026-11-07T08:47:33Z",
+    "hash": "blake3:f5df6d14d176017ff8a56e318d38d393bb764166dd43382d28e3093ae55aea90"
   },
   "rules": [
     {
@@ -222,7 +222,7 @@
       "id": "RACIINF-024",
       "revision": 0,
       "state": "D",
-      "body": "A rule with a trigger type MUST fire on entry events of that type, for each target whose source binds to the changed resource.",
+      "body": "A rule with a trigger type MUST have the operation add, update or remove, and fires on entry events of that type with that operation, for each target whose source binds to the changed resource.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
