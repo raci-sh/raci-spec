@@ -1,0 +1,395 @@
+{
+  "$schema": "./_schema/entity.v1.schema.json",
+  "entity": {
+    "id": "RACIMGT",
+    "title": "RACI rule management",
+    "description": "Rules in force, bootstrap, rendering into SteerSpec and customer realms (SPEC.md section 6)."
+  },
+  "rule_set": {
+    "version": "0.1.42",
+    "timestamp": "2026-11-07T16:06:10Z",
+    "hash": "blake3:e0ff3c17e5db5027764317f20c5671ce77a1cfe10e46d26c0e4fd7a93dae93a9"
+  },
+  "rules": [
+    {
+      "id": "RACIMGT-001",
+      "revision": 0,
+      "state": "D",
+      "body": "RACI.sh configuration rules, meaning constraints, inference rules and default rule-management rules, MUST have a structured source that the raci CLI evaluates deterministically.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-002",
+      "revision": 0,
+      "state": "D",
+      "body": "The structured source MUST be the authoring format of a RACI.sh configuration rule.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-003",
+      "revision": 0,
+      "state": "D",
+      "body": "The canonical record of which rule is in force MUST be the audit log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-004",
+      "revision": 0,
+      "state": "D",
+      "body": "Loading a new or changed structured rule source MUST append a rule event carrying the full structured body.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-005",
+      "revision": 0,
+      "state": "D",
+      "body": "The CLI MUST evaluate only rules that are recorded in the log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-006",
+      "revision": 0,
+      "state": "D",
+      "body": "A structured rule source MUST be reported as unrecorded when it differs from the latest rule event for the same rule id in the log, or when the log has no rule event for that rule id.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-007",
+      "revision": 0,
+      "state": "D",
+      "body": "Until rules are recorded in the log, a change to an entry MUST be rejected with no-rules-in-force.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-008",
+      "revision": 0,
+      "state": "D",
+      "body": "An explicit init MUST append a pin event for each dependency realm, then rule events with actor import for the in-force rules with a structured source of the pinned versions and of the own entities of the realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-009",
+      "revision": 0,
+      "state": "D",
+      "body": "Every later change of a pinned version MUST append a pin event and the rule events of the rules with a structured source that the new version brings in.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-010",
+      "revision": 0,
+      "state": "D",
+      "body": "Inherited rules with a structured source MUST be recorded in the log of the realm that uses them.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-011",
+      "revision": 0,
+      "state": "D",
+      "body": "RACI.sh rules MUST follow the SteerSpec lifecycle.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-012",
+      "revision": 0,
+      "state": "D",
+      "body": "The sh.raci realm MUST hold the specification as hand-authored normative prose rules.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-013",
+      "revision": 0,
+      "state": "D",
+      "body": "Default configuration rules MUST be rendered into SteerSpec rules in the sh.raci realm, with prose bodies and notes carrying the structured form.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-014",
+      "revision": 0,
+      "state": "D",
+      "body": "A rendered rule MUST NOT be hand-edited.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-015",
+      "revision": 0,
+      "state": "D",
+      "body": "A change MUST be rejected only by a deterministic check.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-016",
+      "revision": 0,
+      "state": "D",
+      "body": "A customer realm MUST depend on sh.raci like any SteerSpec realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-017",
+      "revision": 0,
+      "state": "D",
+      "body": "A customer realm MUST customise by authoring structured rules in its own realm, rendered like the defaults.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-018",
+      "revision": 0,
+      "state": "D",
+      "body": "A customer rule MUST add a rule or override an inherited one, subject to the override lint.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-019",
+      "revision": 0,
+      "state": "D",
+      "body": "A published RACI.sh rule MUST NOT be edited.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-020",
+      "revision": 0,
+      "state": "D",
+      "body": "The LLM path MUST only review a change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-021",
+      "revision": 0,
+      "state": "D",
+      "body": "Only a rule with a structured source MUST be recorded as a rule event, so a prose-only normative rule is never evaluated by the CLI.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    }
+  ],
+  "notes": [
+    {
+      "id": "RACIMGT-001/01",
+      "rule_ref": "RACIMGT-001",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-002/01",
+      "rule_ref": "RACIMGT-002",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-003/01",
+      "rule_ref": "RACIMGT-003",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-004/01",
+      "rule_ref": "RACIMGT-004",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-005/01",
+      "rule_ref": "RACIMGT-005",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-006/01",
+      "rule_ref": "RACIMGT-006",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-007/01",
+      "rule_ref": "RACIMGT-007",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-008/01",
+      "rule_ref": "RACIMGT-008",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-009/01",
+      "rule_ref": "RACIMGT-009",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-010/01",
+      "rule_ref": "RACIMGT-010",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-011/01",
+      "rule_ref": "RACIMGT-011",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-012/01",
+      "rule_ref": "RACIMGT-012",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-013/01",
+      "rule_ref": "RACIMGT-013",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-014/01",
+      "rule_ref": "RACIMGT-014",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-015/01",
+      "rule_ref": "RACIMGT-015",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-016/01",
+      "rule_ref": "RACIMGT-016",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-017/01",
+      "rule_ref": "RACIMGT-017",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-018/01",
+      "rule_ref": "RACIMGT-018",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-019/01",
+      "rule_ref": "RACIMGT-019",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-020/01",
+      "rule_ref": "RACIMGT-020",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-021/01",
+      "rule_ref": "RACIMGT-021",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    }
+  ]
+}

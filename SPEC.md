@@ -142,7 +142,7 @@ Payload for `type: rule`:
 Payload for `type: pin`:
 
 - `dependency_realm`, `version`: the dependency realm (e.g. `sh.raci`; distinct from the envelope's `realm`, which is the realm that owns the event) and the version this realm's rules are evaluated against from this event on.
-- `op`: `set`. A later `pin` event for the same `dependency_realm` replaces the earlier one. Replay derives the realm's current pins from these events, so `pins` in the `.raci` file (section 7) is reconstructible and verifiable. The `rule` events that follow a version change record the rules that the pin brings in.
+- `op`: `set`. A later `pin` event for the same `dependency_realm` replaces the earlier one. Replay derives the realm's current pins from these events, so `pins` in the `.raci` file (section 7) is reconstructible and verifiable. The `rule` events that follow a version change record the structured rules that the pin brings in.
 
 ### 4.2 Rules
 
@@ -158,12 +158,12 @@ RACI.sh manages RACI. Enforcing it is the customer's job. The service can answer
 
 ## 6. SteerSpec mapping
 
-- RACI.sh rules (constraints, inference rules, default rule-management rules) have a **structured source** that the `raci` CLI evaluates deterministically. It is the authoring format. The canonical record of which rule was in force is the audit log (section 4.2): loading a new or changed rule source appends a `rule` event carrying the full structured body, and the CLI evaluates only rules recorded in the log. A source that differs from the log's latest rule event is reported as unrecorded and not evaluated.
+- RACI.sh rules (constraints, inference rules, default rule-management rules) have a **structured source** that the `raci` CLI evaluates deterministically. It is the authoring format. The canonical record of which rule was in force is the audit log (section 4.2): loading a new or changed structured rule source appends a `rule` event carrying the full structured body, and the CLI evaluates only rules recorded in the log. A structured source that differs from the latest `rule` event for the same rule id in the log, or for which the log has no `rule` event for that rule id, is reported as unrecorded and not evaluated.
 
-**Bootstrap.** A realm's log starts empty, and until rules are recorded nothing is in force, so entry changes are rejected with `no-rules-in-force`. An explicit init appends a `pin` event for each dependency realm (e.g. `sh.raci`), then `rule` events (actor `import`) for the in-force rules of the pinned versions and of the realm's own entities. Every later change of a pinned version appends a `pin` event and the corresponding `rule` events, so inherited rules are recorded in the log of the realm that uses them.
-- The specification and those rules are **rendered into SteerSpec rules** in a `sh.raci` realm: prose `MUST` bodies with SteerSpec ids, lifecycle states and supersession, plus notes carrying the structured form. The rendered rules are derived, never hand-edited.
+**Bootstrap.** A realm's log starts empty, and until rules are recorded nothing is in force, so entry changes are rejected with `no-rules-in-force`. An explicit init appends a `pin` event for each dependency realm (e.g. `sh.raci`), then `rule` events (actor `import`) for the in-force rules that have a structured source, of the pinned versions and of the realm's own entities. Every later change of a pinned version appends a `pin` event and the `rule` events of the rules with a structured source that the new version brings in, so inherited rules are recorded in the log of the realm that uses them.
+- The specification is **hand-authored as normative prose rules** in the `sh.raci` realm (`RACI`, `RACICNS`, `RACIINH`, `RACIINF`, `RACIAUD`, `RACIFILE`, `RACIMGT`), with SteerSpec ids, lifecycle states and supersession. The default configuration rules (the strict preset, separation of duties, default inference and rule-management rules) are **rendered into SteerSpec rules** from their structured source: prose `MUST` bodies, plus notes carrying the structured form. A rendered rule is derived, never hand-edited.
 - Rendering to prose gives the SteerSpec/LLM path (CI gates, advisory review of rule changes) without making enforcement depend on an LLM. Deterministic checks reject; the LLM path only reviews.
-- Customer realms depend on `sh.raci` like any SteerSpec realm and customise by authoring structured rules in their own realm, which are rendered to SteerSpec rules like the defaults. They add or supersede rules, subject to the override lint in section 3.
+- Customer realms depend on `sh.raci` like any SteerSpec realm and customise by authoring structured rules in their own realm, which are rendered to SteerSpec rules like the defaults. They add rules or override inherited ones, subject to the override lint in section 3.
 - Open: realm id and versioning of `sh.raci`, and the exact mapping of structured fields into rule bodies and notes.
 
 ## 7. The `.raci` file
@@ -196,7 +196,7 @@ Shape:
 
 - `roles` is a string of the held roles in the fixed precedence order A, R, C, I (section 1), so `"AR"`, never `"RA"`. An entry with no roles is absent, not stored empty.
 - Object members are in the canonical (sorted) order, as in the example. Array ordering is canonical too: `resources` by `id`; `entries` by (`resource`, `activity`, `party`); `rules_in_force` by `rule_id`; `pins` by (`dependency_realm`, `version`); `enabled` alphabetically; `pairs` by their canonical JSON.
-- `rules_in_force` lists every rule recorded in force in this realm's log (section 6, including inherited ones) with its `body_hash`. Verification compares these with the log's `rule` events and with the rule sources without replaying the whole log.
+- `rules_in_force` lists every rule recorded in force in this realm's log (section 6, including inherited ones) with its `body_hash`. Verification compares these with the log's `rule` events and with the structured rule sources without replaying the whole log.
 - `pins` is derived from the log's `pin` events (section 4.1): the current version of each dependency realm the log was evaluated against (e.g. the `sh.raci` version). Verification recomputes it by replay.
 - `constraints` lists the constraints recorded by this realm's own `constraint` events. The effective set (the union along the realm path, section 3) is computed at load and not embedded.
 - Selectors in `pairs` follow the selector syntax, which is open (section 2.1).
@@ -215,7 +215,7 @@ Findings are not part of `.raci`. `raci verify` computes them on demand and emit
 | `hash-mismatch` | error | A recomputed `hash` or a `prev_hash` link of the log fails (section 4.2). |
 | `view-mismatch` | error | Replaying the log gives a different state than the `.raci` file. |
 | `stale-view` | warning | The view's log head differs from the log's; rebuild by replay. |
-| `unrecorded-rule` | error | A rule source differs from the log's latest `rule` event, so it is not evaluated (section 6). |
+| `unrecorded-rule` | error | A structured rule source differs from the latest `rule` event for the same rule id in the log, or for which the log has no `rule` event for that rule id, so it is not evaluated (section 6). |
 | `incomplete-change` | warning | A `change_id` has events but no commit marker (section 4.1). |
 | `no-matching-rule` | warning | A target was created with an empty RACI because no inference rule matched. |
 | `descendant-violation` | error | A realm outside the change's tree, which depends on this one, now violates a constraint (section 2). |
