@@ -6,9 +6,9 @@
     "description": "Rules in force, bootstrap, rendering into SteerSpec and customer realms (SPEC.md section 6)."
   },
   "rule_set": {
-    "version": "0.1.40",
-    "timestamp": "2026-11-07T15:46:22Z",
-    "hash": "blake3:5526ce0167c36f86faebeee24617de3e36565b6c9e112856b5d2698f75d26d1d"
+    "version": "0.1.42",
+    "timestamp": "2026-11-07T15:48:07Z",
+    "hash": "blake3:cbf6b2ddda0f37fa6dc5261ad865dc734ccef652afdaacfd01879293eb39b0d2"
   },
   "rules": [
     {
@@ -141,7 +141,7 @@
       "id": "RACIMGT-015",
       "revision": 0,
       "state": "D",
-      "body": "Deterministic checks MUST reject a change.",
+      "body": "A change MUST be rejected only by a deterministic check.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -168,7 +168,7 @@
       "id": "RACIMGT-018",
       "revision": 0,
       "state": "D",
-      "body": "A customer rule MUST add or supersede a rule, subject to the override lint.",
+      "body": "A customer rule MUST add a rule or override an inherited one, subject to the override lint.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -187,6 +187,15 @@
       "revision": 0,
       "state": "D",
       "body": "The LLM path MUST only review a change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-021",
+      "revision": 0,
+      "state": "D",
+      "body": "Only a rule with a structured source MUST be recorded as a rule event, so a prose-only normative rule is never evaluated by the CLI.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -367,6 +376,15 @@
     {
       "id": "RACIMGT-020/01",
       "rule_ref": "RACIMGT-020",
+      "type": "reference",
+      "content": "SPEC.md section 6",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-021/01",
+      "rule_ref": "RACIMGT-021",
       "type": "reference",
       "content": "SPEC.md section 6",
       "added_by": "github:pleberre",

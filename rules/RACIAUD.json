@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.86",
-    "timestamp": "2026-11-07T15:46:22Z",
-    "hash": "blake3:62c2a12d2f72a524b630ce16ad5a3d90116988a3239d1b1c17b01b7846712faf"
+    "version": "0.1.88",
+    "timestamp": "2026-11-07T15:48:07Z",
+    "hash": "blake3:2f446da6921b5a337ab3868f1462bb5a6fbbd92e7335fdbe10206f077d0d3f14"
   },
   "rules": [
     {
@@ -357,7 +357,7 @@
       "id": "RACIAUD-039",
       "revision": 0,
       "state": "D",
-      "body": "Verification MUST check the body hash of each rule event against its body, against the rendered rule and against the authoring source.",
+      "body": "Verification MUST check the body hash of each rule event against its body.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -394,6 +394,15 @@
       "revision": 0,
       "state": "D",
       "body": "Materialisation MUST treat a removed entry as absent from the removal on.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-044",
+      "revision": 0,
+      "state": "D",
+      "body": "For a rendered rule, verification MUST also check the body hash against the rendered SteerSpec rule and the authoring source.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -783,6 +792,15 @@
       "rule_ref": "RACIAUD-043",
       "type": "reference",
       "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-044/01",
+      "rule_ref": "RACIAUD-044",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "revision": 0
