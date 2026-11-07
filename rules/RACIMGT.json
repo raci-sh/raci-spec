@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.42",
-    "timestamp": "2026-11-07T15:52:38Z",
-    "hash": "blake3:d4b34ce53a1c41a0281711f52d516d7396f326f15f489c9dd63c7bf6770f9f5b"
+    "timestamp": "2026-11-07T15:56:38Z",
+    "hash": "blake3:c8a316ef72cc29695bc0ab04866e859fae900608ecb282233823cb89904eeef5"
   },
   "rules": [
     {
@@ -87,7 +87,7 @@
       "id": "RACIMGT-009",
       "revision": 0,
       "state": "D",
-      "body": "Every later change of a pinned version MUST append a pin event and the corresponding rule events.",
+      "body": "Every later change of a pinned version MUST append a pin event and the rule events of the rules with a structured source that the new version brings in.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
