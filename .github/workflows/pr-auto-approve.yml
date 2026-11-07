@@ -2,8 +2,8 @@ name: PR Auto-Approve (Copilot)
 
 # This IS the live workflow for this repo. Generated from
 # templates/pr-auto-approve.yml in SteerSpec/strspc-pr-review (v1.10.3); only the
-# workflow_run list is per-repo (it names the PR-gating workflows: strspc lint
-# and commitlint), and the action is pinned to a commit SHA because it runs
+# workflow_run list is per-repo (it names the PR-gating workflows: strspc lint,
+# strspc check and commitlint), and the action is pinned to a commit SHA because it runs
 # with a write-capable token. Needs the variable
 # STRSPC_PR_AUTO_APPROVE_BOT_LOGIN and the secret BOT_GITHUB_TOKEN (a PAT of the
 # bot account, Pull requests: write only).
