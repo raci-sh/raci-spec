@@ -56,15 +56,16 @@ A rule has:
 
 - **target type**: the resource type whose RACI is being derived (e.g. audit).
 - **operation**: the change that fires the rule. `new` or `delete` are resource events; `add`, `update` or `remove` are entry events (on the trigger type, or on the target itself when there is no trigger type).
-- **trigger type** (optional): the source resource type whose RACI change fired the rule (e.g. module, location). Absent for a change on the target itself.
+- **trigger type** (optional): the resource type whose entry change fires the rule (e.g. module, location). Absent for a change on the target itself. A rule with a trigger type fires on entry events of that type, for each target whose source (below) binds to the changed resource.
+- **selector** (optional): names the source resource explicitly, instead of the default search below (open: selector syntax).
 - **actions**, from a small vocabulary (taken from ESIS):
   - `map(source-type, from-role, to-role)`: parties holding `from-role` on the source get `to-role` on the target. ESIS example: module R becomes audit A, module A becomes audit I.
-  - `add-issuer(role)`: the party creating the target gets `role`.
+  - `add-issuer(role)`: the party creating the target gets `role`. Only valid in rules whose operation is `new`, the one operation that has a creating party.
   - `strip(held-role, role)`: parties holding `held-role` on the source lose `role` on the target (ESIS: a module I loses A and R on the audit).
 
 Any action may carry the attribute `add-only`: it then adds missing entries and never changes an existing one.
 
-**Source binding.** `map` and `strip` locate the source resource by following the target's parent links to the nearest ancestor of the trigger type. When the rule has no trigger type, the target itself is the source. A rule that names a selector uses it instead (open: selector syntax).
+**Source binding.** `map` and `strip` locate their source as the nearest resource of the action's `source-type`, searching the target itself first and then its parent links. So an action whose source type is the target's own type reads the target (the case of an entry event on the target with no trigger type), and `map(module, R, A)` on a new audit reads the audit's parent module. A rule that names a selector uses it instead.
 
 Two ESIS semantics to keep:
 

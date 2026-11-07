@@ -6,16 +6,16 @@
     "description": "Triggered inference rules, ESIS style: shape, actions, non-recursion, evaluation order and composition of deltas (SPEC.md section 3.1)."
   },
   "rule_set": {
-    "version": "0.1.47",
-    "timestamp": "2026-11-07T08:38:49Z",
-    "hash": "blake3:1e7fed62a010695afe95d8f3ea719a64d688d46f5f412210e0d66485bfe2840b"
+    "version": "0.1.51",
+    "timestamp": "2026-11-07T08:43:06Z",
+    "hash": "blake3:fa02a570594f8d7c2212571b0b3e59cce2ae33e2f7210cf841af043467232613"
   },
   "rules": [
     {
       "id": "RACIINF-001",
       "revision": 0,
       "state": "D",
-      "body": "An inference rule MUST consist of a target type, an operation, an optional trigger type and a list of actions.",
+      "body": "An inference rule MUST consist of a target type, an operation, an optional trigger type, an optional selector and a list of actions.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -78,7 +78,7 @@
       "id": "RACIINF-008",
       "revision": 0,
       "state": "D",
-      "body": "The map and strip actions MUST locate the source by following the target's parent links to the nearest ancestor of the trigger type, or take the target itself as the source when the rule has no trigger type, unless the rule names a selector.",
+      "body": "The map and strip actions MUST locate their source as the nearest resource of the action's source type, searching the target itself and then its parent links, unless the rule names a selector.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -214,6 +214,24 @@
       "revision": 0,
       "state": "D",
       "body": "The operations add, update and remove MUST denote entry events.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-024",
+      "revision": 0,
+      "state": "D",
+      "body": "A rule with a trigger type MUST fire on entry events of that type, for each target whose source binds to the changed resource.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-025",
+      "revision": 0,
+      "state": "D",
+      "body": "The add-issuer action MUST be used only in rules whose operation is new.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -421,6 +439,24 @@
     {
       "id": "RACIINF-023/01",
       "rule_ref": "RACIINF-023",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-024/01",
+      "rule_ref": "RACIINF-024",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-025/01",
+      "rule_ref": "RACIINF-025",
       "type": "reference",
       "content": "SPEC.md section 3.1",
       "added_by": "github:pleberre",
