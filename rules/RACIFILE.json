@@ -1,0 +1,629 @@
+{
+  "$schema": "./_schema/entity.v1.schema.json",
+  "entity": {
+    "id": "RACIFILE",
+    "title": "RACI file and verification",
+    "description": "The .raci materialised view and the raci verify report (SPEC.md sections 7 and 7.1)."
+  },
+  "rule_set": {
+    "version": "0.1.68",
+    "timestamp": "2026-11-07T15:46:22Z",
+    "hash": "blake3:7b4a52b1044bddca9c8da901c7580c178e7375fd550d29f9f560cc621f103324"
+  },
+  "rules": [
+    {
+      "id": "RACIFILE-001",
+      "revision": 0,
+      "state": "D",
+      "body": "The .raci file MUST be a materialised view of the audit log of exactly one realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-002",
+      "revision": 0,
+      "state": "D",
+      "body": "The .raci file MUST hold RACI state and nothing else.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-003",
+      "revision": 0,
+      "state": "D",
+      "body": "The .raci file MUST NOT contain findings or history.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-004",
+      "revision": 0,
+      "state": "D",
+      "body": "The CLI MUST be the only writer of a .raci file.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-005",
+      "revision": 0,
+      "state": "D",
+      "body": "The .raci file MUST be one canonical JSON document as defined by RFC 8785.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-006",
+      "revision": 0,
+      "state": "D",
+      "body": "The same log MUST always yield a byte-identical .raci file.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-007",
+      "revision": 0,
+      "state": "D",
+      "body": "The .raci file MUST hold only the own state of its realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-008",
+      "revision": 0,
+      "state": "D",
+      "body": "The entries and resources of ancestor and descendant realms MUST NOT be embedded in the .raci file.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-009",
+      "revision": 0,
+      "state": "D",
+      "body": "The only data about other realms in the file MUST be pins and rules in force, derived from the own log of the realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-010",
+      "revision": 0,
+      "state": "D",
+      "body": "The .raci file MUST NOT carry filesystem paths.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-011",
+      "revision": 0,
+      "state": "D",
+      "body": "The log of a realm MUST be found by convention, next to its .raci file.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-012",
+      "revision": 0,
+      "state": "D",
+      "body": "The .raci file MUST have the members constraints, entries, log, pins, raci, realm, resources and rules_in_force.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-013",
+      "revision": 0,
+      "state": "D",
+      "body": "The raci member MUST be the format version string 1.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-014",
+      "revision": 0,
+      "state": "D",
+      "body": "The log member MUST hold the head_seq and head_hash of the log state that the view reflects.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-015",
+      "revision": 0,
+      "state": "D",
+      "body": "A view whose log head differs from the head of the log MUST be treated as stale and rebuilt by replay.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-016",
+      "revision": 0,
+      "state": "D",
+      "body": "For an empty log the head MUST be head_seq 0 and the all-zero digest as head_hash.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-017",
+      "revision": 0,
+      "state": "D",
+      "body": "The roles of an entry MUST be a string of the held roles in the fixed order A, R, C, I.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-018",
+      "revision": 0,
+      "state": "D",
+      "body": "An entry with no roles MUST be absent from the file, not stored empty.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-019",
+      "revision": 0,
+      "state": "D",
+      "body": "The arrays of the file MUST be in canonical order, resources by id, entries by resource, activity and party, rules in force by rule id, pins by dependency realm and version, enabled constraints alphabetically and pairs by their canonical JSON.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-020",
+      "revision": 0,
+      "state": "D",
+      "body": "The rules in force MUST list every rule recorded in force in the log of the realm, inherited ones included, each with its body hash.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-021",
+      "revision": 0,
+      "state": "D",
+      "body": "The pins MUST be derived from the pin events of the log and hold the current version of each dependency realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-022",
+      "revision": 0,
+      "state": "D",
+      "body": "The constraints member MUST list only the constraints recorded by the own constraint events of the realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-023",
+      "revision": 0,
+      "state": "D",
+      "body": "The effective constraint set along the realm path MUST be computed at load time and not embedded.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-024",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification findings MUST be emitted by raci verify as a separate report and not persisted in the .raci file.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-025",
+      "revision": 0,
+      "state": "D",
+      "body": "A verification report MUST hold the realm, the log head and a list of findings, each with a code, a severity, a realm and a detail.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-026",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST report a hash-mismatch finding of severity error when a recomputed hash or a prev_hash link fails.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-027",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST report a view-mismatch finding of severity error when replay gives a different state than the .raci file.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-028",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST report a stale-view finding of severity warning when the log head of the view differs from the head of the log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-029",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST report an unrecorded-rule finding of severity error when a rule source differs from the latest rule event of the log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-030",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST report an incomplete-change finding of severity warning when a change id has events but no commit marker.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-031",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST report a no-matching-rule finding of severity warning when a target was created with an empty RACI because no inference rule matched.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-032",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST report a descendant-violation finding of severity error when a dependent realm outside the tree of the change violates a constraint.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-033",
+      "revision": 0,
+      "state": "D",
+      "body": "A verification report MUST include the findings recorded in commit markers, with severity and realm added.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-034",
+      "revision": 0,
+      "state": "D",
+      "body": "A .raci file MUST NOT be hand-edited.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "supersedes": null
+    }
+  ],
+  "notes": [
+    {
+      "id": "RACIFILE-001/01",
+      "rule_ref": "RACIFILE-001",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-002/01",
+      "rule_ref": "RACIFILE-002",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-003/01",
+      "rule_ref": "RACIFILE-003",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-004/01",
+      "rule_ref": "RACIFILE-004",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-005/01",
+      "rule_ref": "RACIFILE-005",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-006/01",
+      "rule_ref": "RACIFILE-006",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-007/01",
+      "rule_ref": "RACIFILE-007",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-008/01",
+      "rule_ref": "RACIFILE-008",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-009/01",
+      "rule_ref": "RACIFILE-009",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-010/01",
+      "rule_ref": "RACIFILE-010",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-011/01",
+      "rule_ref": "RACIFILE-011",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-012/01",
+      "rule_ref": "RACIFILE-012",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-013/01",
+      "rule_ref": "RACIFILE-013",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-014/01",
+      "rule_ref": "RACIFILE-014",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-015/01",
+      "rule_ref": "RACIFILE-015",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-016/01",
+      "rule_ref": "RACIFILE-016",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-017/01",
+      "rule_ref": "RACIFILE-017",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-018/01",
+      "rule_ref": "RACIFILE-018",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-019/01",
+      "rule_ref": "RACIFILE-019",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-020/01",
+      "rule_ref": "RACIFILE-020",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-021/01",
+      "rule_ref": "RACIFILE-021",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-022/01",
+      "rule_ref": "RACIFILE-022",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-023/01",
+      "rule_ref": "RACIFILE-023",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-024/01",
+      "rule_ref": "RACIFILE-024",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-025/01",
+      "rule_ref": "RACIFILE-025",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-026/01",
+      "rule_ref": "RACIFILE-026",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-027/01",
+      "rule_ref": "RACIFILE-027",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-028/01",
+      "rule_ref": "RACIFILE-028",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-029/01",
+      "rule_ref": "RACIFILE-029",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-030/01",
+      "rule_ref": "RACIFILE-030",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-031/01",
+      "rule_ref": "RACIFILE-031",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-032/01",
+      "rule_ref": "RACIFILE-032",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-033/01",
+      "rule_ref": "RACIFILE-033",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-034/01",
+      "rule_ref": "RACIFILE-034",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-07",
+      "revision": 0
+    }
+  ]
+}
