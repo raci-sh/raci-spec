@@ -7,15 +7,15 @@
   },
   "rule_set": {
     "version": "0.1.42",
-    "timestamp": "2026-11-07T15:48:07Z",
-    "hash": "blake3:cbf6b2ddda0f37fa6dc5261ad865dc734ccef652afdaacfd01879293eb39b0d2"
+    "timestamp": "2026-11-07T15:52:38Z",
+    "hash": "blake3:d4b34ce53a1c41a0281711f52d516d7396f326f15f489c9dd63c7bf6770f9f5b"
   },
   "rules": [
     {
       "id": "RACIMGT-001",
       "revision": 0,
       "state": "D",
-      "body": "RACI.sh rules MUST have a structured source that the raci CLI evaluates deterministically.",
+      "body": "RACI.sh configuration rules, meaning constraints, inference rules and default rule-management rules, MUST have a structured source that the raci CLI evaluates deterministically.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -24,7 +24,7 @@
       "id": "RACIMGT-002",
       "revision": 0,
       "state": "D",
-      "body": "The structured source MUST be the authoring format of a RACI.sh rule.",
+      "body": "The structured source MUST be the authoring format of a RACI.sh configuration rule.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -42,7 +42,7 @@
       "id": "RACIMGT-004",
       "revision": 0,
       "state": "D",
-      "body": "Loading a new or changed rule source MUST append a rule event carrying the full structured body.",
+      "body": "Loading a new or changed structured rule source MUST append a rule event carrying the full structured body.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -60,7 +60,7 @@
       "id": "RACIMGT-006",
       "revision": 0,
       "state": "D",
-      "body": "A rule source that differs from the latest rule event of the log MUST be reported as unrecorded.",
+      "body": "A structured rule source that differs from the latest rule event of the log MUST be reported as unrecorded.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -78,7 +78,7 @@
       "id": "RACIMGT-008",
       "revision": 0,
       "state": "D",
-      "body": "An explicit init MUST append a pin event for each dependency realm, then rule events with actor import for the in-force rules of the pinned versions and of the own entities of the realm.",
+      "body": "An explicit init MUST append a pin event for each dependency realm, then rule events with actor import for the in-force rules with a structured source of the pinned versions and of the own entities of the realm.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -96,7 +96,7 @@
       "id": "RACIMGT-010",
       "revision": 0,
       "state": "D",
-      "body": "Inherited rules MUST be recorded in the log of the realm that uses them.",
+      "body": "Inherited rules with a structured source MUST be recorded in the log of the realm that uses them.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null

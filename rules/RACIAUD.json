@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.88",
-    "timestamp": "2026-11-07T15:48:07Z",
-    "hash": "blake3:2f446da6921b5a337ab3868f1462bb5a6fbbd92e7335fdbe10206f077d0d3f14"
+    "timestamp": "2026-11-07T15:52:38Z",
+    "hash": "blake3:d353615c77d4da1f4753252fcb4a4cbfc7607d61644cff37f781a75b986d50c1"
   },
   "rules": [
     {
@@ -393,7 +393,7 @@
       "id": "RACIAUD-043",
       "revision": 0,
       "state": "D",
-      "body": "Materialisation MUST treat a removed entry as absent from the removal on.",
+      "body": "Materialisation MUST treat a removed entry as absent from the point of removal onward.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
