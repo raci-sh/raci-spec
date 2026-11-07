@@ -1,0 +1,23 @@
+name: strspc check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    uses: SteerSpec/.github/.github/workflows/strspc-check.yml@0f165a7f7d88982e2594c67e7f8198770e286265  # v1
+    permissions:
+      contents: read
+      pull-requests: read
+    secrets:
+      # Optional: without it the job runs structural checks only.
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Optional: token for github:// rule sources in private repositories;
+      # the workflow token is used when unset.
+      STRSPC_GITHUB_TOKEN: ${{ secrets.STRSPC_GITHUB_TOKEN }}
