@@ -1,0 +1,44 @@
+{
+  "$schema": "./_schema/entity.v1.schema.json",
+  "entity": {
+    "id": "RACIDINF",
+    "title": "RACI default inference rules",
+    "description": "Inheritable default inference rules shipped for customer realms; structured bodies live in structured notes (SPEC.md sections 3.1 and 6)."
+  },
+  "rule_set": {
+    "version": "0.1.0",
+    "timestamp": "2026-11-08T18:06:54Z",
+    "hash": "blake3:8753010846af71c741af41fbfde4636c34f2b9298ead580de0a153e40ba80e97"
+  },
+  "rules": [
+    {
+      "id": "RACIDINF-001",
+      "revision": 0,
+      "state": "D",
+      "body": "The default inference rules MUST give the party creating a resource of any type the role A on it.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
+      "supersedes": null
+    }
+  ],
+  "notes": [
+    {
+      "id": "RACIDINF-001/01",
+      "rule_ref": "RACIDINF-001",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
+      "revision": 0
+    },
+    {
+      "id": "RACIDINF-001/02",
+      "rule_ref": "RACIDINF-001",
+      "type": "structured",
+      "content": "raci/1:{\"actions\":[{\"action\":\"add-issuer\",\"role\":\"A\"}],\"kind\":\"inference\",\"name\":\"issuer-accountable\",\"operation\":\"new\",\"target-type\":\"*\"}",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
+      "revision": 0
+    }
+  ]
+}

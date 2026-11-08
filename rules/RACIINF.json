@@ -6,9 +6,9 @@
     "description": "Triggered inference rules, ESIS style: shape, actions, non-recursion, evaluation order and composition of deltas (SPEC.md section 3.1)."
   },
   "rule_set": {
-    "version": "0.1.51",
-    "timestamp": "2026-11-07T08:51:41Z",
-    "hash": "blake3:ad67b2f1cefb5ea4dff519a5d3d5aaa38fe291fe8aecd6e2af471b8bbcd6ced8"
+    "version": "0.1.59",
+    "timestamp": "2026-11-08T18:10:48Z",
+    "hash": "blake3:8f1a6bb72353bd8e78a714e36aff62004be7f654da595e9b0c3a1039a101cb19"
   },
   "rules": [
     {
@@ -234,6 +234,42 @@
       "body": "The add-issuer action MUST be used only in rules whose operation is new.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-026",
+      "revision": 0,
+      "state": "D",
+      "body": "The target type of an inference rule MAY be the wildcard *, which matches a resource of any type.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-027",
+      "revision": 0,
+      "state": "D",
+      "body": "The wildcard * MUST NOT be used as the source type of an action or as the trigger type of a rule.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-028",
+      "revision": 0,
+      "state": "D",
+      "body": "An inference action MAY name an activity.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-029",
+      "revision": 0,
+      "state": "D",
+      "body": "An inference action that names no activity MUST apply to every activity on the target.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
       "supersedes": null
     }
   ],
@@ -461,6 +497,42 @@
       "content": "SPEC.md section 3.1",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-026/01",
+      "rule_ref": "RACIINF-026",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-027/01",
+      "rule_ref": "RACIINF-027",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-028/01",
+      "rule_ref": "RACIINF-028",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-029/01",
+      "rule_ref": "RACIINF-029",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
       "revision": 0
     }
   ]

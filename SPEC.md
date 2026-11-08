@@ -54,7 +54,7 @@ A change that violates an enabled constraint is **rejected**. There is no silent
 
 A rule has:
 
-- **target type**: the resource type whose RACI is being derived (e.g. audit).
+- **target type**: the resource type whose RACI is being derived (e.g. audit), or the wildcard `*`, which matches a resource of any type (used by default rules, which cannot name customer-defined types).
 - **operation**: the change that fires the rule. `new` or `delete` are resource events; `add`, `update` or `remove` are entry events (on the trigger type, or on the target itself when there is no trigger type).
 - **trigger type** (optional): the resource type whose entry change fires the rule (e.g. module, location). Absent for a change on the target itself. A rule with a trigger type must have an entry operation (`add`, `update` or `remove`), never `new` or `delete`, and fires on entry events of that type with that operation, for each target whose source (below) binds to the changed resource.
 - **selector** (optional): names the source resource explicitly, instead of the default search below (open: selector syntax).
@@ -63,9 +63,13 @@ A rule has:
   - `add-issuer(role)`: the party creating the target gets `role`. Only valid in rules whose operation is `new`, the one operation that has a creating party.
   - `strip(source-type, held-role, role)`: parties holding `held-role` on the source of `source-type` lose `role` on the target (ESIS: a module I loses A and R on the audit).
 
+An action may name an **activity**; an action that names none applies to every activity on the target. The wildcard `*` is valid only as a target type, never as a source type or trigger type.
+
 Any action may carry the attribute `add-only`: it then adds missing entries and never changes an existing one.
 
 **Source binding.** `map` and `strip` locate their source as the nearest resource of the action's `source-type`, searching the target itself first and then its parent links. So an action whose source type is the target's own type reads the target (the case of an entry event on the target with no trigger type), and `map(module, R, A)` on a new audit reads the audit's parent module. A rule that names a selector uses it instead.
+
+**Default rules.** The `sh.raci` realm ships a minimal default set that customer realms inherit and may override (section 6). It has one rule: on `new` of any type (`*`), `add-issuer(A)`, so the party that creates a resource is Accountable for it. This satisfies `min-ra` and the strict preset on a resource with no parent. Rules that map roles from a parent or trigger resource need a source selector and are left to customer realms until the selector syntax is decided.
 
 Two ESIS semantics to keep:
 
