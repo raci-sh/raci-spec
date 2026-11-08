@@ -6,9 +6,9 @@
     "description": "Inheritable default constraint configuration shipped for customer realms; structured bodies live in structured notes (SPEC.md sections 2 and 6)."
   },
   "rule_set": {
-    "version": "0.1.7",
-    "timestamp": "2026-11-08T16:53:23Z",
-    "hash": "blake3:f3264324b4b5e68408a9a24fd653c0f33a532f9e4a530cec4bb18fd65cebdc7a"
+    "version": "0.1.8",
+    "timestamp": "2026-11-08T16:56:43Z",
+    "hash": "blake3:49c4a113fff77fb85d572b205eeab79c544693df1e4f4bd90eca7454f4eea0c2"
   },
   "rules": [
     {
@@ -47,7 +47,7 @@
       "content": "raci/1:{\"enable\":[\"min-ra\",\"one-role-per-party\",\"single-accountable\",\"single-responsible\"],\"kind\":\"preset\",\"name\":\"strict\"}",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
-      "revision": 0
+      "revision": 1
     },
     {
       "id": "RACIDCNS-002/01",
@@ -65,7 +65,7 @@
       "content": "raci/1:{\"kind\":\"constraint-default\",\"name\":\"separation-of-duties\",\"requires\":\"pairs\",\"preset\":false}",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
-      "revision": 0
+      "revision": 1
     }
   ]
 }
