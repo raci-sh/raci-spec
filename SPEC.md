@@ -100,7 +100,7 @@ Rule management is RACI too: a SteerSpec rule is a resource of type `rule`, and 
 - `retire`: move a rule out of state `P` or `I`.
 - `override`: author a rule that overrides an inherited rule.
 
-The `sh.raci` realm defines these activities and ships **no inference rule of its own** for them. The generic default (section 3.1) already gives the creator of a new `rule`, as of any resource, the role A on every activity. A rule-specific default such as R on `author` would add a second role for the same party and violate `one-role-per-party` under the strict preset, and the current inference actions cannot scope a generic default away from one resource type. A realm that wants the drafter kept apart from the approver assigns the roles for `publish`, `retire` and `override` explicitly, and may pair them with `author` in a `separation-of-duties` conflict (section 2.1).
+The `sh.raci` realm declares these activities as a structured `activity-set` (RACIDMGT-001) and ships **no inference rule of its own** for them. The generic default (section 3.1) already gives the creator of a new `rule`, as of any resource, the role A on every activity. A rule-specific default such as R on `author` would add a second role for the same party and violate `one-role-per-party` under the strict preset, and the current inference actions cannot scope a generic default away from one resource type. A realm that wants the drafter kept apart from the approver assigns the roles for `publish`, `retire` and `override` explicitly, and may pair them with `author` in a `separation-of-duties` conflict (section 2.1).
 
 ## 4. Audit
 

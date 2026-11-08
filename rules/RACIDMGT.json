@@ -6,9 +6,9 @@
     "description": "Default rule-management activities on SteerSpec rules: author, update, publish, retire and override (SPEC.md sections 3.2 and 6)."
   },
   "rule_set": {
-    "version": "0.1.0",
-    "timestamp": "2026-11-08T21:32:24Z",
-    "hash": "blake3:04622b4307b214f6d2932df7b527bdc30518242a8b3b77af840cbce8561b5277"
+    "version": "0.1.1",
+    "timestamp": "2026-11-08T21:35:47Z",
+    "hash": "blake3:10b66d1161b22a85368bee37f4693e066d842c9f3742ffd221d4d966278d15df"
   },
   "rules": [
     {
@@ -135,6 +135,15 @@
       "rule_ref": "RACIDMGT-007",
       "type": "reference",
       "content": "SPEC.md section 3.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
+      "revision": 0
+    },
+    {
+      "id": "RACIDMGT-001/02",
+      "rule_ref": "RACIDMGT-001",
+      "type": "structured",
+      "content": "raci/1:{\"activities\":[\"author\",\"update\",\"publish\",\"retire\",\"override\"],\"kind\":\"activity-set\",\"name\":\"rule-management\",\"resource-type\":\"rule\"}",
       "added_by": "github:pleberre",
       "added_at": "2026-11-08",
       "revision": 0
