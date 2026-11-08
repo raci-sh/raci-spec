@@ -6,9 +6,9 @@
     "description": "Triggered inference rules, ESIS style: shape, actions, non-recursion, evaluation order and composition of deltas (SPEC.md section 3.1)."
   },
   "rule_set": {
-    "version": "0.1.51",
-    "timestamp": "2026-11-07T08:51:41Z",
-    "hash": "blake3:ad67b2f1cefb5ea4dff519a5d3d5aaa38fe291fe8aecd6e2af471b8bbcd6ced8"
+    "version": "0.1.52",
+    "timestamp": "2026-11-08T18:06:54Z",
+    "hash": "blake3:8f77990090dca3486b8084f5085cab495b7dac54a7f8c980dba5892790a8d495"
   },
   "rules": [
     {
@@ -234,6 +234,15 @@
       "body": "The add-issuer action MUST be used only in rules whose operation is new.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-026",
+      "revision": 0,
+      "state": "D",
+      "body": "The target type of an inference rule MAY be the wildcard *, which matches a resource of any type.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-08",
       "supersedes": null
     }
   ],
