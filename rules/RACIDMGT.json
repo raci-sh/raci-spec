@@ -3,12 +3,12 @@
   "entity": {
     "id": "RACIDMGT",
     "title": "RACI default rule-management rules",
-    "description": "Inheritable default RACI for the rule-management activities on SteerSpec rules; structured bodies live in structured notes (SPEC.md sections 3.2 and 6)."
+    "description": "Default rule-management activities on SteerSpec rules: author, update, publish, retire and override (SPEC.md sections 3.2 and 6)."
   },
   "rule_set": {
     "version": "0.1.0",
-    "timestamp": "2026-11-08T21:28:34Z",
-    "hash": "blake3:a438f2ad1a40f46f3c4f37ac4e108eece8cdb90f8eac544e6d0d6f6947947c37"
+    "timestamp": "2026-11-08T21:32:24Z",
+    "hash": "blake3:04622b4307b214f6d2932df7b527bdc30518242a8b3b77af840cbce8561b5277"
   },
   "rules": [
     {
@@ -73,33 +73,6 @@
       "added_by": "github:pleberre",
       "added_at": "2026-11-08",
       "supersedes": null
-    },
-    {
-      "id": "RACIDMGT-008",
-      "revision": 0,
-      "state": "D",
-      "body": "The default rule-management rules MUST give the creator of a rule the role R on the author activity.",
-      "added_by": "github:pleberre",
-      "added_at": "2026-11-08",
-      "supersedes": null
-    },
-    {
-      "id": "RACIDMGT-009",
-      "revision": 0,
-      "state": "D",
-      "body": "The default rule-management rules MUST give the creator of a rule the role R on the update activity.",
-      "added_by": "github:pleberre",
-      "added_at": "2026-11-08",
-      "supersedes": null
-    },
-    {
-      "id": "RACIDMGT-010",
-      "revision": 0,
-      "state": "D",
-      "body": "The default rule-management rules MUST NOT give the creator of a rule any role on the publish, retire or override activities.",
-      "added_by": "github:pleberre",
-      "added_at": "2026-11-08",
-      "supersedes": null
     }
   ],
   "notes": [
@@ -160,51 +133,6 @@
     {
       "id": "RACIDMGT-007/01",
       "rule_ref": "RACIDMGT-007",
-      "type": "reference",
-      "content": "SPEC.md section 3.2",
-      "added_by": "github:pleberre",
-      "added_at": "2026-11-08",
-      "revision": 0
-    },
-    {
-      "id": "RACIDMGT-008/01",
-      "rule_ref": "RACIDMGT-008",
-      "type": "reference",
-      "content": "SPEC.md section 3.2",
-      "added_by": "github:pleberre",
-      "added_at": "2026-11-08",
-      "revision": 0
-    },
-    {
-      "id": "RACIDMGT-008/02",
-      "rule_ref": "RACIDMGT-008",
-      "type": "structured",
-      "content": "raci/1:{\"actions\":[{\"action\":\"add-issuer\",\"activity\":\"author\",\"role\":\"R\"}],\"kind\":\"inference\",\"name\":\"rule-author\",\"operation\":\"new\",\"target-type\":\"rule\"}",
-      "added_by": "github:pleberre",
-      "added_at": "2026-11-08",
-      "revision": 0
-    },
-    {
-      "id": "RACIDMGT-009/01",
-      "rule_ref": "RACIDMGT-009",
-      "type": "reference",
-      "content": "SPEC.md section 3.2",
-      "added_by": "github:pleberre",
-      "added_at": "2026-11-08",
-      "revision": 0
-    },
-    {
-      "id": "RACIDMGT-009/02",
-      "rule_ref": "RACIDMGT-009",
-      "type": "structured",
-      "content": "raci/1:{\"actions\":[{\"action\":\"add-issuer\",\"activity\":\"update\",\"role\":\"R\"}],\"kind\":\"inference\",\"name\":\"rule-updater\",\"operation\":\"new\",\"target-type\":\"rule\"}",
-      "added_by": "github:pleberre",
-      "added_at": "2026-11-08",
-      "revision": 0
-    },
-    {
-      "id": "RACIDMGT-010/01",
-      "rule_ref": "RACIDMGT-010",
       "type": "reference",
       "content": "SPEC.md section 3.2",
       "added_by": "github:pleberre",
