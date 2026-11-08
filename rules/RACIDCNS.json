@@ -3,12 +3,12 @@
   "entity": {
     "id": "RACIDCNS",
     "title": "RACI default constraints",
-    "description": "Inheritable default constraint configuration shipped for customer realms; structured bodies live in reference notes (SPEC.md sections 2 and 6)."
+    "description": "Inheritable default constraint configuration shipped for customer realms; structured bodies live in structured notes (SPEC.md sections 2 and 6)."
   },
   "rule_set": {
     "version": "0.1.7",
-    "timestamp": "2026-11-06T16:31:17Z",
-    "hash": "blake3:e320a5193fb8ba40f4da5250cf9694f428148af995e266c82398fb55541c80b6"
+    "timestamp": "2026-11-08T16:53:23Z",
+    "hash": "blake3:f3264324b4b5e68408a9a24fd653c0f33a532f9e4a530cec4bb18fd65cebdc7a"
   },
   "rules": [
     {
@@ -43,7 +43,7 @@
     {
       "id": "RACIDCNS-001/02",
       "rule_ref": "RACIDCNS-001",
-      "type": "reference",
+      "type": "structured",
       "content": "raci/1:{\"enable\":[\"min-ra\",\"one-role-per-party\",\"single-accountable\",\"single-responsible\"],\"kind\":\"preset\",\"name\":\"strict\"}",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
@@ -61,7 +61,7 @@
     {
       "id": "RACIDCNS-002/02",
       "rule_ref": "RACIDCNS-002",
-      "type": "reference",
+      "type": "structured",
       "content": "raci/1:{\"kind\":\"constraint-default\",\"name\":\"separation-of-duties\",\"requires\":\"pairs\",\"preset\":false}",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
