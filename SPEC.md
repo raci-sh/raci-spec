@@ -63,6 +63,8 @@ A rule has:
   - `add-issuer(role)`: the party creating the target gets `role`. Only valid in rules whose operation is `new`, the one operation that has a creating party.
   - `strip(source-type, held-role, role)`: parties holding `held-role` on the source of `source-type` lose `role` on the target (ESIS: a module I loses A and R on the audit).
 
+An action may name an **activity**; an action that names none applies to every activity on the target. The wildcard `*` is valid only as a target type, never as a source type or trigger type.
+
 Any action may carry the attribute `add-only`: it then adds missing entries and never changes an existing one.
 
 **Source binding.** `map` and `strip` locate their source as the nearest resource of the action's `source-type`, searching the target itself first and then its parent links. So an action whose source type is the target's own type reads the target (the case of an entry event on the target with no trigger type), and `map(module, R, A)` on a new audit reads the audit's parent module. A rule that names a selector uses it instead.
