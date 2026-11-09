@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raci.sh/schemas/raci-1.schema.json",
+  "title": "raci/1 structured rule payload",
+  "description": "The JSON payload of a structured note whose format is raci/1 (SPEC.md section 6.1). Draft.",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/preset" },
+    { "$ref": "#/$defs/constraintDefault" },
+    { "$ref": "#/$defs/inference" },
+    { "$ref": "#/$defs/activitySet" }
+  ],
+  "$defs": {
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" },
+    "role": { "enum": ["R", "A", "C", "I"] },
+    "concreteType": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" },
+    "constraint": {
+      "enum": ["single-accountable", "single-responsible", "one-role-per-party", "min-ra", "separation-of-duties"]
+    },
+    "preset": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "preset" },
+        "name": { "$ref": "#/$defs/name" },
+        "enable": { "type": "array", "items": { "$ref": "#/$defs/constraint" }, "minItems": 1, "uniqueItems": true }
+      },
+      "required": ["kind", "name", "enable"],
+      "additionalProperties": false
+    },
+    "constraintDefault": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "constraint-default" },
+        "name": { "$ref": "#/$defs/constraint" },
+        "requires": { "enum": ["pairs"] }
+      },
+      "required": ["kind", "name"],
+      "additionalProperties": false
+    },
+    "activitySet": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "activity-set" },
+        "name": { "$ref": "#/$defs/name" },
+        "resource-type": { "$ref": "#/$defs/concreteType" },
+        "activities": { "type": "array", "items": { "$ref": "#/$defs/name" }, "minItems": 1, "uniqueItems": true }
+      },
+      "required": ["kind", "name", "resource-type", "activities"],
+      "additionalProperties": false
+    },
+    "action": {
+      "type": "object",
+      "properties": {
+        "action": { "enum": ["map", "add-issuer", "strip"] },
+        "activity": { "$ref": "#/$defs/name" },
+        "add-only": { "type": "boolean" },
+        "source-type": { "$ref": "#/$defs/concreteType" },
+        "from-role": { "$ref": "#/$defs/role" },
+        "to-role": { "$ref": "#/$defs/role" },
+        "held-role": { "$ref": "#/$defs/role" },
+        "role": { "$ref": "#/$defs/role" }
+      },
+      "required": ["action"],
+      "oneOf": [
+        {
+          "properties": { "action": { "const": "map" } },
+          "required": ["source-type", "from-role", "to-role"],
+          "not": { "anyOf": [{ "required": ["held-role"] }, { "required": ["role"] }] }
+        },
+        {
+          "properties": { "action": { "const": "add-issuer" } },
+          "required": ["role"],
+          "not": { "anyOf": [{ "required": ["source-type"] }, { "required": ["from-role"] }, { "required": ["to-role"] }, { "required": ["held-role"] }] }
+        },
+        {
+          "properties": { "action": { "const": "strip" } },
+          "required": ["source-type", "held-role", "role"],
+          "not": { "anyOf": [{ "required": ["from-role"] }, { "required": ["to-role"] }] }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "inference": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "inference" },
+        "name": { "$ref": "#/$defs/name" },
+        "target-type": { "oneOf": [{ "const": "*" }, { "$ref": "#/$defs/concreteType" }] },
+        "operation": { "enum": ["new", "delete", "add", "update", "remove"] },
+        "trigger-type": { "$ref": "#/$defs/concreteType" },
+        "actions": { "type": "array", "items": { "$ref": "#/$defs/action" }, "minItems": 1 }
+      },
+      "required": ["kind", "name", "target-type", "operation", "actions"],
+      "allOf": [
+        {
+          "if": { "required": ["trigger-type"] },
+          "then": { "properties": { "operation": { "enum": ["add", "update", "remove"] } } }
+        },
+        {
+          "if": { "properties": { "operation": { "const": "new" } }, "required": ["operation"] },
+          "else": {
+            "properties": {
+              "actions": { "items": { "properties": { "action": { "not": { "const": "add-issuer" } } } } }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}
