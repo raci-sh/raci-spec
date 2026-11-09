@@ -193,8 +193,8 @@ The structured source of a RACI.sh configuration rule is the content of a SteerS
 
 | Kind | Members (required unless marked optional) | Meaning |
 | --- | --- | --- |
-| `preset` | `name`, `enable`: the constraint names to switch on (at least one, no repeats) | A named bundle of constraints (section 2). A preset must not enable a constraint whose `constraint-default` has `requires`. |
-| `constraint-default` | `name`: a constraint name; `requires` (optional): `pairs` | The default configuration of one constraint. `requires: pairs` means it only takes effect together with a list of conflict pairs, so presets cannot include it. |
+| `preset` | `name`, `enable`: the constraint names to switch on (at least one, no repeats) | A named bundle of constraints (section 2). A preset cannot enable `separation-of-duties`, which needs conflict pairs. |
+| `constraint-default` | `name`: a constraint name; `requires` (optional): `pairs` | The default configuration of one constraint. `requires: pairs` is valid only for `separation-of-duties`: it only takes effect together with a list of conflict pairs. |
 | `inference` | `name`, `target-type`, `operation`, `actions`; `trigger-type` (optional) | An inference rule (section 3.1). |
 | `activity-set` | `name`, `resource-type`, `activities`: names, at least one, no repeats | The activities defined on a resource type (section 3.2). |
 
