@@ -90,6 +90,18 @@ Inference is **non-recursive**: a change produced by an inference rule does not 
 
 **`strip` and tighten-only.** Tighten-only governs constraints (section 2), not entries. `strip` changes entries, so it is allowed as a rule action. It is never a way to relax a constraint, and its result still has to satisfy every enabled constraint (e.g. `min-ra`).
 
+### 3.2 Default rule-management rules
+
+Rule management is RACI too: a SteerSpec rule is a resource of type `rule`, and the `sh.raci` realm ships a default set for the activities on it. The activities are:
+
+- `author`: create a rule, in state `D`.
+- `update`: change a rule in state `D`, and add or change a note on a rule in any state. A rule that is no longer a Draft is immutable (SteerSpec RUL-007), so its notes are the only part that still changes.
+- `publish`: move a rule into state `P`.
+- `retire`: move a rule out of state `P` or `I`.
+- `override`: author a rule that overrides an inherited rule.
+
+The `sh.raci` realm declares these activities as a structured `activity-set` (RACIDMGT-001) and ships **no inference rule of its own** for them. The generic default (section 3.1) already gives the creator of a new `rule`, as of any resource, the role A on every activity. A rule-specific default such as R on `author` would add a second role for the same party and violate `one-role-per-party` under the strict preset, and the current inference actions cannot scope a generic default away from one resource type. A realm that wants the drafter kept apart from the approver assigns the roles for `publish`, `retire` and `override` explicitly, and may pair them with `author` in a `separation-of-duties` conflict (section 2.1).
+
 ## 4. Audit
 
 Every change is an append-only event. Policy and rule changes (constraints, inference rules) are audited too, as separate event types, since they change the RACI system itself. Rules follow the SteerSpec lifecycle (section 6): a published rule is never edited, so these events are state transitions and supersessions, not edits.
@@ -228,4 +240,4 @@ A commit marker's `findings` (section 4.1) are the subset recorded at change tim
 
 ## Open questions
 
-Tracked in beads (`bd list`): default SteerSpec rule-management rule set, selector syntax for activities and resources, the `sh.raci` realm and rendering, and merging concurrent offline logs. Also undecided: merge-versus-override of roles across realm levels, and evaluating constraints against effective entries (sections 2 and 3).
+Tracked in beads (`bd list`): selector syntax for activities and resources, the `sh.raci` realm and rendering, and merging concurrent offline logs. Also undecided: merge-versus-override of roles across realm levels, and evaluating constraints against effective entries (sections 2 and 3).
