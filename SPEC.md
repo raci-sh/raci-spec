@@ -184,7 +184,7 @@ RACI.sh manages RACI. Enforcing it is the customer's job. The service can answer
 
 ### 6.1 The `raci/1` payload format
 
-The structured source of a RACI.sh configuration rule is the content of a SteerSpec `structured` note (core NTE-036 to NTE-041): `<format>:<payload>`, split at the first colon, with the format `raci/1`. SteerSpec treats the payload as opaque; this section defines it, and `schemas/raci-1.schema.json` is its machine-checkable form. Draft.
+The structured source of a RACI.sh configuration rule is the content of a SteerSpec `structured` note (core NTE-036 to NTE-041): `<format>:<payload>`, split at the first colon, with the format `raci/1`. SteerSpec treats the payload as opaque; this section defines it, and `schemas/raci-1.schema.json` is its machine-checkable form, and CI checks every `raci/1` note in `rules/` against it (`tools/check-payloads.py`). Draft.
 
 - **Payload.** A JSON object in RFC 8785 canonical form (the form of the `.raci` file, section 7): sorted members, no insignificant whitespace, no duplicate member. The CLI canonicalises on load. The `body_hash` of a `rule` event (section 4.1) is the blake3 of this canonical payload.
 - **Closed.** A payload has exactly the members its kind defines. An unknown kind, an unknown member or a missing required member makes the payload invalid: it is not evaluated, and loading it is an error, never silently skipped.
