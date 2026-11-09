@@ -13,8 +13,10 @@ for f in sorted(glob.glob('rules/*.json')):
     if f.endswith('realm.json'): continue
     for note in json.load(open(f)).get('notes',[]):
         if note['type']!='structured': continue
-        fmt,payload=note['content'].split(':',1); n+=1
-        assert fmt=='raci/1',fmt
+        n+=1
+        fmt,sep,payload=note['content'].partition(':')
+        if not sep or fmt!='raci/1':
+            print(note['id'],'BAD unsupported format',repr(fmt)); bad+=1; continue
         obj=json.loads(payload)
         canon=json.dumps(obj,sort_keys=True,separators=(',',':'),ensure_ascii=False)
         errs=list(v.iter_errors(obj))
