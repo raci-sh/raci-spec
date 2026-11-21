@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raci.sh/schemas/raci-report-1.schema.json",
+  "title": "raci verify report, version 1",
+  "description": "The report that raci verify emits (SPEC.md section 7.1). Each finding code has a fixed severity. Finding order is canonical and is checked by the CLI, not by this schema. Draft.",
+  "type": "object",
+  "properties": {
+    "realm": {
+      "$ref": "raci-event-1.schema.json#/$defs/realmId"
+    },
+    "log_head": {
+      "type": "object",
+      "properties": {
+        "seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hash": {
+          "$ref": "raci-event-1.schema.json#/$defs/digest"
+        }
+      },
+      "required": [
+        "seq",
+        "hash"
+      ],
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    }
+  },
+  "required": [
+    "realm",
+    "log_head",
+    "findings"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "enum": [
+            "hash-mismatch",
+            "seq-mismatch",
+            "view-mismatch",
+            "unrecorded-rule",
+            "descendant-violation",
+            "stale-view",
+            "incomplete-change",
+            "no-matching-rule"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ]
+        },
+        "realm": {
+          "$ref": "raci-event-1.schema.json#/$defs/realmId"
+        },
+        "detail": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "realm",
+        "detail"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "code": {
+            "enum": [
+              "hash-mismatch",
+              "seq-mismatch",
+              "view-mismatch",
+              "unrecorded-rule",
+              "descendant-violation"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "severity": {
+            "const": "error"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "severity": {
+            "const": "warning"
+          }
+        }
+      }
+    }
+  }
+}

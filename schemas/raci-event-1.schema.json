@@ -1,0 +1,617 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raci.sh/schemas/raci-event-1.schema.json",
+  "title": "raci audit event, version 1",
+  "description": "One line of a realm's JSONL audit log (SPEC.md section 4.1). A common envelope, a type discriminator, and one payload object per type. Draft.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/uuid7"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "ts": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "realm": {
+      "$ref": "#/$defs/realmId"
+    },
+    "type": {
+      "enum": [
+        "entry",
+        "resource",
+        "constraint",
+        "rule",
+        "pin",
+        "commit"
+      ]
+    },
+    "change_id": {
+      "$ref": "#/$defs/uuid7"
+    },
+    "actor": {
+      "$ref": "#/$defs/actor"
+    },
+    "cause": {
+      "$ref": "#/$defs/cause"
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/constraintResult"
+      }
+    },
+    "outcome": {
+      "$ref": "#/$defs/outcome"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "prev_hash": {
+      "$ref": "#/$defs/digest"
+    },
+    "hash": {
+      "$ref": "#/$defs/digest"
+    }
+  },
+  "required": [
+    "id",
+    "seq",
+    "ts",
+    "realm",
+    "type",
+    "change_id",
+    "actor",
+    "constraints",
+    "outcome",
+    "payload",
+    "prev_hash",
+    "hash"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "actor": {
+            "properties": {
+              "via": {
+                "const": "inference"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "cause"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "cause"
+          ]
+        }
+      }
+    },
+    {
+      "oneOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "entry"
+            },
+            "payload": {
+              "$ref": "#/$defs/entryPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "resource"
+            },
+            "payload": {
+              "$ref": "#/$defs/resourcePayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "constraint"
+            },
+            "payload": {
+              "$ref": "#/$defs/constraintPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "rule"
+            },
+            "payload": {
+              "$ref": "#/$defs/rulePayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "pin"
+            },
+            "payload": {
+              "$ref": "#/$defs/pinPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "commit"
+            },
+            "payload": {
+              "$ref": "#/$defs/commitPayload"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "$defs": {
+    "uuid7": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^blake3:[0-9a-f]{64}$"
+    },
+    "realmId": {
+      "description": "A SteerSpec realm id, as in realm.v1.schema.json (SPEC.md section 1.1).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*$"
+    },
+    "ruleId": {
+      "description": "A SteerSpec rule id, qualified by its realm id when it comes from a dependency realm, as in entity.v1.schema.json overrides (SPEC.md section 1.1).",
+      "type": "string",
+      "pattern": "^([a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*:)?[A-Z0-9]+-[0-9]{3}$"
+    },
+    "name": {
+      "description": "Kebab-case name: activities and resource types (SPEC.md section 1.1), as in raci-1.schema.json.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "opaqueId": {
+      "description": "Party and resource ids: 1 to 256 code points, no control characters (SPEC.md section 1.1).",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\x00-\\x1f\\x7f]+$"
+    },
+    "roles": {
+      "description": "Held roles in the fixed order A, R, C, I; the empty string holds none.",
+      "type": "string",
+      "pattern": "^A?R?C?I?$"
+    },
+    "constraint": {
+      "enum": [
+        "single-accountable",
+        "single-responsible",
+        "one-role-per-party",
+        "min-ra",
+        "separation-of-duties"
+      ]
+    },
+    "ruleState": {
+      "enum": [
+        "D",
+        "A",
+        "P",
+        "I",
+        "R",
+        "T"
+      ]
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+      "description": "A realm version, as in realm.v1.schema.json."
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "party": {
+          "$ref": "#/$defs/opaqueId"
+        },
+        "via": {
+          "enum": [
+            "user",
+            "agent",
+            "import",
+            "inference"
+          ]
+        }
+      },
+      "required": [
+        "party",
+        "via"
+      ],
+      "additionalProperties": false
+    },
+    "cause": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "$ref": "#/$defs/ruleId"
+        },
+        "event_id": {
+          "$ref": "#/$defs/uuid7"
+        }
+      },
+      "required": [
+        "rule_id",
+        "event_id"
+      ],
+      "additionalProperties": false
+    },
+    "constraintResult": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/constraint"
+        },
+        "result": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "outcome": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "applied",
+            "rejected"
+          ]
+        },
+        "reason": {
+          "enum": [
+            "constraint-violation",
+            "no-rules-in-force",
+            "change-rejected",
+            "invalid-change"
+          ]
+        },
+        "detail": {
+          "description": "Free text, e.g. the descendant realm and the constraint of a revalidation failure (SPEC.md section 2).",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "status": {
+            "const": "rejected"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "reason"
+        ]
+      },
+      "else": {
+        "allOf": [
+          {
+            "not": {
+              "required": [
+                "reason"
+              ]
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "detail"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "activity": {
+          "$ref": "#/$defs/name"
+        },
+        "party": {
+          "$ref": "#/$defs/opaqueId"
+        },
+        "resource": {
+          "$ref": "#/$defs/opaqueId"
+        }
+      },
+      "required": [
+        "activity",
+        "party",
+        "resource"
+      ],
+      "additionalProperties": false
+    },
+    "entryPayload": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "enum": [
+            "add",
+            "update",
+            "remove",
+            "replace"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "before": {
+          "$ref": "#/$defs/roles"
+        },
+        "after": {
+          "$ref": "#/$defs/roles"
+        },
+        "conflict": {
+          "type": "object",
+          "properties": {
+            "kept": {
+              "$ref": "#/$defs/ruleId"
+            },
+            "dropped": {
+              "$ref": "#/$defs/ruleId"
+            }
+          },
+          "required": [
+            "kept",
+            "dropped"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "op",
+        "target",
+        "before",
+        "after"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "op": {
+            "const": "remove"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "after": {
+            "const": ""
+          }
+        }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/opaqueId"
+        },
+        "type": {
+          "$ref": "#/$defs/name"
+        },
+        "parent": {
+          "$ref": "#/$defs/opaqueId"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "resourcePayload": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "enum": [
+            "new",
+            "delete"
+          ]
+        },
+        "resource": {
+          "$ref": "#/$defs/resource"
+        }
+      },
+      "required": [
+        "op",
+        "resource"
+      ],
+      "additionalProperties": false
+    },
+    "constraintPayload": {
+      "type": "object",
+      "properties": {
+        "constraint": {
+          "$ref": "#/$defs/constraint"
+        },
+        "op": {
+          "enum": [
+            "enable",
+            "add-pair"
+          ]
+        },
+        "params": {
+          "description": "The conflict pair of an add-pair. Its shape waits on the selector syntax (SPEC.md section 2.1).",
+          "type": "object"
+        }
+      },
+      "required": [
+        "constraint",
+        "op"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "op": {
+            "const": "add-pair"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "params"
+        ],
+        "properties": {
+          "constraint": {
+            "const": "separation-of-duties"
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "params"
+          ]
+        }
+      }
+    },
+    "rulePayload": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "$ref": "#/$defs/ruleId"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "state": {
+          "$ref": "#/$defs/ruleState"
+        },
+        "transition": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "$ref": "#/$defs/ruleState"
+            },
+            "to": {
+              "$ref": "#/$defs/ruleState"
+            }
+          },
+          "required": [
+            "from",
+            "to"
+          ],
+          "additionalProperties": false,
+          "description": "The lifecycle change this event records; its to equals state (checked by the CLI). Absent on an imported rule."
+        },
+        "supersedes": {
+          "$ref": "#/$defs/ruleId"
+        },
+        "body": {
+          "$ref": "https://raci.sh/schemas/raci-1.schema.json"
+        },
+        "body_hash": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "required": [
+        "rule_id",
+        "revision",
+        "state",
+        "body",
+        "body_hash"
+      ],
+      "additionalProperties": false
+    },
+    "pinPayload": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "const": "set"
+        },
+        "dependency_realm": {
+          "$ref": "#/$defs/realmId"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        }
+      },
+      "required": [
+        "op",
+        "dependency_realm",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "commitPayload": {
+      "type": "object",
+      "properties": {
+        "events": {
+          "description": "The ids of the other events of the change, in log order.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/uuid7"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "findings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "enum": [
+                  "no-matching-rule"
+                ]
+              },
+              "detail": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "detail"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "events"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

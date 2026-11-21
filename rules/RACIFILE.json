@@ -6,9 +6,9 @@
     "description": "The .raci materialised view and the raci verify report (SPEC.md sections 7 and 7.1)."
   },
   "rule_set": {
-    "version": "0.1.68",
-    "timestamp": "2026-11-07T16:06:10Z",
-    "hash": "blake3:bb1eda53df518a84b44d27f28704d7c303d47ab8343a907e8173256195e37df2"
+    "version": "0.1.81",
+    "timestamp": "2026-11-21T22:31:20Z",
+    "hash": "blake3:4c00c15a00ff8c195b3964a3acdd1eeca278e3c2c167e4e2fb7fb16374fea35e"
   },
   "rules": [
     {
@@ -238,9 +238,9 @@
     },
     {
       "id": "RACIFILE-026",
-      "revision": 0,
+      "revision": 1,
       "state": "D",
-      "body": "Verification MUST report a hash-mismatch finding of severity error when a recomputed hash or a prev_hash link fails.",
+      "body": "Verification MUST report a hash-mismatch finding of severity error when a recomputed hash or a prev_hash link fails, or when a line of the log is not an event.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -315,6 +315,60 @@
       "body": "A .raci file MUST NOT be hand-edited.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-035",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST report a seq-mismatch finding of severity error when the seq of the log does not run from 1 without gap or repeat.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-036",
+      "revision": 0,
+      "state": "D",
+      "body": "The finding codes of a verification report MUST be the closed set of section 7.1, each with its fixed severity.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-037",
+      "revision": 0,
+      "state": "D",
+      "body": "The findings of a verification report MUST be sorted by severity, code, realm and detail.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-038",
+      "revision": 0,
+      "state": "D",
+      "body": "raci verify MUST exit with 0 when the report has no error finding, with 1 when it has at least one, and with 2 on a usage or configuration error.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-039",
+      "revision": 0,
+      "state": "D",
+      "body": "A .raci file MUST be valid against schemas/raci-view-1.schema.json.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-040",
+      "revision": 0,
+      "state": "D",
+      "body": "A verification report MUST be valid against schemas/raci-report-1.schema.json.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
       "supersedes": null
     }
   ],
@@ -623,6 +677,60 @@
       "content": "SPEC.md section 7",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-035/01",
+      "rule_ref": "RACIFILE-035",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-036/01",
+      "rule_ref": "RACIFILE-036",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-037/01",
+      "rule_ref": "RACIFILE-037",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-038/01",
+      "rule_ref": "RACIFILE-038",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-039/01",
+      "rule_ref": "RACIFILE-039",
+      "type": "reference",
+      "content": "SPEC.md section 7",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-040/01",
+      "rule_ref": "RACIFILE-040",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
       "revision": 0
     }
   ]

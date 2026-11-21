@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raci.sh/schemas/raci-view-1.schema.json",
+  "title": "raci .raci file, version 1",
+  "description": "The .raci materialised view of one realm's audit log (SPEC.md section 7). Array order is canonical and is checked by the CLI, not by this schema. Draft.",
+  "type": "object",
+  "properties": {
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "array",
+          "items": {
+            "$ref": "raci-event-1.schema.json#/$defs/constraint"
+          },
+          "uniqueItems": true
+        },
+        "pairs": {
+          "description": "Conflict pairs of separation-of-duties. Their shape follows the selector syntax, which is open (SPEC.md section 2.1).",
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "enabled",
+        "pairs"
+      ],
+      "additionalProperties": false
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "activity": {
+            "$ref": "raci-event-1.schema.json#/$defs/name"
+          },
+          "party": {
+            "$ref": "raci-event-1.schema.json#/$defs/opaqueId"
+          },
+          "resource": {
+            "$ref": "raci-event-1.schema.json#/$defs/opaqueId"
+          },
+          "roles": {
+            "description": "Held roles in the order A, R, C, I; never empty, since an entry with no roles is absent.",
+            "allOf": [
+              {
+                "$ref": "raci-event-1.schema.json#/$defs/roles"
+              },
+              {
+                "minLength": 1
+              }
+            ]
+          }
+        },
+        "required": [
+          "activity",
+          "party",
+          "resource",
+          "roles"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "log": {
+      "type": "object",
+      "properties": {
+        "head_hash": {
+          "$ref": "raci-event-1.schema.json#/$defs/digest"
+        },
+        "head_seq": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "head_hash",
+        "head_seq"
+      ],
+      "additionalProperties": false
+    },
+    "pins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dependency_realm": {
+            "$ref": "raci-event-1.schema.json#/$defs/realmId"
+          },
+          "version": {
+            "$ref": "raci-event-1.schema.json#/$defs/semver"
+          }
+        },
+        "required": [
+          "dependency_realm",
+          "version"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "raci": {
+      "const": "1"
+    },
+    "realm": {
+      "$ref": "raci-event-1.schema.json#/$defs/realmId"
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "$ref": "raci-event-1.schema.json#/$defs/resource"
+      }
+    },
+    "rules_in_force": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "body_hash": {
+            "$ref": "raci-event-1.schema.json#/$defs/digest"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "rule_id": {
+            "$ref": "raci-event-1.schema.json#/$defs/ruleId"
+          }
+        },
+        "required": [
+          "body_hash",
+          "revision",
+          "rule_id"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "constraints",
+    "entries",
+    "log",
+    "pins",
+    "raci",
+    "realm",
+    "resources",
+    "rules_in_force"
+  ],
+  "additionalProperties": false
+}

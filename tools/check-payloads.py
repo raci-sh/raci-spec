@@ -5,8 +5,9 @@ A payload fails if it is invalid or is not in canonical form (sorted members, no
 """
 import json,glob,sys
 from jsonschema import Draft202012Validator
+for f in sorted(glob.glob('schemas/*.schema.json')):
+    Draft202012Validator.check_schema(json.load(open(f)))
 schema=json.load(open('schemas/raci-1.schema.json'))
-Draft202012Validator.check_schema(schema)
 v=Draft202012Validator(schema)
 bad=0;n=0
 for f in sorted(glob.glob('rules/*.json')):

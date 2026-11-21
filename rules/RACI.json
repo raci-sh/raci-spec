@@ -6,9 +6,9 @@
     "description": "The RACI.sh data model: realms, parties, roles, activities, resources and entries (SPEC.md section 1)."
   },
   "rule_set": {
-    "version": "0.1.18",
-    "timestamp": "2026-11-06T16:31:17Z",
-    "hash": "blake3:d01da2a02d420db2892c3db3879d8205a7f641d489da3a75910fe3d94cf7ae5b"
+    "version": "0.1.27",
+    "timestamp": "2026-11-21T22:35:30Z",
+    "hash": "blake3:6161e0c5524878f5ae723c63fb19ff1ba7455e17c887c3a3617268bbc2859e33"
   },
   "rules": [
     {
@@ -72,6 +72,42 @@
       "body": "The creation and deletion of a resource MUST be audited events.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-008",
+      "revision": 1,
+      "state": "D",
+      "body": "A realm id MUST be a SteerSpec realm id: one or more dot-separated labels, each a lowercase letter followed by lowercase letters and digits.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-009",
+      "revision": 0,
+      "state": "D",
+      "body": "An activity and a resource type MUST be lowercase kebab-case words.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-010",
+      "revision": 0,
+      "state": "D",
+      "body": "A party id and a resource id MUST be strings of 1 to 256 Unicode code points with no control character.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-011",
+      "revision": 0,
+      "state": "D",
+      "body": "Party ids and resource ids MUST be compared as exact strings, with no case folding or normalisation.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
       "supersedes": null
     }
   ],
@@ -137,6 +173,42 @@
       "content": "SPEC.md section 1",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACI-008/01",
+      "rule_ref": "RACI-008",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACI-009/01",
+      "rule_ref": "RACI-009",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACI-010/01",
+      "rule_ref": "RACI-010",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACI-011/01",
+      "rule_ref": "RACI-011",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
       "revision": 0
     }
   ]
