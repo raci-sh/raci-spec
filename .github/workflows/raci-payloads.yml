@@ -1,0 +1,23 @@
+name: raci payloads
+
+# Every `raci/1` structured note under rules/ must validate against
+# schemas/raci-1.schema.json and be in canonical form (SPEC.md section 6.1).
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  payloads:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install jsonschema
+      - run: python tools/check-payloads.py

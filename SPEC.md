@@ -180,7 +180,30 @@ RACI.sh manages RACI. Enforcing it is the customer's job. The service can answer
 - The specification is **hand-authored as normative prose rules** in the `sh.raci` realm (`RACI`, `RACICNS`, `RACIINH`, `RACIINF`, `RACIAUD`, `RACIFILE`, `RACIMGT`), with SteerSpec ids, lifecycle states and supersession. The default configuration rules (the strict preset, separation of duties, default inference and rule-management rules) are **rendered into SteerSpec rules** from their structured source: prose `MUST` bodies, plus notes carrying the structured form. A rendered rule is derived, never hand-edited.
 - Rendering to prose gives the SteerSpec/LLM path (CI gates, advisory review of rule changes) without making enforcement depend on an LLM. Deterministic checks reject; the LLM path only reviews.
 - Customer realms depend on `sh.raci` like any SteerSpec realm and customise by authoring structured rules in their own realm, which are rendered to SteerSpec rules like the defaults. They add rules or override inherited ones, subject to the override lint in section 3.
-- Open: realm id and versioning of `sh.raci`, and the exact mapping of structured fields into rule bodies and notes.
+- The payload format of the structured source is section 6.1. Open: realm id and versioning of `sh.raci`, and the mapping of a payload into a rule body (rendering).
+
+### 6.1 The `raci/1` payload format
+
+The structured source of a RACI.sh configuration rule is the content of a SteerSpec `structured` note (core NTE-036 to NTE-041): `<format>:<payload>`, split at the first colon, with the format `raci/1`. SteerSpec treats the payload as opaque; this section defines it, and `schemas/raci-1.schema.json` is its machine-checkable form, and CI checks every `raci/1` note in `rules/` against it (`tools/check-payloads.py`). Draft.
+
+- **Payload.** A JSON object in RFC 8785 canonical form (the form of the `.raci` file, section 7): sorted members, no insignificant whitespace, no duplicate member. The CLI canonicalises on load. The `body_hash` of a `rule` event (section 4.1) is the blake3 of this canonical payload.
+- **Closed.** A payload has exactly the members its kind defines. An unknown kind, an unknown member or a missing required member makes the payload invalid: it is not evaluated, and loading it is an error, never silently skipped.
+- **Versioning.** `1` is the version of this payload format. It is independent of the `raci` member of the `.raci` file (section 7), which versions that file. Any change to the set of valid payloads, including a new kind or a new optional member, is a new format version (`raci/2`), because a closed evaluator rejects what it does not know.
+- **Identity.** `kind` selects the payload shape. `name` labels the configuration item (a preset, a constraint, an inference rule, an activity set) and is a lowercase kebab-case word. In the audit log a rule is identified by its SteerSpec rule id (`rule_id`, section 4.1), qualified by the realm id when the rule comes from a dependency realm, as `<realm id>:<rule id>` (the form SteerSpec uses in `overrides`), so that two realms can each have an `-001`. A `name` is unique per kind among the in-force rules of a realm path, except where one rule overrides or supersedes another; the superseding rule keeps the name while its rule id changes.
+
+| Kind | Members (required unless marked optional) | Meaning |
+| --- | --- | --- |
+| `preset` | `name`, `enable`: the constraint names to switch on (at least one, no repeats) | A named bundle of constraints (section 2). A preset cannot enable `separation-of-duties`, which needs conflict pairs. |
+| `constraint-default` | `name`: a constraint name; `requires` (optional): `pairs` | The default configuration of one constraint. `requires: pairs` is valid only for `separation-of-duties`: it only takes effect together with a list of conflict pairs. |
+| `inference` | `name`, `target-type`, `operation`, `actions`; `trigger-type` (optional) | An inference rule (section 3.1). |
+| `activity-set` | `name`, `resource-type`, `activities`: names, at least one, no repeats | The activities defined on a resource type (section 3.2). |
+
+An **inference** payload follows section 3.1:
+
+- `target-type` is a resource type or the wildcard `*` (only here). `operation` is `new`, `delete`, `add`, `update` or `remove`. `trigger-type`, a concrete type, is allowed only with `add`, `update` or `remove`. `selector` is reserved: its grammar is open (section 3.1), so a payload with a `selector` member is invalid until it is defined.
+- `actions` is a non-empty list, in order. Each action has `action` (`map`, `add-issuer` or `strip`), an optional `activity` (absent means every activity on the target, section 3.1), and an optional boolean `add-only`. `map` also has `source-type`, `from-role` and `to-role`; `add-issuer` has `role` and is valid only when `operation` is `new`; `strip` has `source-type`, `held-role` and `role`. A `source-type` is a concrete type, never `*`. Roles are `R`, `A`, `C` or `I`.
+
+**Not defined here.** The mapping from a payload to the prose body of a rendered rule (the rendering of section 6) is not defined yet: the default rules' bodies are authored by hand beside their payloads, and the rule that a rendered rule is never hand-edited takes effect with the renderer. Realm id and versioning of `sh.raci` are open too.
 
 ## 7. The `.raci` file
 
