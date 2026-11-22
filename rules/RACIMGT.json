@@ -6,9 +6,9 @@
     "description": "Rules in force, bootstrap, rendering into SteerSpec and customer realms (SPEC.md section 6)."
   },
   "rule_set": {
-    "version": "0.1.93",
-    "timestamp": "2026-11-22T14:52:14Z",
-    "hash": "blake3:9637e29355c514162475f52df1857fefdb8bec35f212188d99d275f43608b8a1"
+    "version": "0.1.97",
+    "timestamp": "2026-11-22T15:10:39Z",
+    "hash": "blake3:91b63fa7736eaf9d8c1503526a0fdc521b9efab172bbf1c26bfca0c77d2515aa"
   },
   "rules": [
     {
@@ -421,6 +421,24 @@
       "revision": 0,
       "state": "D",
       "body": "Event format version 1 and payload format raci/1 MUST be frozen from the first release of the raci CLI that writes logs.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-047",
+      "revision": 0,
+      "state": "D",
+      "body": "A rule with a realm-qualified id MUST NOT name a resource by realm and id, in a selector or in a side of a conflict pair.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-048",
+      "revision": 0,
+      "state": "D",
+      "body": "A fetched realm with a rule in force that names a resource by realm and id MUST be refused without writing to the log.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -837,6 +855,24 @@
       "rule_ref": "RACIMGT-046",
       "type": "reference",
       "content": "SPEC.md section 6.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-047/01",
+      "rule_ref": "RACIMGT-047",
+      "type": "reference",
+      "content": "SPEC.md section 6.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-048/01",
+      "rule_ref": "RACIMGT-048",
+      "type": "reference",
+      "content": "SPEC.md section 6.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "revision": 0

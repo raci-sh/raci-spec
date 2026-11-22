@@ -6,9 +6,9 @@
     "description": "The named constraints that express strictness, and how a violating change is handled (SPEC.md section 2)."
   },
   "rule_set": {
-    "version": "0.1.65",
-    "timestamp": "2026-11-22T14:57:37Z",
-    "hash": "blake3:9fb7710b355755e198daed52949fa9ac0e956d5ace6e8a2978e6046552320d62"
+    "version": "0.1.70",
+    "timestamp": "2026-11-22T15:10:38Z",
+    "hash": "blake3:3abce2a452065930ecc75dc7387f5e02a07f98d7463a5cc5fb87918a772b6783"
   },
   "rules": [
     {
@@ -49,9 +49,9 @@
     },
     {
       "id": "RACICNS-005",
-      "revision": 1,
+      "revision": 2,
       "state": "D",
-      "body": "When min-ra is enabled, at least one R or A MUST remain per activity and resource, so removing the last one needs a named substitute.",
+      "body": "When min-ra is enabled, at least one R or A MUST remain per activity and resource, except on a resource that the change deletes, so removing the last one otherwise needs a named substitute.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
       "supersedes": null
@@ -240,7 +240,7 @@
       "id": "RACICNS-026",
       "revision": 0,
       "state": "D",
-      "body": "A missing, ambiguous or cyclic parent link met while evaluating a conflict pair MUST reject the change with invalid-change.",
+      "body": "A missing or cyclic parent link met while evaluating a conflict pair MUST fail the evaluation closed, and never read as unrelated resources.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -249,7 +249,25 @@
       "id": "RACICNS-027",
       "revision": 0,
       "state": "D",
-      "body": "An entry that names a deleted resource MUST be evaluated against conflict pairs with the last type and parent of that resource.",
+      "body": "An entry that references a resource that is not live MUST fail the evaluation of conflict pairs closed.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-028",
+      "revision": 0,
+      "state": "D",
+      "body": "The exemption of a delete from min-ra MUST cover only the resource that the change deletes, and no other entry that the same change removes.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-029",
+      "revision": 0,
+      "state": "D",
+      "body": "The delete and its removals MUST NOT record a result for min-ra.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -513,6 +531,24 @@
       "rule_ref": "RACICNS-027",
       "type": "reference",
       "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-028/01",
+      "rule_ref": "RACICNS-028",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-029/01",
+      "rule_ref": "RACICNS-029",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "revision": 0

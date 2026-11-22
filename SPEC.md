@@ -17,9 +17,18 @@ Prior art: jRACI, raci.ai, ESIS (RACI auth/inference rules). See BRAINDUMP.md.
 - **Realm ids** are SteerSpec realm ids: one or more dot-separated labels, each a lowercase letter followed by lowercase letters and digits (`^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)*$`), e.g. `sh.raci`, `com.example.payments`.
 - **Activities and resource types** are lowercase kebab-case words (`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`), the pattern of `name` in the `raci/1` payload (section 6.1).
 - **Party and resource ids** are opaque to RACI.sh: strings of 1 to 256 Unicode code points with no control characters (U+0000 to U+001F, U+007F). They are compared as exact strings, with no case folding or normalisation. By convention a party id is prefixed by its namespace, as in `github:alice`, the form SteerSpec uses for `added_by`.
-- **A resource is identified by its realm and id, and an id is unambiguous along a realm path.** A change that creates a resource is rejected with `invalid-change` if a resource of that id exists in the realm, an ancestor or a descendant, or if entries still name that id there. So a child realm cannot shadow or squat a resource that a selector or a pair names in its path. Sibling realms may use the same id for different resources. An evaluation that still finds two resources for one id on a path (e.g. after realms are nested) rejects the change with `invalid-change`.
-- **Parent links never dangle.** A new resource's parent must exist in its realm or an ancestor. A resource that another names as `parent`, in its realm or a descendant, cannot be deleted. Both are `invalid-change`.
+- **A resource is identified by its realm and id.** Every reference to one is `{"realm": <realm id>, "id": <resource id>}`: an entry's target, a `parent`, a selector, the side of a pair, an entry in the view. A reference resolves to that resource alone, never by a search for the id, so the same id in two realms is two resources and neither can stand in for the other. Only a declaration (the `resource` event and the view's `resources`) gives a bare `id`: its realm is the log's.
+- **An id is never reused in its realm.** Once an applied change has created a resource with an id, no later change in that realm creates that id again, also after a delete (`invalid-change`). A log with such a creation applied holds an event that is not valid (`hash-mismatch`).
+- **References never dangle.** An entry's target and a resource's `parent` are live resources of the log's realm or an ancestor (`invalid-change`). Where verification finds one that is not, it reports `dangling-reference` and the log cannot be replayed (section 4.1).
 - **Rule ids** are SteerSpec rule ids, qualified as `<realm id>:<rule id>` when the rule comes from a dependency realm (section 6.1).
+
+### 1.2 Deleting a resource
+
+- **Only the owner deletes.** A `delete` names a live resource of the log's own realm, with its declared type and parent.
+- **Refused while anything outside the change depends on it.** A resource that is the `parent` of a live resource, in its realm or a descendant, cannot be deleted. Neither can a resource on which a descendant realm holds an entry, since a change writes only its own realm's log (section 4.2). Both are `invalid-change`.
+- **The delete takes its entries with it, audited.** The `delete` is the first event of its change. One `remove` entry event for each entry of the realm on that resource follows immediately, by activity and party in code point order, with the delete's actor and no `cause`. Anything inferred comes after them. An applied delete without exactly these removals is not a valid event (`hash-mismatch`).
+- **Exempt from `min-ra`, only there.** `min-ra` does not apply to the resource that the change deletes, and the delete and its removals record no result for it. A removal on any other resource in the same change is not exempt. The exemption is recognised from the log alone: the target is the resource that the change's delete names.
+- **No inference onto what is gone.** The removals do not fire inference rules, as only the original change does, and no inference action produces a delta on the deleted resource.
 
 ## 2. Constraints and strictness
 
@@ -34,7 +43,7 @@ Constraints are evaluated against the **effective entries** of the realm in whic
 | `single-accountable` | At most one A per activity and resource. |
 | `single-responsible` | At most one R per activity and resource. |
 | `one-role-per-party` | A party holds at most one role per activity and resource. |
-| `min-ra` | At least one R or A must remain; removing the last needs a named substitute. |
+| `min-ra` | At least one R or A must remain; removing the last needs a named substitute. Not applied to a resource that the change deletes (section 1.2). |
 | `separation-of-duties` | Declarative conflicts, e.g. a party that is R on X may not be A on Y. |
 
 ### 2.1 Separation of duties
@@ -43,19 +52,19 @@ A `separation-of-duties` constraint is a list of **conflict pairs**, each a stru
 
 ```json
 { "relation": "any",
-  "a": { "activity": "*", "resource": { "id": "Acme" }, "roles": "R" },
-  "b": { "activity": "*", "resource": { "id": "Emca" }, "roles": "A" } }
+  "a": { "activity": "*", "resource": { "realm": "com.example", "id": "Acme" }, "roles": "R" },
+  "b": { "activity": "*", "resource": { "realm": "com.example", "id": "Emca" }, "roles": "A" } }
 ```
 
 - **Scope is the declaring realm and its descendants.** A conflict pair declared in a realm is evaluated among the entries of that realm and of its sub-realms (the effective realm path), so an inherited pair is enforced on entries created in a child. Comparisons between an entry in a parent and an entry in a descendant are allowed. Comparisons between sibling realms, or between unrelated realms, never happen.
 - **Deterministic.** The `raci` CLI evaluates conflict pairs itself, so a violating change is rejected like any other constraint violation.
 - **Tighten-only applies**: a sub-realm may add conflict pairs, never remove an inherited one.
-- **Sides.** A side is `{activity, resource, roles}`. `activity` is an activity name or `*` for every activity. `resource` is exactly one of `{"id": <resource id>}`, where the id is literal, and `{"type": <resource type>}`, where the type may be `*` for every resource. `roles` is a non-empty role string in the order A, R, C, I, and the side matches on **any** of them.
+- **Sides.** A side is `{activity, resource, roles}`. `activity` is an activity name or `*` for every activity. `resource` is exactly one of a reference `{"realm": <realm id>, "id": <resource id>}` (section 1.1), which matches that one resource and has no wildcard, and `{"type": <resource type>}`, where the type may be `*` for every resource. `roles` is a non-empty role string in the order A, R, C, I, and the side matches on **any** of them.
 - **Relation.** `same`: one and the same resource (e.g. who authors a rule does not publish that rule). `lineage`: the same resource, or one is an ancestor of the other through parent links (e.g. who is R on a module is not A on its audit). `any`: any two resources in scope (e.g. Acme and Emca).
 - **Conflict.** A grant is one role of one party on an activity and resource. A pair is violated when one party has two different grants, one matching each side, on resources in the relation. A grant never conflicts with itself, and two roles in one entry are two grants. The sides are unordered, so a pair and its mirror are the same pair.
 - **Declaration.** A pair comes from an `add-pair` event (section 4.1), or from a `conflict-pair` rule (section 6.1) while that rule is in force. A realm's effective pairs are those of both kinds in the realm and its ancestors. Separation of duties is in effect whenever there is one: a pair needs no separate `enable`. A pair added by event is never removed. A pair from a rule leaves with its rule.
 - **When.** Pairs are evaluated on the state that results from every change, not only entry changes: a new resource can create a lineage, and a pair entering force, by event, rule or version change, is checked against the entries that exist. That state includes every descendant the change reaches (section 2, revalidation). A violation in any of them rejects the change.
-- **Fail closed.** A missing, ambiguous or cyclic parent link, or an id that resolves to two resources, rejects the change with `invalid-change`: it never reads as "not related". An entry that still names a deleted resource is evaluated with that resource's last type and parent, from the log.
+- **Fail closed.** A missing or cyclic parent link, or an entry on a resource that is not live, is a `dangling-reference`: the evaluation fails as for a log that cannot be replayed (section 4.1), and never reads it as "not related".
 
 `strict` is a preset that enables `single-accountable`, `single-responsible`, `one-role-per-party` and `min-ra`. `separation-of-duties` is opt-in because it needs a conflict list.
 
@@ -77,7 +86,7 @@ A rule has:
 - **target type**: the resource type whose RACI is being derived (e.g. audit), or the wildcard `*`, which matches a resource of any type (used by default rules, which cannot name customer-defined types).
 - **operation**: the change that fires the rule. `new` or `delete` are resource events; `add`, `update` or `remove` are entry events (on the trigger type, or on the target itself when there is no trigger type).
 - **trigger type** (optional): the resource type whose entry change fires the rule (e.g. module, location). Absent for a change on the target itself. A rule with a trigger type must have an entry operation (`add`, `update` or `remove`), never `new` or `delete`, and fires on entry events of that type with that operation, for each target whose source (below) binds to the changed resource.
-- **selector** (optional): `{"id": <resource id>}`, names the one source resource explicitly, instead of the default search below. Valid only on a rule with a `map` or `strip` action.
+- **selector** (optional): `{"realm": <realm id>, "id": <resource id>}`, names the one source resource explicitly, instead of the default search below. Valid only on a rule with a `map` or `strip` action.
 - **actions**, from a small vocabulary (taken from ESIS):
   - `map(source-type, from-role, to-role)`: parties holding `from-role` on the source get `to-role` on the target. ESIS example: module R becomes audit A, module A becomes audit I.
   - `add-issuer(role)`: the party creating the target gets `role`. Only valid in rules whose operation is `new`, the one operation that has a creating party.
@@ -87,7 +96,7 @@ An action may name an **activity**; an action that names none applies to every a
 
 Any action may carry the attribute `add-only`: it then adds missing entries and never changes an existing one.
 
-**Source binding.** `map` and `strip` locate their source as the nearest resource of the action's `source-type`, searching the target itself first and then its parent links. So an action whose source type is the target's own type reads the target (the case of an entry event on the target with no trigger type), and `map(module, R, A)` on a new audit reads the audit's parent module. A rule that names a selector uses that resource instead, for each of its `map` and `strip` actions. It is looked up in the realm in whose log the rule is in force and that realm's ancestors, never in a descendant, so a change in a child realm cannot substitute a resource of its own. If it does not exist, or is not of an action's `source-type`, a change that fires the rule is rejected with `invalid-change`, so a `strip` is never skipped silently.
+**Source binding.** `map` and `strip` locate their source as the nearest resource of the action's `source-type`, searching the target itself first and then its parent links. So an action whose source type is the target's own type reads the target (the case of an entry event on the target with no trigger type), and `map(module, R, A)` on a new audit reads the audit's parent module. A rule that names a selector uses that resource instead, for each of its `map` and `strip` actions. Its realm is the realm in whose log the rule is in force or one of that realm's ancestors, never a descendant, and only that resource matches, so no other realm can substitute one of its own. A rule imported from a dependency realm has no selector (section 6.2). If it does not exist, or is not of an action's `source-type`, a change that fires the rule is rejected with `invalid-change`, so a `strip` is never skipped silently.
 
 **Default rules.** The `sh.raci` realm ships a minimal default set that customer realms inherit and may override (section 6). It has one rule: on `new` of any type (`*`), `add-issuer(A)`, so the party that creates a resource is Accountable for it. This satisfies `min-ra` and the strict preset on a resource with no parent. Rules that map roles from another resource depend on customer-defined types or ids and are left to customer realms.
 
@@ -149,7 +158,7 @@ Envelope (all types). Every member is required except `cause`:
 Payload for `type: entry`:
 
 - `op`: `add`, `update`, `remove` or `replace`.
-- `target`: `{activity, party, resource}`.
+- `target`: `{activity, party, resource}`, with `resource` a reference `{realm, id}` (section 1.1).
 - `before`, `after`: the role sets, each a string of the held roles in the fixed order A, R, C, I (the form of the `.raci` file, section 7), the empty string for none. A `remove` has `after` `""`; materialisation and replay treat the entry as absent from that point, and the earlier events stay in the log.
 - `conflict` (optional): `{kept, dropped}`, the rule ids of the winning and the discarded delta, when stricter-wins resolution applied (section 3.1).
 - `replace` is linked `entry` events (the one losing the role and the one gaining it), both with `op` `replace`, sharing one `change_id`, made atomic by the commit marker below.
@@ -165,7 +174,7 @@ A change is **all or nothing**. If the original change or any change inferred fr
 Payload for `type: resource`:
 
 - `op`: `new` or `delete`.
-- `resource`: `{id, type, parent}`, with `parent` optional. The realm is the envelope's `realm`.
+- `resource`: `{id, type, parent}`. `id` is bare, as this is the declaration and its realm is the envelope's `realm`. `parent` is optional, a reference `{realm, id}`. A `delete` repeats the declaration and is followed by its removals (section 1.2).
 - A resource event can be the `cause` of inferred entries (e.g. `add-issuer` on `new`).
 
 Payload for `type: constraint`:
@@ -199,7 +208,7 @@ Payload for `type: revert`, written only by a doctor revert (below), with at lea
 - Every version keeps the members `raci`, `seq`, `prev_hash` and `hash`, the definition of `hash`, and the line format of the log file, so any verifier can check the chain of any log.
 - Verification reads `raci` before it validates the event against that version's schema. A line whose `raci` is missing, or is not a string holding a positive decimal integer without leading zeros, is not an event (`hash-mismatch`).
 - A version the verifier does not support is reported as `unsupported-version`, once, for the first such event. The verifier still checks `hash`, `prev_hash` and `seq` along the whole log, but does not replay it, so beside that finding it reports only `hash-mismatch`, `seq-mismatch`, `torn-line`, `view-ahead` and `stale-view` for that log. A CLI never appends to such a log and never rebuilds its view.
-- **Fail closed.** A log with any of `unsupported-version`, `hash-mismatch`, `seq-mismatch`, `torn-line`, `incomplete-change`, `view-ahead`, `pin-mismatch` or `pin-downgrade` cannot be replayed. Nothing appends to it or rebuilds its view, other than a doctor revert where one is allowed, and its view is never used as an input in its place. A command that evaluates a change or answers from RACI state fails, writes nothing and exits with 2 when any log it depends on (its own, an ancestor's, a source's, a revalidated descendant's) cannot be replayed. This is a failed command, not a rejected change. Verification reports such a log that it reads with that log's realm in the finding's `realm`.
+- **Fail closed.** A log with any of `unsupported-version`, `hash-mismatch`, `seq-mismatch`, `torn-line`, `incomplete-change`, `view-ahead`, `pin-mismatch`, `pin-downgrade` or `dangling-reference` cannot be replayed. Nothing appends to it or rebuilds its view, other than a doctor revert where one is allowed, and its view is never used as an input in its place. A command that evaluates a change or answers from RACI state fails, writes nothing and exits with 2 when any log it depends on (its own, an ancestor's, a source's, a revalidated descendant's) cannot be replayed. This is a failed command, not a rejected change. Verification reports such a log that it reads with that log's realm in the finding's `realm`.
 
 **Log file.** The offline log of a realm is a file named after its view with `.jsonl` appended: `.raci` and `.raci.jsonl` side by side. It is UTF-8 without a byte order mark. Each line is one event in canonical JSON followed by a line feed (U+000A), including the last line, and there are no blank lines. A last line without its line feed is torn (a crash during a write). It is not an event, even if it parses as one: it is never applied and is reported as `torn-line`.
 
@@ -251,7 +260,7 @@ The structured source of a RACI.sh configuration rule is the content of a SteerS
 
 An **inference** payload follows section 3.1:
 
-- `target-type` is a resource type or the wildcard `*` (only here). `operation` is `new`, `delete`, `add`, `update` or `remove`. `trigger-type`, a concrete type, is allowed only with `add`, `update` or `remove`. `selector`, optional and allowed only with a `map` or `strip` action, is `{"id": <resource id>}` (section 3.1).
+- `target-type` is a resource type or the wildcard `*` (only here). `operation` is `new`, `delete`, `add`, `update` or `remove`. `trigger-type`, a concrete type, is allowed only with `add`, `update` or `remove`. `selector`, optional and allowed only with a `map` or `strip` action, is `{"realm": <realm id>, "id": <resource id>}` (section 3.1).
 - `actions` is a non-empty list, in order. Each action has `action` (`map`, `add-issuer` or `strip`), an optional `activity` (absent means every activity on the target, section 3.1), and an optional boolean `add-only`. `map` also has `source-type`, `from-role` and `to-role`; `add-issuer` has `role` and is valid only when `operation` is `new`; `strip` has `source-type`, `held-role` and `role`. A `source-type` is a concrete type, never `*`. Roles are `R`, `A`, `C` or `I`.
 
 **Not defined here.** The mapping from a payload to the prose body of a rendered rule (the rendering of section 6) is not defined yet: the default rules' bodies are authored by hand beside their payloads, and the rule that a rendered rule is never hand-edited takes effect with the renderer.
@@ -274,6 +283,7 @@ How a realm names the version of a dependency realm it is evaluated against, and
 - **One content per version.** A declaration carries no digest, so the first pin of a version in a log trusts what its source serves, and is always made from a fetch, never from a cache. From then on, content for that realm and version, fetched or cached, must have the digest of the earlier applied `pin`, and a cached copy that has it may stand in for a fetch. A log with two applied pins of one realm and version but different digests is reported as `pin-mismatch` (section 7.1). Verification does not fetch, so a moved tag shows at the next fetch, or when two realms' pins are compared.
 - **Pin.** The `version` of the resulting `pin` event (section 4.1) is the declared version string, exactly, and its `digest` is the digest of the content that was used.
 - **Imported rules.** Each `rule` event that an init or a version change appends records the rule's `state` in the fetched realm, without a `transition`. Only rules in state `P` or `I` are recorded, since only they are in force (section 3), and the event schema accepts no other state on an import. So while every default rule of `sh.raci` is still a Draft, an init records none of them and the realm stays at `no-rules-in-force` until it records rules of its own.
+- **Imported rules name resources by type only.** A dependency realm does not know the importer's resources, so a rule with a qualified id has no `selector` and no pair side by `{realm, id}`. The event schema rejects both. A fetched realm with such a rule in force is refused when it is fetched (exit 2, nothing written), rather than failing at every change that fires the rule.
 - **A pin replaces the imported set.** The imported rules of a dependency realm are the rules whose id that realm qualifies (`<realm id>:<rule id>`), not every event with `via` `import`: an init imports the realm's own rules too. When replay applies a `pin`, it takes all of that realm's imported rules out of force, then applies the `rule` events that follow in the same change. So a version change records every rule in force in the new version, unchanged ones included, and a rule that was retired, terminated, superseded or dropped upstream leaves force. A qualified `rule` event always has `via` `import`, and one that does not follow a `pin` of its realm in the same change is not a valid event (`hash-mismatch`).
 - **No downgrade, no unpin.** A pin never moves to a lower version, compared as semantic versions: the command fails, writes nothing and exits with 2, and a log that holds such a pin is reported as `pin-downgrade`. Rolling back takes a new, higher upstream release. Removing a declaration does not unpin: the pin and its rules stay in force, and version 1 has no unpin.
 - **Upgrades and tighten-only.** An upgrade relaxes only what the dependency realm itself retired or changed. It never disables a constraint that a `constraint` event of this realm or an ancestor enabled (section 3).
@@ -296,18 +306,18 @@ Shape:
     "enabled": [ "min-ra", "single-accountable" ],
     "pairs": []
   },
-  "entries": [ { "activity": "<activity>", "party": "<party>", "resource": "<id>", "roles": "AR" } ],
+  "entries": [ { "activity": "<activity>", "party": "<party>", "resource": { "id": "<id>", "realm": "<realm id>" }, "roles": "AR" } ],
   "log": { "head_hash": "<hash of the head event>", "head_seq": 412 },
   "pins": { "<dependency realm>": { "digest": "<digest>", "version": "<pinned version>" } },
   "raci": "1",
   "realm": "<realm id>",
-  "resources": [ { "id": "<id>", "parent": "<id or absent>", "type": "<type>" } ],
+  "resources": [ { "id": "<id>", "parent": { "id": "<id>", "realm": "<realm id>" }, "type": "<type>" } ],
   "rules_in_force": [ { "body_hash": "<hash>", "revision": 2, "rule_id": "<id>" } ]
 }
 ```
 
 - `roles` is a string of the held roles in the fixed precedence order A, R, C, I (section 1), so `"AR"`, never `"RA"`. An entry with no roles is absent, not stored empty.
-- Object members are in the canonical (sorted) order, as in the example. Array ordering is canonical too: `resources` by `id`; `entries` by (`resource`, `activity`, `party`); `rules_in_force` by `rule_id`; `enabled` alphabetically; `pairs` by their canonical JSON.
+- Object members are in the canonical (sorted) order, as in the example. Array ordering is canonical too, strings comparing by code point: `resources` by `id`, all of this realm (`parent` is absent when there is none); `entries` by (`resource.realm`, `resource.id`, `activity`, `party`); `rules_in_force` by `rule_id`; `enabled` alphabetically; `pairs` by their canonical JSON.
 - `rules_in_force` lists every rule recorded in force in this realm's log (section 6, including inherited ones) with its `body_hash`. Verification compares these with the log's `rule` events and with the structured rule sources without replaying the whole log.
 - `pins` is an object keyed by dependency realm id, so it holds one pin per realm in canonical order. It is derived from the log's `pin` events (section 4.1): the current version and digest of each dependency realm the log was evaluated against (e.g. the `sh.raci` version). Verification recomputes it by replay.
 - `constraints` lists the constraints recorded by this realm's own `constraint` events. The effective set (the union along the realm path, section 3) is computed at load and not embedded.
@@ -332,6 +342,7 @@ Findings are not part of `.raci`. `raci verify` computes them on demand and emit
 | `pin-downgrade` | error | An applied pin has a lower version than an earlier applied pin of the same dependency realm (section 6.2). |
 | `torn-line` | error | The last line of the log has no line feed (section 4.1). |
 | `view-ahead` | error | The view's log head cannot be read or is not in the log, so the log lost or changed events (section 7). |
+| `dangling-reference` | error | An entry or a parent link references a resource that is not live in the log's realm or an ancestor (section 1.1). |
 | `view-mismatch` | error | Replaying the log gives a different state, or different bytes, than the `.raci` file. |
 | `stale-view` | warning | The view's log head is an earlier event of the log; rebuild by replay. |
 | `unrecorded-rule` | error | A structured rule source differs, in format or payload, from the latest `rule` event for the same rule id in the log, or for which the log has no `rule` event for that rule id, so it is not evaluated (section 6). |

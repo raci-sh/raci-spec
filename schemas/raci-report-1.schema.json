@@ -78,6 +78,7 @@
             "torn-line",
             "incomplete-change",
             "view-ahead",
+            "dangling-reference",
             "view-mismatch",
             "unrecorded-rule",
             "descendant-violation",
@@ -117,6 +118,7 @@
               "torn-line",
               "incomplete-change",
               "view-ahead",
+              "dangling-reference",
               "view-mismatch",
               "unrecorded-rule",
               "descendant-violation"

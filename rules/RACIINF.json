@@ -6,9 +6,9 @@
     "description": "Triggered inference rules, ESIS style: shape, actions, non-recursion, evaluation order and composition of deltas (SPEC.md section 3.1)."
   },
   "rule_set": {
-    "version": "0.1.67",
-    "timestamp": "2026-11-22T14:57:37Z",
-    "hash": "blake3:72858366afb209f1d9241052c75e56d4de9665f164d6ef975518eec048d81b75"
+    "version": "0.1.71",
+    "timestamp": "2026-11-22T15:10:39Z",
+    "hash": "blake3:b4a4067bb1b4e01dbac81ed49579efd4284960d24b82b59edd318a51c8d8c4e3"
   },
   "rules": [
     {
@@ -276,7 +276,7 @@
       "id": "RACIINF-030",
       "revision": 0,
       "state": "D",
-      "body": "A selector MUST name exactly one source resource by its id, resolved only in the realm in whose log the rule is in force and the ancestors of that realm.",
+      "body": "A selector MUST name exactly one source resource by realm and id, whose realm is the realm in whose log the rule is in force or an ancestor of that realm.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -304,6 +304,24 @@
       "revision": 0,
       "state": "D",
       "body": "A change MUST be rejected with invalid-change when it fires a rule whose selected resource does not exist or is not of the source type of the action.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-034",
+      "revision": 0,
+      "state": "D",
+      "body": "The removals of a delete MUST NOT fire inference rules.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-035",
+      "revision": 0,
+      "state": "D",
+      "body": "An inference action MUST NOT produce a delta on a resource that the change deletes.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -603,6 +621,24 @@
       "rule_ref": "RACIINF-033",
       "type": "reference",
       "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-034/01",
+      "rule_ref": "RACIINF-034",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-035/01",
+      "rule_ref": "RACIINF-035",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "revision": 0

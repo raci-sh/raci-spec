@@ -214,7 +214,7 @@
             "$ref": "raci-event-1.schema.json#/$defs/opaqueId"
           },
           "resource": {
-            "$ref": "raci-event-1.schema.json#/$defs/opaqueId"
+            "$ref": "https://raci.sh/schemas/raci-1.schema.json#/$defs/resourceRef"
           },
           "roles": {
             "description": "Held roles in the order A, R, C, I; never empty, since an entry with no roles is absent.",

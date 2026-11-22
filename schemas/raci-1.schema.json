@@ -308,7 +308,7 @@
           "minItems": 1
         },
         "selector": {
-          "$ref": "#/$defs/idSelector"
+          "$ref": "#/$defs/resourceRef"
         }
       },
       "required": [
@@ -420,18 +420,6 @@
         "pattern": "\\n"
       }
     },
-    "idSelector": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/opaqueId"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "additionalProperties": false
-    },
     "typeSelector": {
       "type": "object",
       "properties": {
@@ -467,7 +455,7 @@
         "resource": {
           "oneOf": [
             {
-              "$ref": "#/$defs/idSelector"
+              "$ref": "#/$defs/resourceRef"
             },
             {
               "$ref": "#/$defs/typeSelector"
@@ -527,6 +515,31 @@
         "kind",
         "name",
         "pair"
+      ],
+      "additionalProperties": false
+    },
+    "realmId": {
+      "description": "A SteerSpec realm id, as in realm.v1.schema.json (SPEC.md section 1.1).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "resourceRef": {
+      "description": "A reference to a resource: always its realm and id (SPEC.md section 1.1).",
+      "type": "object",
+      "properties": {
+        "realm": {
+          "$ref": "#/$defs/realmId"
+        },
+        "id": {
+          "$ref": "#/$defs/opaqueId"
+        }
+      },
+      "required": [
+        "realm",
+        "id"
       ],
       "additionalProperties": false
     }

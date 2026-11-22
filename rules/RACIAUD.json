@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.200",
-    "timestamp": "2026-11-22T14:57:37Z",
-    "hash": "blake3:c5ec470a63b1ea4d0d5d594d22d9705f9ce39ac39ec2d75483e453755e4c0e01"
+    "version": "0.1.210",
+    "timestamp": "2026-11-22T15:10:38Z",
+    "hash": "blake3:b28b018058a740b535d426e2d6516ec432081a9703c13d6a1a4ec6b51579fe80"
   },
   "rules": [
     {
@@ -699,7 +699,7 @@
       "id": "RACIAUD-077",
       "revision": 0,
       "state": "D",
-      "body": "A log with an unsupported-version, hash-mismatch, seq-mismatch, torn-line, incomplete-change, view-ahead, pin-mismatch or pin-downgrade finding MUST be treated as not replayable.",
+      "body": "A log with an unsupported-version, hash-mismatch, seq-mismatch, torn-line, incomplete-change, view-ahead, pin-mismatch, pin-downgrade or dangling-reference finding MUST be treated as not replayable.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -835,6 +835,51 @@
       "revision": 0,
       "state": "D",
       "body": "A revert that abandons an unfinished change MUST record the id of that change in its revert event.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-093",
+      "revision": 0,
+      "state": "D",
+      "body": "A delete event MUST be the first event of its change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-094",
+      "revision": 0,
+      "state": "D",
+      "body": "The removals of an applied delete MUST follow it immediately as one remove event per entry, by activity and party in code point order.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-095",
+      "revision": 0,
+      "state": "D",
+      "body": "The removals of a delete MUST have the actor of the delete and no cause.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-096",
+      "revision": 0,
+      "state": "D",
+      "body": "An applied delete without exactly the removals of the entries of its realm on that resource MUST be treated as not being a valid event.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-097",
+      "revision": 0,
+      "state": "D",
+      "body": "An applied creation that reuses an id in its realm MUST be treated as not being a valid event.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -1665,6 +1710,51 @@
       "rule_ref": "RACIAUD-092",
       "type": "reference",
       "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-093/01",
+      "rule_ref": "RACIAUD-093",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-094/01",
+      "rule_ref": "RACIAUD-094",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-095/01",
+      "rule_ref": "RACIAUD-095",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-096/01",
+      "rule_ref": "RACIAUD-096",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-097/01",
+      "rule_ref": "RACIAUD-097",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "revision": 0

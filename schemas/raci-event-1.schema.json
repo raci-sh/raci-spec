@@ -257,6 +257,45 @@
                 "const": "import"
               }
             }
+          },
+          "payload": {
+            "properties": {
+              "body": {
+                "not": {
+                  "required": [
+                    "selector"
+                  ]
+                },
+                "properties": {
+                  "pair": {
+                    "properties": {
+                      "a": {
+                        "properties": {
+                          "resource": {
+                            "not": {
+                              "required": [
+                                "id"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "b": {
+                        "properties": {
+                          "resource": {
+                            "not": {
+                              "required": [
+                                "id"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -570,7 +609,7 @@
           "$ref": "#/$defs/opaqueId"
         },
         "resource": {
-          "$ref": "#/$defs/opaqueId"
+          "$ref": "https://raci.sh/schemas/raci-1.schema.json#/$defs/resourceRef"
         }
       },
       "required": [
@@ -649,14 +688,15 @@
           "$ref": "#/$defs/name"
         },
         "parent": {
-          "$ref": "#/$defs/opaqueId"
+          "$ref": "https://raci.sh/schemas/raci-1.schema.json#/$defs/resourceRef"
         }
       },
       "required": [
         "id",
         "type"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "description": "A declaration, so a bare id: its realm is the envelope's. parent is a reference."
     },
     "resourcePayload": {
       "type": "object",
