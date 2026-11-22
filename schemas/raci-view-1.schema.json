@@ -2,18 +2,83 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raci.sh/schemas/raci-view-1.schema.json",
   "title": "raci .raci file, version 1",
-  "description": "The .raci materialised view of one realm's audit log (SPEC.md section 7). Array order is canonical and is checked by the CLI, not by this schema. Draft.",
+  "description": "The .raci materialised view of one realm's audit log (SPEC.md section 7). The order of entries, resources and rules_in_force is given by replay and is not expressible here. Draft.",
   "type": "object",
   "properties": {
     "constraints": {
       "type": "object",
       "properties": {
         "enabled": {
+          "description": "Alphabetical, no repeats: one of the 16 ordered subsets of the enableable constraints.",
           "type": "array",
           "items": {
             "$ref": "raci-event-1.schema.json#/$defs/enableableConstraint"
           },
-          "uniqueItems": true
+          "enum": [
+            [],
+            [
+              "min-ra"
+            ],
+            [
+              "one-role-per-party"
+            ],
+            [
+              "single-accountable"
+            ],
+            [
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party"
+            ],
+            [
+              "min-ra",
+              "single-accountable"
+            ],
+            [
+              "min-ra",
+              "single-responsible"
+            ],
+            [
+              "one-role-per-party",
+              "single-accountable"
+            ],
+            [
+              "one-role-per-party",
+              "single-responsible"
+            ],
+            [
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "single-accountable"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "one-role-per-party",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "single-accountable",
+              "single-responsible"
+            ]
+          ]
         },
         "pairs": {
           "description": "Empty in version 1: no conflict pair can be recorded until the selector syntax is defined (SPEC.md section 2.1).",
@@ -77,16 +142,43 @@
         "head_hash",
         "head_seq"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "head_seq": {
+            "const": 0
+          }
+        },
+        "required": [
+          "head_seq"
+        ]
+      },
+      "then": {
+        "properties": {
+          "head_hash": {
+            "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "head_hash": {
+            "not": {
+              "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      }
     },
     "pins": {
-      "type": "array",
-      "items": {
+      "description": "The current pin of each dependency realm, by realm id.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "raci-event-1.schema.json#/$defs/realmId"
+      },
+      "additionalProperties": {
         "type": "object",
         "properties": {
-          "dependency_realm": {
-            "$ref": "raci-event-1.schema.json#/$defs/realmId"
-          },
           "digest": {
             "$ref": "raci-event-1.schema.json#/$defs/digest"
           },
@@ -95,7 +187,6 @@
           }
         },
         "required": [
-          "dependency_realm",
           "digest",
           "version"
         ],

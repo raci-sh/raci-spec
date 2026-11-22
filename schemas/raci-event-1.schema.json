@@ -29,6 +29,7 @@
         "constraint",
         "rule",
         "pin",
+        "revert",
         "commit"
       ]
     },
@@ -138,6 +139,14 @@
               "required": [
                 "transition"
               ]
+            },
+            "properties": {
+              "state": {
+                "enum": [
+                  "P",
+                  "I"
+                ]
+              }
             }
           }
         }
@@ -198,6 +207,16 @@
         {
           "properties": {
             "type": {
+              "const": "revert"
+            },
+            "payload": {
+              "$ref": "#/$defs/revertPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
               "const": "commit"
             },
             "payload": {
@@ -206,6 +225,133 @@
           }
         }
       ]
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "rule"
+          },
+          "payload": {
+            "properties": {
+              "rule_id": {
+                "type": "string",
+                "pattern": ":"
+              }
+            },
+            "required": [
+              "rule_id"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "payload"
+        ]
+      },
+      "then": {
+        "properties": {
+          "actor": {
+            "properties": {
+              "via": {
+                "const": "import"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "revert"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "actor": {
+            "properties": {
+              "via": {
+                "enum": [
+                  "user",
+                  "agent"
+                ]
+              }
+            }
+          },
+          "outcome": {
+            "properties": {
+              "status": {
+                "const": "applied"
+              }
+            }
+          },
+          "constraints": {
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outcome": {
+            "properties": {
+              "status": {
+                "const": "applied"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "outcome"
+        ]
+      },
+      "then": {
+        "properties": {
+          "constraints": {
+            "additionalProperties": {
+              "const": "pass"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "seq": {
+            "const": 1
+          }
+        },
+        "required": [
+          "seq"
+        ]
+      },
+      "then": {
+        "properties": {
+          "prev_hash": {
+            "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "prev_hash": {
+            "not": {
+              "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      }
     }
   ],
   "$defs": {
@@ -291,6 +437,15 @@
         "one-role-per-party",
         "min-ra"
       ]
+    },
+    "base64": {
+      "description": "RFC 4648 section 4, padded, at least one byte.",
+      "type": "string",
+      "minLength": 4,
+      "pattern": "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "ruleState": {
       "enum": [
@@ -754,6 +909,31 @@
         "dependency_realm",
         "version",
         "digest"
+      ],
+      "additionalProperties": false
+    },
+    "revertPayload": {
+      "description": "Written only by a doctor revert (SPEC.md section 4.1).",
+      "type": "object",
+      "properties": {
+        "removed": {
+          "$ref": "#/$defs/base64"
+        },
+        "abandoned": {
+          "$ref": "#/$defs/uuid7"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "removed"
+          ]
+        },
+        {
+          "required": [
+            "abandoned"
+          ]
+        }
       ],
       "additionalProperties": false
     },

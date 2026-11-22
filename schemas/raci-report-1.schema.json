@@ -23,7 +23,33 @@
         "seq",
         "hash"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "seq": {
+            "const": 0
+          }
+        },
+        "required": [
+          "seq"
+        ]
+      },
+      "then": {
+        "properties": {
+          "hash": {
+            "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "hash": {
+            "not": {
+              "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      }
     },
     "findings": {
       "type": "array",
@@ -48,11 +74,14 @@
             "seq-mismatch",
             "unsupported-version",
             "pin-mismatch",
+            "pin-downgrade",
+            "torn-line",
+            "incomplete-change",
+            "view-ahead",
             "view-mismatch",
             "unrecorded-rule",
             "descendant-violation",
             "stale-view",
-            "incomplete-change",
             "no-matching-rule"
           ]
         },
@@ -84,6 +113,10 @@
               "seq-mismatch",
               "unsupported-version",
               "pin-mismatch",
+              "pin-downgrade",
+              "torn-line",
+              "incomplete-change",
+              "view-ahead",
               "view-mismatch",
               "unrecorded-rule",
               "descendant-violation"
