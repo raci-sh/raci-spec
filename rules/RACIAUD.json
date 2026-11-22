@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.145",
-    "timestamp": "2026-11-21T22:35:45Z",
-    "hash": "blake3:45af3ad91ec96a596ae450fe57dc0cac1a4401581acca0282f8f4a467ca4720a"
+    "timestamp": "2026-11-22T09:05:28Z",
+    "hash": "blake3:bc2253f55708531f8fae46da1b26231a44ae57e1c932577012ecd1587d6b2377"
   },
   "rules": [
     {
@@ -274,7 +274,7 @@
     },
     {
       "id": "RACIAUD-030",
-      "revision": 2,
+      "revision": 1,
       "state": "D",
       "body": "A rule event MUST carry the lifecycle transition that it records, if it records one, and the id of the rule that it supersedes, if it supersedes one.",
       "added_by": "github:pleberre",
@@ -463,7 +463,7 @@
     },
     {
       "id": "RACIAUD-051",
-      "revision": 1,
+      "revision": 0,
       "state": "D",
       "body": "The constraints of an event MUST list each evaluated constraint with the result pass or fail, sorted by name.",
       "added_by": "github:pleberre",
@@ -472,7 +472,7 @@
     },
     {
       "id": "RACIAUD-052",
-      "revision": 2,
+      "revision": 0,
       "state": "D",
       "body": "A rejected outcome MUST carry a reason of constraint-violation, no-rules-in-force, invalid-change or change-rejected.",
       "added_by": "github:pleberre",
@@ -481,7 +481,7 @@
     },
     {
       "id": "RACIAUD-053",
-      "revision": 1,
+      "revision": 0,
       "state": "D",
       "body": "In a rejected change every event that caused no rejection itself MUST carry the reason change-rejected.",
       "added_by": "github:pleberre",
@@ -508,7 +508,7 @@
     },
     {
       "id": "RACIAUD-056",
-      "revision": 1,
+      "revision": 0,
       "state": "D",
       "body": "A rule event MUST record the lifecycle state of the rule as of the event.",
       "added_by": "github:pleberre",
@@ -544,7 +544,7 @@
     },
     {
       "id": "RACIAUD-060",
-      "revision": 1,
+      "revision": 0,
       "state": "D",
       "body": "A torn last line of an offline log MUST NOT be applied.",
       "added_by": "github:pleberre",
@@ -571,7 +571,7 @@
     },
     {
       "id": "RACIAUD-063",
-      "revision": 1,
+      "revision": 0,
       "state": "D",
       "body": "An applied outcome MUST NOT carry a reason or a detail.",
       "added_by": "github:pleberre",

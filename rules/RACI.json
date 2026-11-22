@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.27",
-    "timestamp": "2026-11-21T22:35:30Z",
-    "hash": "blake3:6161e0c5524878f5ae723c63fb19ff1ba7455e17c887c3a3617268bbc2859e33"
+    "timestamp": "2026-11-22T09:05:28Z",
+    "hash": "blake3:3652a76a4d194dfd255729b168c24b4ab28a034ae1cc6602514424a13434f91a"
   },
   "rules": [
     {
@@ -76,7 +76,7 @@
     },
     {
       "id": "RACI-008",
-      "revision": 1,
+      "revision": 0,
       "state": "D",
       "body": "A realm id MUST be a SteerSpec realm id: one or more dot-separated labels, each a lowercase letter followed by lowercase letters and digits.",
       "added_by": "github:pleberre",

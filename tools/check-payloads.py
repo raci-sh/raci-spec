@@ -1,15 +1,33 @@
-"""Check every raci/1 structured note in rules/ against schemas/raci-1.schema.json (SPEC.md section 6.1).
+"""Check the schemas in schemas/, then every raci/1 structured note in rules/ against
+schemas/raci-1.schema.json (SPEC.md section 6.1).
 
 Run from the repository root: python tools/check-payloads.py. Needs the jsonschema package.
-A payload fails if it is invalid or is not in canonical form (sorted members, no whitespace).
+A schema fails if it is not a valid draft 2020-12 schema or if one of its $ref targets does not
+resolve among the schemas of schemas/. A payload fails if it is invalid or is not in canonical
+form (sorted members, no whitespace).
 """
 import json,glob,sys
 from jsonschema import Draft202012Validator
-for f in sorted(glob.glob('schemas/*.schema.json')):
-    Draft202012Validator.check_schema(json.load(open(f)))
-schema=json.load(open('schemas/raci-1.schema.json'))
-v=Draft202012Validator(schema)
-bad=0;n=0
+from referencing import Registry,Resource
+from referencing.exceptions import Unresolvable
+schemas={f:json.load(open(f)) for f in sorted(glob.glob('schemas/*.schema.json'))}
+registry=Registry().with_resources((s['$id'],Resource.from_contents(s)) for s in schemas.values())
+def refs(node):
+    if isinstance(node,dict):
+        if isinstance(node.get('$ref'),str): yield node['$ref']
+        for x in node.values(): yield from refs(x)
+    elif isinstance(node,list):
+        for x in node: yield from refs(x)
+bad=0
+for f,s in schemas.items():
+    Draft202012Validator.check_schema(s)
+    resolver=registry.resolver(base_uri=s['$id'])
+    for r in sorted(set(refs(s))):
+        try: resolver.lookup(r)
+        except Unresolvable as e: print(f,'BAD unresolvable $ref',repr(r)); bad+=1
+print(len(schemas),'schemas',bad,'bad')
+v=Draft202012Validator(schemas['schemas/raci-1.schema.json'],registry=registry)
+n=0
 for f in sorted(glob.glob('rules/*.json')):
     if f.endswith('realm.json'): continue
     for note in json.load(open(f)).get('notes',[]):
