@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.198",
-    "timestamp": "2026-11-22T14:52:14Z",
-    "hash": "blake3:1b4648772f7676d0039504f87f60c2039449787b75fd03991323418cdb53e8fd"
+    "version": "0.1.200",
+    "timestamp": "2026-11-22T14:57:37Z",
+    "hash": "blake3:c5ec470a63b1ea4d0d5d594d22d9705f9ce39ac39ec2d75483e453755e4c0e01"
   },
   "rules": [
     {
@@ -780,7 +780,7 @@
       "id": "RACIAUD-086",
       "revision": 0,
       "state": "D",
-      "body": "A revert MUST record the bytes that it removes in base64, and the id of the unfinished change that it abandons, in a revert event.",
+      "body": "A revert that removes bytes MUST record them in base64 in its revert event.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -826,6 +826,15 @@
       "revision": 0,
       "state": "D",
       "body": "An event with an applied outcome MUST NOT record a failed constraint.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-092",
+      "revision": 0,
+      "state": "D",
+      "body": "A revert that abandons an unfinished change MUST record the id of that change in its revert event.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -1645,6 +1654,15 @@
     {
       "id": "RACIAUD-091/01",
       "rule_ref": "RACIAUD-091",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-092/01",
+      "rule_ref": "RACIAUD-092",
       "type": "reference",
       "content": "SPEC.md section 4.1",
       "added_by": "github:pleberre",

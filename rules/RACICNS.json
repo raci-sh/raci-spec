@@ -6,9 +6,9 @@
     "description": "The named constraints that express strictness, and how a violating change is handled (SPEC.md section 2)."
   },
   "rule_set": {
-    "version": "0.1.60",
-    "timestamp": "2026-11-22T14:52:14Z",
-    "hash": "blake3:1f3b51cbc76dbb41d29162902943ff56d44228852fd98e742df41f0825a16d4d"
+    "version": "0.1.65",
+    "timestamp": "2026-11-22T14:57:37Z",
+    "hash": "blake3:9fb7710b355755e198daed52949fa9ac0e956d5ace6e8a2978e6046552320d62"
   },
   "rules": [
     {
@@ -85,9 +85,9 @@
     },
     {
       "id": "RACICNS-009",
-      "revision": 2,
+      "revision": 3,
       "state": "D",
-      "body": "A change to a parent entry, or a new or tightened constraint, MUST also revalidate, read-only, the descendant realms of the same realm tree that its effective entries reach.",
+      "body": "A change to a parent entry, a resource created or deleted, a change of the effective conflict pairs, or a new or tightened constraint MUST also revalidate, read-only, the descendant realms of the same realm tree that its effective entries, resources or pairs reach.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
       "supersedes": null
@@ -232,6 +232,24 @@
       "revision": 0,
       "state": "D",
       "body": "Conflict pairs MUST be evaluated on the state that results from every change, including a new resource and a pair that enters force.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-026",
+      "revision": 0,
+      "state": "D",
+      "body": "A missing, ambiguous or cyclic parent link met while evaluating a conflict pair MUST reject the change with invalid-change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-027",
+      "revision": 0,
+      "state": "D",
+      "body": "An entry that names a deleted resource MUST be evaluated against conflict pairs with the last type and parent of that resource.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -475,6 +493,24 @@
     {
       "id": "RACICNS-025/01",
       "rule_ref": "RACICNS-025",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-026/01",
+      "rule_ref": "RACICNS-026",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-027/01",
+      "rule_ref": "RACICNS-027",
       "type": "reference",
       "content": "SPEC.md section 2.1",
       "added_by": "github:pleberre",

@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.67",
-    "timestamp": "2026-11-22T14:52:14Z",
-    "hash": "blake3:66e02910d50dd9af24f250ddcb67a429a87a5ca876ea86e197574975f7448f9b"
+    "timestamp": "2026-11-22T14:57:37Z",
+    "hash": "blake3:72858366afb209f1d9241052c75e56d4de9665f164d6ef975518eec048d81b75"
   },
   "rules": [
     {
@@ -276,7 +276,7 @@
       "id": "RACIINF-030",
       "revision": 0,
       "state": "D",
-      "body": "A selector MUST name exactly one source resource by its id, in the realm of the rule evaluation or an ancestor of it.",
+      "body": "A selector MUST name exactly one source resource by its id, resolved only in the realm in whose log the rule is in force and the ancestors of that realm.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
