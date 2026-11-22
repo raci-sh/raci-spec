@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.0.1](https://github.com/raci-sh/raci-spec/compare/v1.0.0...v1.0.1) (2026-11-22)
+
+
+### Bug Fixes
+
+* **spec:** allow at most one result per constraint in an event ([310795b](https://github.com/raci-sh/raci-spec/commit/310795b4ad776d0902747865d3aa8785163cf1c6))
+* **spec:** close bypasses of conflict pairs, split the revert rule ([ba8ce8f](https://github.com/raci-sh/raci-spec/commit/ba8ce8f5e1df69b74148e0a359b50787a58f709f))
+* **spec:** fail closed on unreplayable logs, pin the exact sh.raci source ([098a1a5](https://github.com/raci-sh/raci-spec/commit/098a1a56021fb81a6ce9f01e9008a52968a439bc))
+* **spec:** make event constraints an object keyed by name ([4b6efa3](https://github.com/raci-sh/raci-spec/commit/4b6efa3b89674dc250e1ac7df80ae621b1bc487b))
+* **spec:** qualify resource references by realm, define deletion ([3d2b188](https://github.com/raci-sh/raci-spec/commit/3d2b188ac48d011b1a44b3902f8a71ed9788da53))
+* **spec:** reject trailing newlines and correct the seq truncation claim ([59c763e](https://github.com/raci-sh/raci-spec/commit/59c763e5226fc2d020923735e069889efcba4f8e))
+* **spec:** replace imported rules on pin, fail closed until doctor revert ([fa282aa](https://github.com/raci-sh/raci-spec/commit/fa282aab68eae0a9f66bb5e0433c97517ce5be79))
+* **spec:** reset new-rule revisions, validate ts ranges, resolve schema refs ([0ddbe8f](https://github.com/raci-sh/raci-spec/commit/0ddbe8f334c03cb0b526b7adbf298587cfd41271))
+* **spec:** support separation of duties and selectors in version 1 ([914b40b](https://github.com/raci-sh/raci-spec/commit/914b40b0e1c379cf22dd41fd7efa5a1b85a3e25b))
+* **spec:** version events, pin content digests, close schema gaps ([8b86963](https://github.com/raci-sh/raci-spec/commit/8b86963fcc8abeb877f4a850f0b3a2e9e94e8c68))
+
+
+### Documentation
+
+* **spec:** pin the raci/1 wire format and sh.raci versioning ([e40c3a1](https://github.com/raci-sh/raci-spec/commit/e40c3a147ecdeefa303d3fda5f4ab6ddaaaab5c9))
+
 ## 1.0.0 (2026-11-21)
 
 
