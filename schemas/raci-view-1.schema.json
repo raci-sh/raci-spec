@@ -1,0 +1,354 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raci.sh/schemas/raci-view-1.schema.json",
+  "title": "raci .raci file, version 1",
+  "description": "The .raci materialised view of one realm's audit log (SPEC.md section 7). The order of entries, resources and rules_in_force is given by replay and is not expressible here. Draft.",
+  "type": "object",
+  "properties": {
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Alphabetical, no repeats: one of the 32 ordered subsets of the constraints.",
+          "type": "array",
+          "items": {
+            "$ref": "raci-event-1.schema.json#/$defs/constraint"
+          },
+          "enum": [
+            [],
+            [
+              "min-ra"
+            ],
+            [
+              "one-role-per-party"
+            ],
+            [
+              "separation-of-duties"
+            ],
+            [
+              "single-accountable"
+            ],
+            [
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party"
+            ],
+            [
+              "min-ra",
+              "separation-of-duties"
+            ],
+            [
+              "min-ra",
+              "single-accountable"
+            ],
+            [
+              "min-ra",
+              "single-responsible"
+            ],
+            [
+              "one-role-per-party",
+              "separation-of-duties"
+            ],
+            [
+              "one-role-per-party",
+              "single-accountable"
+            ],
+            [
+              "one-role-per-party",
+              "single-responsible"
+            ],
+            [
+              "separation-of-duties",
+              "single-accountable"
+            ],
+            [
+              "separation-of-duties",
+              "single-responsible"
+            ],
+            [
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "separation-of-duties"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "single-accountable"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "separation-of-duties",
+              "single-accountable"
+            ],
+            [
+              "min-ra",
+              "separation-of-duties",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "one-role-per-party",
+              "separation-of-duties",
+              "single-accountable"
+            ],
+            [
+              "one-role-per-party",
+              "separation-of-duties",
+              "single-responsible"
+            ],
+            [
+              "one-role-per-party",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "separation-of-duties",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "separation-of-duties",
+              "single-accountable"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "separation-of-duties",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "separation-of-duties",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "one-role-per-party",
+              "separation-of-duties",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "separation-of-duties",
+              "single-accountable",
+              "single-responsible"
+            ]
+          ]
+        },
+        "pairs": {
+          "description": "The pairs of the realm's own add-pair events. The order of the pairs and of the sides is given by replay and is not expressible here.",
+          "type": "array",
+          "items": {
+            "$ref": "https://raci.sh/schemas/raci-1.schema.json#/$defs/pair"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "enabled",
+        "pairs"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "pairs": {
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "enabled": {
+            "contains": {
+              "const": "separation-of-duties"
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "enabled": {
+            "not": {
+              "contains": {
+                "const": "separation-of-duties"
+              }
+            }
+          }
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "activity": {
+            "$ref": "raci-event-1.schema.json#/$defs/name"
+          },
+          "party": {
+            "$ref": "raci-event-1.schema.json#/$defs/opaqueId"
+          },
+          "resource": {
+            "$ref": "https://raci.sh/schemas/raci-1.schema.json#/$defs/resourceRef"
+          },
+          "roles": {
+            "description": "Held roles in the order A, R, C, I; never empty, since an entry with no roles is absent.",
+            "allOf": [
+              {
+                "$ref": "raci-event-1.schema.json#/$defs/roles"
+              },
+              {
+                "minLength": 1
+              }
+            ]
+          }
+        },
+        "required": [
+          "activity",
+          "party",
+          "resource",
+          "roles"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "log": {
+      "type": "object",
+      "properties": {
+        "head_hash": {
+          "$ref": "raci-event-1.schema.json#/$defs/digest"
+        },
+        "head_seq": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "head_hash",
+        "head_seq"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "head_seq": {
+            "const": 0
+          }
+        },
+        "required": [
+          "head_seq"
+        ]
+      },
+      "then": {
+        "properties": {
+          "head_hash": {
+            "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "head_hash": {
+            "not": {
+              "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      }
+    },
+    "pins": {
+      "description": "The current pin of each dependency realm, by realm id.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "raci-event-1.schema.json#/$defs/realmId"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "digest": {
+            "$ref": "raci-event-1.schema.json#/$defs/digest"
+          },
+          "version": {
+            "$ref": "raci-event-1.schema.json#/$defs/semver"
+          }
+        },
+        "required": [
+          "digest",
+          "version"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "raci": {
+      "const": "1"
+    },
+    "realm": {
+      "$ref": "raci-event-1.schema.json#/$defs/realmId"
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "$ref": "raci-event-1.schema.json#/$defs/resource"
+      }
+    },
+    "rules_in_force": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "body_hash": {
+            "$ref": "raci-event-1.schema.json#/$defs/digest"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "rule_id": {
+            "$ref": "raci-event-1.schema.json#/$defs/ruleId"
+          }
+        },
+        "required": [
+          "body_hash",
+          "revision",
+          "rule_id"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "constraints",
+    "entries",
+    "log",
+    "pins",
+    "raci",
+    "realm",
+    "resources",
+    "rules_in_force"
+  ],
+  "additionalProperties": false
+}

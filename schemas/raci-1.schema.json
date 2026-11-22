@@ -16,12 +16,18 @@
     },
     {
       "$ref": "#/$defs/activitySet"
+    },
+    {
+      "$ref": "#/$defs/conflictPair"
     }
   ],
   "$defs": {
     "name": {
       "type": "string",
-      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "role": {
       "enum": [
@@ -33,7 +39,10 @@
     },
     "concreteType": {
       "type": "string",
-      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "constraint": {
       "enum": [
@@ -297,6 +306,9 @@
             "$ref": "#/$defs/action"
           },
           "minItems": 1
+        },
+        "selector": {
+          "$ref": "#/$defs/resourceRef"
         }
       },
       "required": [
@@ -351,6 +363,32 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "required": [
+              "selector"
+            ]
+          },
+          "then": {
+            "properties": {
+              "actions": {
+                "contains": {
+                  "properties": {
+                    "action": {
+                      "enum": [
+                        "map",
+                        "strip"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ]
+                }
+              }
+            }
+          }
         }
       ],
       "additionalProperties": false
@@ -362,6 +400,148 @@
         "one-role-per-party",
         "min-ra"
       ]
+    },
+    "opaqueId": {
+      "description": "A resource id (SPEC.md section 1.1).",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "roleSet": {
+      "description": "One or more roles in the order A, R, C, I; any of them matches.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^A?R?C?I?$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "typeSelector": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/concreteType"
+            },
+            {
+              "const": "*"
+            }
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "side": {
+      "type": "object",
+      "properties": {
+        "activity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/name"
+            },
+            {
+              "const": "*"
+            }
+          ]
+        },
+        "resource": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/resourceRef"
+            },
+            {
+              "$ref": "#/$defs/typeSelector"
+            }
+          ]
+        },
+        "roles": {
+          "$ref": "#/$defs/roleSet"
+        }
+      },
+      "required": [
+        "activity",
+        "resource",
+        "roles"
+      ],
+      "additionalProperties": false
+    },
+    "pair": {
+      "description": "A conflict pair (SPEC.md section 2.1). The sides are unordered.",
+      "type": "object",
+      "properties": {
+        "relation": {
+          "enum": [
+            "same",
+            "lineage",
+            "any"
+          ]
+        },
+        "a": {
+          "$ref": "#/$defs/side"
+        },
+        "b": {
+          "$ref": "#/$defs/side"
+        }
+      },
+      "required": [
+        "relation",
+        "a",
+        "b"
+      ],
+      "additionalProperties": false
+    },
+    "conflictPair": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "conflict-pair"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "pair": {
+          "$ref": "#/$defs/pair"
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "pair"
+      ],
+      "additionalProperties": false
+    },
+    "realmId": {
+      "description": "A SteerSpec realm id, as in realm.v1.schema.json (SPEC.md section 1.1).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "resourceRef": {
+      "description": "A reference to a resource: always its realm and id (SPEC.md section 1.1).",
+      "type": "object",
+      "properties": {
+        "realm": {
+          "$ref": "#/$defs/realmId"
+        },
+        "id": {
+          "$ref": "#/$defs/opaqueId"
+        }
+      },
+      "required": [
+        "realm",
+        "id"
+      ],
+      "additionalProperties": false
     }
   }
 }

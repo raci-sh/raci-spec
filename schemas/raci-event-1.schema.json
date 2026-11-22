@@ -1,0 +1,1045 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raci.sh/schemas/raci-event-1.schema.json",
+  "title": "raci audit event, version 1",
+  "description": "One line of a realm's JSONL audit log (SPEC.md section 4.1). A common envelope, a type discriminator, and one payload object per type. Draft. An event of another format version has its own schema: read the raci member first.",
+  "type": "object",
+  "properties": {
+    "raci": {
+      "description": "The event format version.",
+      "const": "1"
+    },
+    "id": {
+      "$ref": "#/$defs/uuid7"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "ts": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "realm": {
+      "$ref": "#/$defs/realmId"
+    },
+    "type": {
+      "enum": [
+        "entry",
+        "resource",
+        "constraint",
+        "rule",
+        "pin",
+        "revert",
+        "commit"
+      ]
+    },
+    "change_id": {
+      "$ref": "#/$defs/uuid7"
+    },
+    "actor": {
+      "$ref": "#/$defs/actor"
+    },
+    "cause": {
+      "$ref": "#/$defs/cause"
+    },
+    "constraints": {
+      "description": "Each evaluated constraint, by name, with its result. An object, so canonical JSON fixes the order and allows no repeated name.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/constraint"
+      },
+      "additionalProperties": {
+        "enum": [
+          "pass",
+          "fail"
+        ]
+      }
+    },
+    "outcome": {
+      "$ref": "#/$defs/outcome"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "prev_hash": {
+      "$ref": "#/$defs/digest"
+    },
+    "hash": {
+      "$ref": "#/$defs/digest"
+    }
+  },
+  "required": [
+    "raci",
+    "id",
+    "seq",
+    "ts",
+    "realm",
+    "type",
+    "change_id",
+    "actor",
+    "constraints",
+    "outcome",
+    "payload",
+    "prev_hash",
+    "hash"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "actor": {
+            "properties": {
+              "via": {
+                "const": "inference"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "cause"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "cause"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "rule"
+          },
+          "actor": {
+            "properties": {
+              "via": {
+                "const": "import"
+              }
+            },
+            "required": [
+              "via"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "actor"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "not": {
+              "required": [
+                "transition"
+              ]
+            },
+            "properties": {
+              "state": {
+                "enum": [
+                  "P",
+                  "I"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "oneOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "entry"
+            },
+            "payload": {
+              "$ref": "#/$defs/entryPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "resource"
+            },
+            "payload": {
+              "$ref": "#/$defs/resourcePayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "constraint"
+            },
+            "payload": {
+              "$ref": "#/$defs/constraintPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "rule"
+            },
+            "payload": {
+              "$ref": "#/$defs/rulePayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "pin"
+            },
+            "payload": {
+              "$ref": "#/$defs/pinPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "revert"
+            },
+            "payload": {
+              "$ref": "#/$defs/revertPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "commit"
+            },
+            "payload": {
+              "$ref": "#/$defs/commitPayload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "rule"
+          },
+          "payload": {
+            "properties": {
+              "rule_id": {
+                "type": "string",
+                "pattern": ":"
+              }
+            },
+            "required": [
+              "rule_id"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "payload"
+        ]
+      },
+      "then": {
+        "properties": {
+          "actor": {
+            "properties": {
+              "via": {
+                "const": "import"
+              }
+            }
+          },
+          "payload": {
+            "properties": {
+              "body": {
+                "not": {
+                  "required": [
+                    "selector"
+                  ]
+                },
+                "properties": {
+                  "pair": {
+                    "properties": {
+                      "a": {
+                        "properties": {
+                          "resource": {
+                            "not": {
+                              "required": [
+                                "id"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "b": {
+                        "properties": {
+                          "resource": {
+                            "not": {
+                              "required": [
+                                "id"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "revert"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "actor": {
+            "properties": {
+              "via": {
+                "enum": [
+                  "user",
+                  "agent"
+                ]
+              }
+            }
+          },
+          "outcome": {
+            "properties": {
+              "status": {
+                "const": "applied"
+              }
+            }
+          },
+          "constraints": {
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outcome": {
+            "properties": {
+              "status": {
+                "const": "applied"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "outcome"
+        ]
+      },
+      "then": {
+        "properties": {
+          "constraints": {
+            "additionalProperties": {
+              "const": "pass"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "seq": {
+            "const": 1
+          }
+        },
+        "required": [
+          "seq"
+        ]
+      },
+      "then": {
+        "properties": {
+          "prev_hash": {
+            "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "prev_hash": {
+            "not": {
+              "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "uuid7": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "RFC 3339 in UTC with millisecond precision and the Z suffix (SPEC.md section 4.1). The pattern fixes the form and the field ranges; format date-time, asserted where the validator supports it, rejects impossible dates such as 2026-02-30.",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}Z$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^blake3:[0-9a-f]{64}$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "realmId": {
+      "description": "A SteerSpec realm id, as in realm.v1.schema.json (SPEC.md section 1.1).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "ruleId": {
+      "description": "A SteerSpec rule id, qualified by its realm id when it comes from a dependency realm, as in entity.v1.schema.json overrides (SPEC.md section 1.1).",
+      "type": "string",
+      "pattern": "^([a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*:)?[A-Z0-9]+-[0-9]{3}$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "name": {
+      "description": "Kebab-case name: activities and resource types (SPEC.md section 1.1), as in raci-1.schema.json.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "opaqueId": {
+      "description": "Party and resource ids: 1 to 256 code points, no control characters (SPEC.md section 1.1).",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "roles": {
+      "description": "Held roles in the fixed order A, R, C, I; the empty string holds none.",
+      "type": "string",
+      "pattern": "^A?R?C?I?$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "constraint": {
+      "enum": [
+        "single-accountable",
+        "single-responsible",
+        "one-role-per-party",
+        "min-ra",
+        "separation-of-duties"
+      ]
+    },
+    "enableableConstraint": {
+      "description": "separation-of-duties is not enabled by name: an add-pair switches it on (SPEC.md section 2.1).",
+      "enum": [
+        "single-accountable",
+        "single-responsible",
+        "one-role-per-party",
+        "min-ra"
+      ]
+    },
+    "base64": {
+      "description": "RFC 4648 section 4, padded, at least one byte.",
+      "type": "string",
+      "minLength": 4,
+      "pattern": "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "not": {
+        "pattern": "\\n"
+      }
+    },
+    "ruleState": {
+      "enum": [
+        "D",
+        "A",
+        "P",
+        "I",
+        "R",
+        "T"
+      ]
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+      "not": {
+        "pattern": "\\n"
+      },
+      "description": "A realm version, as in realm.v1.schema.json."
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "party": {
+          "$ref": "#/$defs/opaqueId"
+        },
+        "via": {
+          "enum": [
+            "user",
+            "agent",
+            "import",
+            "inference"
+          ]
+        }
+      },
+      "required": [
+        "party",
+        "via"
+      ],
+      "additionalProperties": false
+    },
+    "cause": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "$ref": "#/$defs/ruleId"
+        },
+        "event_id": {
+          "$ref": "#/$defs/uuid7"
+        }
+      },
+      "required": [
+        "rule_id",
+        "event_id"
+      ],
+      "additionalProperties": false
+    },
+    "outcome": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "applied",
+            "rejected"
+          ]
+        },
+        "reason": {
+          "enum": [
+            "constraint-violation",
+            "no-rules-in-force",
+            "change-rejected",
+            "invalid-change"
+          ]
+        },
+        "detail": {
+          "description": "Free text, e.g. the descendant realm and the constraint of a revalidation failure (SPEC.md section 2).",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "status": {
+            "const": "rejected"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "reason"
+        ]
+      },
+      "else": {
+        "allOf": [
+          {
+            "not": {
+              "required": [
+                "reason"
+              ]
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "detail"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "activity": {
+          "$ref": "#/$defs/name"
+        },
+        "party": {
+          "$ref": "#/$defs/opaqueId"
+        },
+        "resource": {
+          "$ref": "https://raci.sh/schemas/raci-1.schema.json#/$defs/resourceRef"
+        }
+      },
+      "required": [
+        "activity",
+        "party",
+        "resource"
+      ],
+      "additionalProperties": false
+    },
+    "entryPayload": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "enum": [
+            "add",
+            "update",
+            "remove",
+            "replace"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "before": {
+          "$ref": "#/$defs/roles"
+        },
+        "after": {
+          "$ref": "#/$defs/roles"
+        },
+        "conflict": {
+          "type": "object",
+          "properties": {
+            "kept": {
+              "$ref": "#/$defs/ruleId"
+            },
+            "dropped": {
+              "$ref": "#/$defs/ruleId"
+            }
+          },
+          "required": [
+            "kept",
+            "dropped"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "op",
+        "target",
+        "before",
+        "after"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "op": {
+            "const": "remove"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "after": {
+            "const": ""
+          }
+        }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/opaqueId"
+        },
+        "type": {
+          "$ref": "#/$defs/name"
+        },
+        "parent": {
+          "$ref": "https://raci.sh/schemas/raci-1.schema.json#/$defs/resourceRef"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "additionalProperties": false,
+      "description": "A declaration, so a bare id: its realm is the envelope's. parent is a reference."
+    },
+    "resourcePayload": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "enum": [
+            "new",
+            "delete"
+          ]
+        },
+        "resource": {
+          "$ref": "#/$defs/resource"
+        }
+      },
+      "required": [
+        "op",
+        "resource"
+      ],
+      "additionalProperties": false
+    },
+    "constraintPayload": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "constraint": {
+              "$ref": "#/$defs/enableableConstraint"
+            },
+            "op": {
+              "const": "enable"
+            }
+          },
+          "required": [
+            "constraint",
+            "op"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "constraint": {
+              "const": "separation-of-duties"
+            },
+            "op": {
+              "const": "add-pair"
+            },
+            "params": {
+              "$ref": "https://raci.sh/schemas/raci-1.schema.json#/$defs/pair"
+            }
+          },
+          "required": [
+            "constraint",
+            "op",
+            "params"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "rulePayload": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "$ref": "#/$defs/ruleId"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "state": {
+          "$ref": "#/$defs/ruleState"
+        },
+        "transition": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "$ref": "#/$defs/ruleState"
+            },
+            "to": {
+              "$ref": "#/$defs/ruleState"
+            }
+          },
+          "required": [
+            "from",
+            "to"
+          ],
+          "additionalProperties": false,
+          "description": "The lifecycle change this event records; its to equals state. Absent on an imported rule."
+        },
+        "supersedes": {
+          "$ref": "#/$defs/ruleId"
+        },
+        "format": {
+          "description": "The payload format of body (SPEC.md section 6.1).",
+          "const": "raci/1"
+        },
+        "body": {
+          "$ref": "https://raci.sh/schemas/raci-1.schema.json"
+        },
+        "body_hash": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "required": [
+        "rule_id",
+        "revision",
+        "state",
+        "format",
+        "body",
+        "body_hash"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "D"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "D"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "A"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "A"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "P"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "P"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "I"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "I"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "R"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "R"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "T"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "T"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pinPayload": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "const": "set"
+        },
+        "dependency_realm": {
+          "$ref": "#/$defs/realmId"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "required": [
+        "op",
+        "dependency_realm",
+        "version",
+        "digest"
+      ],
+      "additionalProperties": false
+    },
+    "revertPayload": {
+      "description": "Written only by a doctor revert (SPEC.md section 4.1).",
+      "type": "object",
+      "properties": {
+        "removed": {
+          "$ref": "#/$defs/base64"
+        },
+        "abandoned": {
+          "$ref": "#/$defs/uuid7"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "removed"
+          ]
+        },
+        {
+          "required": [
+            "abandoned"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "commitPayload": {
+      "type": "object",
+      "properties": {
+        "events": {
+          "description": "The ids of the other events of the change, in log order.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/uuid7"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "findings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "enum": [
+                  "no-matching-rule"
+                ]
+              },
+              "detail": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "detail"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "events"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

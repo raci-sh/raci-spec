@@ -6,9 +6,9 @@
     "description": "The RACI.sh data model: realms, parties, roles, activities, resources and entries (SPEC.md section 1)."
   },
   "rule_set": {
-    "version": "0.1.18",
-    "timestamp": "2026-11-06T16:31:17Z",
-    "hash": "blake3:d01da2a02d420db2892c3db3879d8205a7f641d489da3a75910fe3d94cf7ae5b"
+    "version": "0.1.47",
+    "timestamp": "2026-11-22T15:10:38Z",
+    "hash": "blake3:de16cb854f69d70e7e923f425eb9eda2a6f0949e926e6b71dfb67fde283040d1"
   },
   "rules": [
     {
@@ -72,6 +72,132 @@
       "body": "The creation and deletion of a resource MUST be audited events.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-008",
+      "revision": 0,
+      "state": "D",
+      "body": "A realm id MUST be a SteerSpec realm id: one or more dot-separated labels, each a lowercase letter followed by lowercase letters and digits.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-009",
+      "revision": 0,
+      "state": "D",
+      "body": "An activity and a resource type MUST be lowercase kebab-case words.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-010",
+      "revision": 0,
+      "state": "D",
+      "body": "A party id and a resource id MUST be strings of 1 to 256 Unicode code points with no control character.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-011",
+      "revision": 0,
+      "state": "D",
+      "body": "Party ids and resource ids MUST be compared as exact strings, with no case folding or normalisation.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-012",
+      "revision": 0,
+      "state": "D",
+      "body": "A resource MUST be identified by its realm and its id.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-013",
+      "revision": 0,
+      "state": "D",
+      "body": "A change that creates a resource with an id that an applied creation in the log of the same realm already used MUST be rejected with invalid-change, so an id is never reused.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-014",
+      "revision": 0,
+      "state": "D",
+      "body": "Every reference to a resource MUST carry both its realm and its id, and resolve to that resource alone, never by a search for the id.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-015",
+      "revision": 0,
+      "state": "D",
+      "body": "A change that creates a resource whose parent is not a live resource of its realm or an ancestor MUST be rejected with invalid-change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-016",
+      "revision": 0,
+      "state": "D",
+      "body": "A change that deletes a resource named as parent in its realm or a descendant MUST be rejected with invalid-change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-017",
+      "revision": 0,
+      "state": "D",
+      "body": "The declaration of a resource MUST give its bare id, its realm being the realm of the log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-018",
+      "revision": 0,
+      "state": "D",
+      "body": "A change with an entry on a resource that is not a live resource of the realm of the log or an ancestor MUST be rejected with invalid-change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-019",
+      "revision": 0,
+      "state": "D",
+      "body": "A change that deletes anything other than a live resource of the realm of the log, with its declared type and parent, MUST be rejected with invalid-change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-020",
+      "revision": 0,
+      "state": "D",
+      "body": "A change that deletes a resource on which a descendant realm holds an entry MUST be rejected with invalid-change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACI-021",
+      "revision": 0,
+      "state": "D",
+      "body": "An applied delete MUST remove every entry of its realm on the deleted resource in the same change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
       "supersedes": null
     }
   ],
@@ -137,6 +263,132 @@
       "content": "SPEC.md section 1",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACI-008/01",
+      "rule_ref": "RACI-008",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACI-009/01",
+      "rule_ref": "RACI-009",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACI-010/01",
+      "rule_ref": "RACI-010",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACI-011/01",
+      "rule_ref": "RACI-011",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACI-012/01",
+      "rule_ref": "RACI-012",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACI-013/01",
+      "rule_ref": "RACI-013",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACI-014/01",
+      "rule_ref": "RACI-014",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACI-015/01",
+      "rule_ref": "RACI-015",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACI-016/01",
+      "rule_ref": "RACI-016",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACI-017/01",
+      "rule_ref": "RACI-017",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACI-018/01",
+      "rule_ref": "RACI-018",
+      "type": "reference",
+      "content": "SPEC.md section 1.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACI-019/01",
+      "rule_ref": "RACI-019",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACI-020/01",
+      "rule_ref": "RACI-020",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACI-021/01",
+      "rule_ref": "RACI-021",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
       "revision": 0
     }
   ]

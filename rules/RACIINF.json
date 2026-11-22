@@ -6,9 +6,9 @@
     "description": "Triggered inference rules, ESIS style: shape, actions, non-recursion, evaluation order and composition of deltas (SPEC.md section 3.1)."
   },
   "rule_set": {
-    "version": "0.1.59",
-    "timestamp": "2026-11-08T18:10:48Z",
-    "hash": "blake3:8f1a6bb72353bd8e78a714e36aff62004be7f654da595e9b0c3a1039a101cb19"
+    "version": "0.1.71",
+    "timestamp": "2026-11-22T15:10:39Z",
+    "hash": "blake3:b4a4067bb1b4e01dbac81ed49579efd4284960d24b82b59edd318a51c8d8c4e3"
   },
   "rules": [
     {
@@ -270,6 +270,60 @@
       "body": "An inference action that names no activity MUST apply to every activity on the target.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-08",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-030",
+      "revision": 0,
+      "state": "D",
+      "body": "A selector MUST name exactly one source resource by realm and id, whose realm is the realm in whose log the rule is in force or an ancestor of that realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-031",
+      "revision": 0,
+      "state": "D",
+      "body": "A selector MUST be given only on a rule that has a map or strip action.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-032",
+      "revision": 0,
+      "state": "D",
+      "body": "Every map and strip action of a rule with a selector MUST use the selected resource as its source.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-033",
+      "revision": 0,
+      "state": "D",
+      "body": "A change MUST be rejected with invalid-change when it fires a rule whose selected resource does not exist or is not of the source type of the action.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-034",
+      "revision": 0,
+      "state": "D",
+      "body": "The removals of a delete MUST NOT fire inference rules.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-035",
+      "revision": 0,
+      "state": "D",
+      "body": "An inference action MUST NOT produce a delta on a resource that the change deletes.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
       "supersedes": null
     }
   ],
@@ -533,6 +587,60 @@
       "content": "SPEC.md section 3.1",
       "added_by": "github:pleberre",
       "added_at": "2026-11-08",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-030/01",
+      "rule_ref": "RACIINF-030",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-031/01",
+      "rule_ref": "RACIINF-031",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-032/01",
+      "rule_ref": "RACIINF-032",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-033/01",
+      "rule_ref": "RACIINF-033",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-034/01",
+      "rule_ref": "RACIINF-034",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-035/01",
+      "rule_ref": "RACIINF-035",
+      "type": "reference",
+      "content": "SPEC.md section 1.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
       "revision": 0
     }
   ]
