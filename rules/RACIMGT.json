@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.76",
-    "timestamp": "2026-11-22T09:36:32Z",
-    "hash": "blake3:5fd3c306b0b80e1efc60b2f5eccd83f19d6ead44e1d30632f62427d80df7fee9"
+    "timestamp": "2026-11-22T09:40:53Z",
+    "hash": "blake3:12667d04583c3957961b77485a7b1f307de561aa8b93b2d84518bb302140f449"
   },
   "rules": [
     {
@@ -303,7 +303,7 @@
       "id": "RACIMGT-033",
       "revision": 0,
       "state": "D",
-      "body": "A dependency on sh.raci whose source tag is not v followed by its declared version MUST be refused without writing to the log.",
+      "body": "A dependency on sh.raci whose source is not exactly github://raci-sh/raci-spec@vX.Y.Z/rules, with X.Y.Z its declared version, MUST be refused without writing to the log.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null

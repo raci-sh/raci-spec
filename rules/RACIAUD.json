@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.166",
-    "timestamp": "2026-11-22T09:36:32Z",
-    "hash": "blake3:80daef446dfb42eaab30fd9aab4325afccf67dd1c5e2365b6fb0e8dabbcac6d7"
+    "version": "0.1.172",
+    "timestamp": "2026-11-22T09:40:53Z",
+    "hash": "blake3:8de9f440f05139fff65829805d0955aa08b148a13fcbb6567ae6d17b858ee47e"
   },
   "rules": [
     {
@@ -694,6 +694,33 @@
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
+    },
+    {
+      "id": "RACIAUD-077",
+      "revision": 0,
+      "state": "D",
+      "body": "A log with an unsupported format version, a hash mismatch or a seq mismatch MUST be treated as not replayable.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-078",
+      "revision": 0,
+      "state": "D",
+      "body": "A command that evaluates a change or answers from RACI state MUST fail without writing when any log it depends on is not replayable.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-079",
+      "revision": 0,
+      "state": "D",
+      "body": "The view of a log that is not replayable MUST NOT be used as an input in place of that log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
     }
   ],
   "notes": [
@@ -1375,6 +1402,33 @@
     {
       "id": "RACIAUD-076/01",
       "rule_ref": "RACIAUD-076",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-077/01",
+      "rule_ref": "RACIAUD-077",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-078/01",
+      "rule_ref": "RACIAUD-078",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-079/01",
+      "rule_ref": "RACIAUD-079",
       "type": "reference",
       "content": "SPEC.md section 4.1",
       "added_by": "github:pleberre",

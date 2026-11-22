@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.92",
-    "timestamp": "2026-11-22T09:36:32Z",
-    "hash": "blake3:c9badc05a0d5ff9ae2a048f7f74633d6cd2978c1462395da9c36f15942836338"
+    "timestamp": "2026-11-22T09:40:53Z",
+    "hash": "blake3:06c133244977923888b361305cb4bdb8610b178b124990b5ce5828adc51df001"
   },
   "rules": [
     {
@@ -375,7 +375,7 @@
       "id": "RACIFILE-041",
       "revision": 0,
       "state": "D",
-      "body": "Verification MUST report one unsupported-version finding of severity error, for the first event whose format version it does not support.",
+      "body": "Verification MUST report one unsupported-version finding of severity error, with the realm of the log, for the first event of each log it reads whose format version it does not support.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -384,7 +384,7 @@
       "id": "RACIFILE-042",
       "revision": 0,
       "state": "D",
-      "body": "Beside an unsupported-version finding, verification MUST report only hash-mismatch, seq-mismatch and stale-view findings.",
+      "body": "Beside an unsupported-version finding, verification MUST report only hash-mismatch, seq-mismatch and stale-view findings for that log.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null

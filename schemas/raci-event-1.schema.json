@@ -110,6 +110,40 @@
       }
     },
     {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "rule"
+          },
+          "actor": {
+            "properties": {
+              "via": {
+                "const": "import"
+              }
+            },
+            "required": [
+              "via"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "actor"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "not": {
+              "required": [
+                "transition"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
       "oneOf": [
         {
           "properties": {
