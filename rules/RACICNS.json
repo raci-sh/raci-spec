@@ -6,9 +6,9 @@
     "description": "The named constraints that express strictness, and how a violating change is handled (SPEC.md section 2)."
   },
   "rule_set": {
-    "version": "0.1.39",
-    "timestamp": "2026-11-07T08:35:10Z",
-    "hash": "blake3:5cb26667c72a01a882275a565ce9e541a3880a59fc212d771be6a2b38987017f"
+    "version": "0.1.60",
+    "timestamp": "2026-11-22T14:52:14Z",
+    "hash": "blake3:1f3b51cbc76dbb41d29162902943ff56d44228852fd98e742df41f0825a16d4d"
   },
   "rules": [
     {
@@ -58,9 +58,9 @@
     },
     {
       "id": "RACICNS-006",
-      "revision": 1,
+      "revision": 2,
       "state": "D",
-      "body": "When separation-of-duties is enabled, a party that holds the roles of one side of a declared conflict pair MUST NOT hold the roles of the other side.",
+      "body": "When a conflict pair is in effect, a party that holds any role of one side MUST NOT hold another grant with any role of the other side on resources that stand in the relation of the pair.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
       "supersedes": null
@@ -144,6 +144,96 @@
       "body": "Violations in realms outside the realm tree of a change MUST be reported as findings when those realms next load.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-016",
+      "revision": 0,
+      "state": "D",
+      "body": "A conflict pair MUST have a relation of same, lineage or any and two sides, each with an activity, a resource selector and a set of roles.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-017",
+      "revision": 0,
+      "state": "D",
+      "body": "A side of a conflict pair MUST match a grant of an activity, resource and role when the activity and resource are selected and the role is any one of its roles.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-018",
+      "revision": 0,
+      "state": "D",
+      "body": "The relation same MUST hold only for one and the same resource.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-019",
+      "revision": 0,
+      "state": "D",
+      "body": "The relation lineage MUST hold only for one and the same resource or for two resources of which one is an ancestor of the other through parent links.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-020",
+      "revision": 0,
+      "state": "D",
+      "body": "The relation any MUST hold for any two resources in the scope of the pair.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-021",
+      "revision": 0,
+      "state": "D",
+      "body": "A single grant MUST NOT conflict with itself.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-022",
+      "revision": 0,
+      "state": "D",
+      "body": "The two sides of a conflict pair MUST be evaluated as unordered, so that a pair and its mirror are the same pair.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-023",
+      "revision": 0,
+      "state": "D",
+      "body": "The effective conflict pairs of a realm MUST be those of the applied add-pair events and of the conflict-pair rules in force in that realm and its ancestors.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-024",
+      "revision": 0,
+      "state": "D",
+      "body": "Separation of duties MUST be in effect whenever the effective conflict pairs are not empty, with no separate enable.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-025",
+      "revision": 0,
+      "state": "D",
+      "body": "Conflict pairs MUST be evaluated on the state that results from every change, including a new resource and a pair that enters force.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
       "supersedes": null
     }
   ],
@@ -299,6 +389,96 @@
       "content": "SPEC.md section 2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-016/01",
+      "rule_ref": "RACICNS-016",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-017/01",
+      "rule_ref": "RACICNS-017",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-018/01",
+      "rule_ref": "RACICNS-018",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-019/01",
+      "rule_ref": "RACICNS-019",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-020/01",
+      "rule_ref": "RACICNS-020",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-021/01",
+      "rule_ref": "RACICNS-021",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-022/01",
+      "rule_ref": "RACICNS-022",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-023/01",
+      "rule_ref": "RACICNS-023",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-024/01",
+      "rule_ref": "RACICNS-024",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-025/01",
+      "rule_ref": "RACICNS-025",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
       "revision": 0
     }
   ]

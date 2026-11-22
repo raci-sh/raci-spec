@@ -6,9 +6,9 @@
     "description": "The .raci materialised view and the raci verify report (SPEC.md sections 7 and 7.1)."
   },
   "rule_set": {
-    "version": "0.1.107",
-    "timestamp": "2026-11-22T11:34:54Z",
-    "hash": "blake3:70e1418f02a4a2763004ef9153ace144e0c5b4894e5f434ffd99b23fe522a52f"
+    "version": "0.1.109",
+    "timestamp": "2026-11-22T14:52:14Z",
+    "hash": "blake3:5c4f321b1b38c2dc0bc7d055a331c81d55141ed9f5c10c0d96bfd0c8920864f6"
   },
   "rules": [
     {
@@ -411,7 +411,7 @@
       "id": "RACIFILE-045",
       "revision": 0,
       "state": "D",
-      "body": "The conflict pairs of a .raci file of version 1 MUST be empty.",
+      "body": "The conflict pairs of a .raci file MUST be those of the applied add-pair events of the realm, each with its sides in canonical JSON order, without repeats.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -457,6 +457,15 @@
       "revision": 0,
       "state": "D",
       "body": "Verification MUST report a pin-downgrade finding of severity error when an applied pin has a lower version than an earlier applied pin of the same dependency realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-051",
+      "revision": 0,
+      "state": "D",
+      "body": "The enabled constraints of a .raci file MUST list separation-of-duties exactly when its conflict pairs are not empty.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null
@@ -909,6 +918,15 @@
       "rule_ref": "RACIFILE-050",
       "type": "reference",
       "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-051/01",
+      "rule_ref": "RACIFILE-051",
+      "type": "reference",
+      "content": "SPEC.md section 7",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "revision": 0

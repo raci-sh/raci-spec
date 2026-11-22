@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.198",
-    "timestamp": "2026-11-22T11:34:54Z",
-    "hash": "blake3:30beaf40e3ae1adffde26ab1d0dce6c2579c27626effccc20d26dfd71826627d"
+    "timestamp": "2026-11-22T14:52:14Z",
+    "hash": "blake3:1b4648772f7676d0039504f87f60c2039449787b75fd03991323418cdb53e8fd"
   },
   "rules": [
     {
@@ -247,9 +247,9 @@
     },
     {
       "id": "RACIAUD-027",
-      "revision": 1,
+      "revision": 0,
       "state": "D",
-      "body": "A constraint event MUST have a tightening operation, which in event format version 1 is only enable, so that a constraint is never disabled or removed.",
+      "body": "A constraint event MUST be limited to the operations enable and add-pair, so that a constraint is never disabled or removed.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -501,7 +501,7 @@
       "id": "RACIAUD-055",
       "revision": 0,
       "state": "D",
-      "body": "A constraint event of format version 1 MUST NOT add a conflict pair or enable separation-of-duties, as the selector syntax of pairs is not defined.",
+      "body": "A constraint event MUST carry one conflict pair as params exactly when its operation is add-pair, which is valid only for separation-of-duties.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-21",
       "supersedes": null
@@ -618,7 +618,7 @@
       "id": "RACIAUD-068",
       "revision": 0,
       "state": "D",
-      "body": "A change to the set of valid events MUST be a new event format version.",
+      "body": "After event format version 1 is frozen, a change to the set of valid events MUST be a new event format version.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
       "supersedes": null

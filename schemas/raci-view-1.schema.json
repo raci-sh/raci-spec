@@ -9,10 +9,10 @@
       "type": "object",
       "properties": {
         "enabled": {
-          "description": "Alphabetical, no repeats: one of the 16 ordered subsets of the enableable constraints.",
+          "description": "Alphabetical, no repeats: one of the 32 ordered subsets of the constraints.",
           "type": "array",
           "items": {
-            "$ref": "raci-event-1.schema.json#/$defs/enableableConstraint"
+            "$ref": "raci-event-1.schema.json#/$defs/constraint"
           },
           "enum": [
             [],
@@ -23,6 +23,9 @@
               "one-role-per-party"
             ],
             [
+              "separation-of-duties"
+            ],
+            [
               "single-accountable"
             ],
             [
@@ -34,6 +37,10 @@
             ],
             [
               "min-ra",
+              "separation-of-duties"
+            ],
+            [
+              "min-ra",
               "single-accountable"
             ],
             [
@@ -42,10 +49,22 @@
             ],
             [
               "one-role-per-party",
+              "separation-of-duties"
+            ],
+            [
+              "one-role-per-party",
               "single-accountable"
             ],
             [
               "one-role-per-party",
+              "single-responsible"
+            ],
+            [
+              "separation-of-duties",
+              "single-accountable"
+            ],
+            [
+              "separation-of-duties",
               "single-responsible"
             ],
             [
@@ -55,6 +74,11 @@
             [
               "min-ra",
               "one-role-per-party",
+              "separation-of-duties"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
               "single-accountable"
             ],
             [
@@ -64,33 +88,119 @@
             ],
             [
               "min-ra",
+              "separation-of-duties",
+              "single-accountable"
+            ],
+            [
+              "min-ra",
+              "separation-of-duties",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
               "single-accountable",
               "single-responsible"
             ],
             [
               "one-role-per-party",
+              "separation-of-duties",
+              "single-accountable"
+            ],
+            [
+              "one-role-per-party",
+              "separation-of-duties",
+              "single-responsible"
+            ],
+            [
+              "one-role-per-party",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "separation-of-duties",
               "single-accountable",
               "single-responsible"
             ],
             [
               "min-ra",
               "one-role-per-party",
+              "separation-of-duties",
+              "single-accountable"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "separation-of-duties",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "separation-of-duties",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "one-role-per-party",
+              "separation-of-duties",
+              "single-accountable",
+              "single-responsible"
+            ],
+            [
+              "min-ra",
+              "one-role-per-party",
+              "separation-of-duties",
               "single-accountable",
               "single-responsible"
             ]
           ]
         },
         "pairs": {
-          "description": "Empty in version 1: no conflict pair can be recorded until the selector syntax is defined (SPEC.md section 2.1).",
+          "description": "The pairs of the realm's own add-pair events. The order of the pairs and of the sides is given by replay and is not expressible here.",
           "type": "array",
-          "maxItems": 0
+          "items": {
+            "$ref": "https://raci.sh/schemas/raci-1.schema.json#/$defs/pair"
+          },
+          "uniqueItems": true
         }
       },
       "required": [
         "enabled",
         "pairs"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "pairs": {
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "enabled": {
+            "contains": {
+              "const": "separation-of-duties"
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "enabled": {
+            "not": {
+              "contains": {
+                "const": "separation-of-duties"
+              }
+            }
+          }
+        }
+      }
     },
     "entries": {
       "type": "array",

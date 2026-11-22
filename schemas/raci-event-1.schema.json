@@ -430,7 +430,7 @@
       ]
     },
     "enableableConstraint": {
-      "description": "separation-of-duties cannot be enabled in format version 1: it needs conflict pairs, whose selector syntax is open (SPEC.md section 2.1).",
+      "description": "separation-of-duties is not enabled by name: an add-pair switches it on (SPEC.md section 2.1).",
       "enum": [
         "single-accountable",
         "single-responsible",
@@ -678,21 +678,45 @@
       "additionalProperties": false
     },
     "constraintPayload": {
-      "description": "add-pair is reserved and invalid in format version 1 (SPEC.md section 4.1).",
       "type": "object",
-      "properties": {
-        "constraint": {
-          "$ref": "#/$defs/enableableConstraint"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "constraint": {
+              "$ref": "#/$defs/enableableConstraint"
+            },
+            "op": {
+              "const": "enable"
+            }
+          },
+          "required": [
+            "constraint",
+            "op"
+          ],
+          "additionalProperties": false
         },
-        "op": {
-          "const": "enable"
+        {
+          "type": "object",
+          "properties": {
+            "constraint": {
+              "const": "separation-of-duties"
+            },
+            "op": {
+              "const": "add-pair"
+            },
+            "params": {
+              "$ref": "https://raci.sh/schemas/raci-1.schema.json#/$defs/pair"
+            }
+          },
+          "required": [
+            "constraint",
+            "op",
+            "params"
+          ],
+          "additionalProperties": false
         }
-      },
-      "required": [
-        "constraint",
-        "op"
-      ],
-      "additionalProperties": false
+      ]
     },
     "rulePayload": {
       "type": "object",

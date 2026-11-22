@@ -37,12 +37,22 @@ Constraints are evaluated against the **effective entries** of the realm in whic
 
 ### 2.1 Separation of duties
 
-A `separation-of-duties` constraint is a list of **conflict pairs**, each a structured declaration: a party that holds `roles` on (`activity`, `resource`) A must not hold `roles` on (`activity`, `resource`) B. Example (Alice): R on Acme conflicts with A on Emca.
+A `separation-of-duties` constraint is a list of **conflict pairs**, each a structured declaration: a party that holds any of the `roles` of one side must not hold any of the `roles` of the other, on resources that stand in the pair's `relation`. Example (Alice): R on Acme conflicts with A on Emca.
+
+```json
+{ "relation": "any",
+  "a": { "activity": "*", "resource": { "id": "Acme" }, "roles": "R" },
+  "b": { "activity": "*", "resource": { "id": "Emca" }, "roles": "A" } }
+```
 
 - **Scope is the declaring realm and its descendants.** A conflict pair declared in a realm is evaluated among the entries of that realm and of its sub-realms (the effective realm path), so an inherited pair is enforced on entries created in a child. Comparisons between an entry in a parent and an entry in a descendant are allowed. Comparisons between sibling realms, or between unrelated realms, never happen.
 - **Deterministic.** The `raci` CLI evaluates conflict pairs itself, so a violating change is rejected like any other constraint violation.
 - **Tighten-only applies**: a sub-realm may add conflict pairs, never remove an inherited one.
-- Open: selector syntax for activities and resources in a pair (names, wildcards, resource types). Until it is decided no pair can be recorded, so `separation-of-duties`, which needs pairs, cannot be enabled (section 4.1).
+- **Sides.** A side is `{activity, resource, roles}`. `activity` is an activity name or `*` for every activity. `resource` is exactly one of `{"id": <resource id>}`, where the id is literal, and `{"type": <resource type>}`, where the type may be `*` for every resource. `roles` is a non-empty role string in the order A, R, C, I, and the side matches on **any** of them.
+- **Relation.** `same`: one and the same resource (e.g. who authors a rule does not publish that rule). `lineage`: the same resource, or one is an ancestor of the other through parent links (e.g. who is R on a module is not A on its audit). `any`: any two resources in scope (e.g. Acme and Emca).
+- **Conflict.** A grant is one role of one party on an activity and resource. A pair is violated when one party has two different grants, one matching each side, on resources in the relation. A grant never conflicts with itself, and two roles in one entry are two grants. The sides are unordered, so a pair and its mirror are the same pair.
+- **Declaration.** A pair comes from an `add-pair` event (section 4.1), or from a `conflict-pair` rule (section 6.1) while that rule is in force. A realm's effective pairs are those of both kinds in the realm and its ancestors. Separation of duties is in effect whenever there is one: a pair needs no separate `enable`. A pair added by event is never removed. A pair from a rule leaves with its rule.
+- **When.** Pairs are evaluated on the state that results from every change, not only entry changes: a new resource can create a lineage, and a pair entering force, by event, rule or version change, is checked against the entries that exist. A violation rejects the change.
 
 `strict` is a preset that enables `single-accountable`, `single-responsible`, `one-role-per-party` and `min-ra`. `separation-of-duties` is opt-in because it needs a conflict list.
 
@@ -64,7 +74,7 @@ A rule has:
 - **target type**: the resource type whose RACI is being derived (e.g. audit), or the wildcard `*`, which matches a resource of any type (used by default rules, which cannot name customer-defined types).
 - **operation**: the change that fires the rule. `new` or `delete` are resource events; `add`, `update` or `remove` are entry events (on the trigger type, or on the target itself when there is no trigger type).
 - **trigger type** (optional): the resource type whose entry change fires the rule (e.g. module, location). Absent for a change on the target itself. A rule with a trigger type must have an entry operation (`add`, `update` or `remove`), never `new` or `delete`, and fires on entry events of that type with that operation, for each target whose source (below) binds to the changed resource.
-- **selector** (optional): names the source resource explicitly, instead of the default search below (open: selector syntax).
+- **selector** (optional): `{"id": <resource id>}`, names the one source resource explicitly, instead of the default search below. Valid only on a rule with a `map` or `strip` action.
 - **actions**, from a small vocabulary (taken from ESIS):
   - `map(source-type, from-role, to-role)`: parties holding `from-role` on the source get `to-role` on the target. ESIS example: module R becomes audit A, module A becomes audit I.
   - `add-issuer(role)`: the party creating the target gets `role`. Only valid in rules whose operation is `new`, the one operation that has a creating party.
@@ -74,9 +84,9 @@ An action may name an **activity**; an action that names none applies to every a
 
 Any action may carry the attribute `add-only`: it then adds missing entries and never changes an existing one.
 
-**Source binding.** `map` and `strip` locate their source as the nearest resource of the action's `source-type`, searching the target itself first and then its parent links. So an action whose source type is the target's own type reads the target (the case of an entry event on the target with no trigger type), and `map(module, R, A)` on a new audit reads the audit's parent module. A rule that names a selector uses it instead.
+**Source binding.** `map` and `strip` locate their source as the nearest resource of the action's `source-type`, searching the target itself first and then its parent links. So an action whose source type is the target's own type reads the target (the case of an entry event on the target with no trigger type), and `map(module, R, A)` on a new audit reads the audit's parent module. A rule that names a selector uses that resource instead, for each of its `map` and `strip` actions. It is looked up in the realm of the change and its ancestors. If it does not exist, or is not of an action's `source-type`, a change that fires the rule is rejected with `invalid-change`, so a `strip` is never skipped silently.
 
-**Default rules.** The `sh.raci` realm ships a minimal default set that customer realms inherit and may override (section 6). It has one rule: on `new` of any type (`*`), `add-issuer(A)`, so the party that creates a resource is Accountable for it. This satisfies `min-ra` and the strict preset on a resource with no parent. Rules that map roles from a parent or trigger resource need a source selector and are left to customer realms until the selector syntax is decided.
+**Default rules.** The `sh.raci` realm ships a minimal default set that customer realms inherit and may override (section 6). It has one rule: on `new` of any type (`*`), `add-issuer(A)`, so the party that creates a resource is Accountable for it. This satisfies `min-ra` and the strict preset on a resource with no parent. Rules that map roles from another resource depend on customer-defined types or ids and are left to customer realms.
 
 Two ESIS semantics to keep:
 
@@ -107,7 +117,7 @@ Rule management is RACI too: a SteerSpec rule is a resource of type `rule`, and 
 - `retire`: move a rule out of state `P` or `I`.
 - `override`: author a rule that overrides an inherited rule.
 
-The `sh.raci` realm declares these activities as a structured `activity-set` (RACIDMGT-001) and ships **no inference rule of its own** for them. The generic default (section 3.1) already gives the creator of a new `rule`, as of any resource, the role A on every activity. A rule-specific default such as R on `author` would add a second role for the same party and violate `one-role-per-party` under the strict preset, and the current inference actions cannot scope a generic default away from one resource type. A realm that wants the drafter kept apart from the approver assigns the roles for `publish`, `retire` and `override` explicitly, and may pair them with `author` in a `separation-of-duties` conflict (section 2.1).
+The `sh.raci` realm declares these activities as a structured `activity-set` (RACIDMGT-001) and ships **no inference rule of its own** for them. The generic default (section 3.1) already gives the creator of a new `rule`, as of any resource, the role A on every activity. A rule-specific default such as R on `author` would add a second role for the same party and violate `one-role-per-party` under the strict preset, and the current inference actions cannot scope a generic default away from one resource type. A realm that wants the drafter kept apart from the approver assigns the roles for `publish`, `retire` and `override` explicitly, and may pair them with `author` in a `separation-of-duties` conflict with relation `same` (section 2.1).
 
 ## 4. Audit
 
@@ -158,8 +168,8 @@ Payload for `type: resource`:
 Payload for `type: constraint`:
 
 - `constraint`: the constraint name (e.g. `single-accountable`, `separation-of-duties`).
-- `op`: `enable` (tighten-only, so there is no disable or remove).
-- `add-pair`, with the conflict pair as `params`, is reserved: its shape follows the selector syntax, which is open (section 2.1), so it is invalid in format version 1. So is `enable` of `separation-of-duties`, which cannot take effect without pairs. Defining them is a new format version.
+- `op`: `enable` or `add-pair` (tighten-only, so there is no disable or remove).
+- `params`: present exactly for `add-pair`, which is valid only for `separation-of-duties`: one conflict pair (section 2.1). `add-pair` is how that constraint is switched on, so `enable` takes the other four.
 
 Payload for `type: rule`:
 
@@ -181,7 +191,7 @@ Payload for `type: revert`, written only by a doctor revert (below), with at lea
 - `abandoned`: the `change_id` of the unfinished change immediately before the revert. Its events stay in the log and are never applied. A `revert` that names any other change is not a valid event (`hash-mismatch`).
 - A revert is a change of its own: its `outcome` is `applied`, its `constraints` is empty, its `actor.via` is `user` or `agent`, and its commit marker follows it. It changes no RACI state.
 
-**Format versions.** This section is version `1` of the event format. It is independent of the `raci` member of the `.raci` file (section 7) and of the payload format (section 6.1), though each event version names the payload formats it allows. Any change to the set of valid events is a new version, so defining `add-pair` or admitting `raci/2` payloads makes event version `2`. A log may hold events of several versions.
+**Format versions.** This section is version `1` of the event format. It is independent of the `raci` member of the `.raci` file (section 7) and of the payload format (section 6.1), though each event version names the payload formats it allows. Version 1 and `raci/1` are frozen from the first release of the `raci` CLI that writes logs. Until then they may change in place. From then on any change to the set of valid events is a new version, so admitting `raci/2` payloads makes event version `2`. A log may hold events of several versions.
 
 - Every version keeps the members `raci`, `seq`, `prev_hash` and `hash`, the definition of `hash`, and the line format of the log file, so any verifier can check the chain of any log.
 - Verification reads `raci` before it validates the event against that version's schema. A line whose `raci` is missing, or is not a string holding a positive decimal integer without leading zeros, is not an event (`hash-mismatch`).
@@ -225,7 +235,7 @@ The structured source of a RACI.sh configuration rule is the content of a SteerS
 
 - **Payload.** A JSON object in RFC 8785 canonical form (the form of the `.raci` file, section 7): sorted members, no insignificant whitespace, no duplicate member. The CLI canonicalises on load. The `body_hash` of a `rule` event (section 4.1) is the blake3 of this canonical payload.
 - **Closed.** A payload has exactly the members its kind defines. An unknown kind, an unknown member or a missing required member makes the payload invalid: it is not evaluated, and loading it is an error, never silently skipped.
-- **Versioning.** `1` is the version of this payload format. It is independent of the `raci` member of the `.raci` file (section 7), which versions that file, and of the `raci` member of an event (section 4.1), which versions the event. A `rule` event records the payload format as `format`. Any change to the set of valid payloads, including a new kind or a new optional member, is a new format version (`raci/2`), because a closed evaluator rejects what it does not know.
+- **Versioning.** `1` is the version of this payload format. It is independent of the `raci` member of the `.raci` file (section 7), which versions that file, and of the `raci` member of an event (section 4.1), which versions the event. A `rule` event records the payload format as `format`. `raci/1` is frozen with event version 1 (section 4.1). From then on any change to the set of valid payloads, including a new kind or a new optional member, is a new format version (`raci/2`), because a closed evaluator rejects what it does not know.
 - **Identity.** `kind` selects the payload shape. `name` labels the configuration item (a preset, a constraint, an inference rule, an activity set) and is a lowercase kebab-case word. In the audit log a rule is identified by its SteerSpec rule id (`rule_id`, section 4.1), qualified by the realm id when the rule comes from a dependency realm, as `<realm id>:<rule id>` (the form SteerSpec uses in `overrides`), so that two realms can each have an `-001`. A `name` is unique per kind among the in-force rules of a realm path, except where one rule overrides or supersedes another; the superseding rule keeps the name while its rule id changes.
 
 | Kind | Members (required unless marked optional) | Meaning |
@@ -233,11 +243,12 @@ The structured source of a RACI.sh configuration rule is the content of a SteerS
 | `preset` | `name`, `enable`: the constraint names to switch on (at least one, no repeats) | A named bundle of constraints (section 2). A preset cannot enable `separation-of-duties`, which needs conflict pairs. |
 | `constraint-default` | `name`: a constraint name; `requires` (optional): `pairs` | The default configuration of one constraint. `requires: pairs` is valid only for `separation-of-duties`: it only takes effect together with a list of conflict pairs. |
 | `inference` | `name`, `target-type`, `operation`, `actions`; `trigger-type` (optional) | An inference rule (section 3.1). |
+| `conflict-pair` | `name`, `pair`: one conflict pair `{relation, a, b}` (section 2.1) | A separation-of-duties pair, in effect while the rule is in force. |
 | `activity-set` | `name`, `resource-type`, `activities`: names, at least one, no repeats | The activities defined on a resource type (section 3.2). |
 
 An **inference** payload follows section 3.1:
 
-- `target-type` is a resource type or the wildcard `*` (only here). `operation` is `new`, `delete`, `add`, `update` or `remove`. `trigger-type`, a concrete type, is allowed only with `add`, `update` or `remove`. `selector` is reserved: its grammar is open (section 3.1), so a payload with a `selector` member is invalid until it is defined.
+- `target-type` is a resource type or the wildcard `*` (only here). `operation` is `new`, `delete`, `add`, `update` or `remove`. `trigger-type`, a concrete type, is allowed only with `add`, `update` or `remove`. `selector`, optional and allowed only with a `map` or `strip` action, is `{"id": <resource id>}` (section 3.1).
 - `actions` is a non-empty list, in order. Each action has `action` (`map`, `add-issuer` or `strip`), an optional `activity` (absent means every activity on the target, section 3.1), and an optional boolean `add-only`. `map` also has `source-type`, `from-role` and `to-role`; `add-issuer` has `role` and is valid only when `operation` is `new`; `strip` has `source-type`, `held-role` and `role`. A `source-type` is a concrete type, never `*`. Roles are `R`, `A`, `C` or `I`.
 
 **Not defined here.** The mapping from a payload to the prose body of a rendered rule (the rendering of section 6) is not defined yet: the default rules' bodies are authored by hand beside their payloads, and the rule that a rendered rule is never hand-edited takes effect with the renderer.
@@ -297,7 +308,7 @@ Shape:
 - `rules_in_force` lists every rule recorded in force in this realm's log (section 6, including inherited ones) with its `body_hash`. Verification compares these with the log's `rule` events and with the structured rule sources without replaying the whole log.
 - `pins` is an object keyed by dependency realm id, so it holds one pin per realm in canonical order. It is derived from the log's `pin` events (section 4.1): the current version and digest of each dependency realm the log was evaluated against (e.g. the `sh.raci` version). Verification recomputes it by replay.
 - `constraints` lists the constraints recorded by this realm's own `constraint` events. The effective set (the union along the realm path, section 3) is computed at load and not embedded.
-- `pairs` is empty in version 1: no pair can be recorded until the selector syntax, which is open (section 2.1), is defined.
+- `pairs` holds the pairs of this realm's own `add-pair` events, each with the side whose canonical JSON sorts first as `a`, and without repeats. `enabled` lists `separation-of-duties` exactly when `pairs` is not empty. Pairs from rules are not embedded: their rules are in `rules_in_force`, and their bodies in the log.
 - `resources` and `entries` use the identifier forms of section 1.1, `pins` the semantic versions of section 6.2. `schemas/raci-view-1.schema.json` is the machine-checkable form of this shape; it checks the order of `enabled`, whose values are a closed set. It cannot check the other array orders: replay gives them, and a file in another order is a `view-mismatch`.
 
 ### 7.1 Verification report
@@ -333,4 +344,4 @@ A commit marker's `findings` (section 4.1) are the subset recorded at change tim
 
 ## Open questions
 
-Tracked in beads (`bd list`): selector syntax for activities and resources, rendering payloads into rule bodies, and merging concurrent offline logs. Also undecided: merge-versus-override of roles across realm levels, and evaluating constraints against effective entries (sections 2 and 3).
+Tracked in beads (`bd list`): rendering payloads into rule bodies, and merging concurrent offline logs. Also undecided: merge-versus-override of roles across realm levels, and evaluating constraints against effective entries (sections 2 and 3).
