@@ -38,10 +38,83 @@
       "$ref": "#/$defs/cause"
     },
     "constraints": {
+      "description": "At most one result per constraint. The order by name is canonical and is checked by the CLI, not by this schema.",
       "type": "array",
       "items": {
         "$ref": "#/$defs/constraintResult"
-      }
+      },
+      "allOf": [
+        {
+          "contains": {
+            "properties": {
+              "name": {
+                "const": "single-accountable"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          },
+          "minContains": 0,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "name": {
+                "const": "single-responsible"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          },
+          "minContains": 0,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "name": {
+                "const": "one-role-per-party"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          },
+          "minContains": 0,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "name": {
+                "const": "min-ra"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          },
+          "minContains": 0,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "name": {
+                "const": "separation-of-duties"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          },
+          "minContains": 0,
+          "maxContains": 1
+        }
+      ]
     },
     "outcome": {
       "$ref": "#/$defs/outcome"
