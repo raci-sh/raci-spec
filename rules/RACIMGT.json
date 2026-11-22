@@ -6,9 +6,9 @@
     "description": "Rules in force, bootstrap, rendering into SteerSpec and customer realms (SPEC.md section 6)."
   },
   "rule_set": {
-    "version": "0.1.64",
-    "timestamp": "2026-11-21T22:35:30Z",
-    "hash": "blake3:61cb623ec2f597ed349fba9923a8eab4584edc8061a2e3aef6f5badd93225deb"
+    "version": "0.1.76",
+    "timestamp": "2026-11-22T09:36:32Z",
+    "hash": "blake3:5fd3c306b0b80e1efc60b2f5eccd83f19d6ead44e1d30632f62427d80df7fee9"
   },
   "rules": [
     {
@@ -213,7 +213,7 @@
       "id": "RACIMGT-023",
       "revision": 0,
       "state": "D",
-      "body": "Every release of the sh.raci realm MUST be tagged vX.Y.Z with X.Y.Z equal to its realm.version.",
+      "body": "Every release of the sh.raci realm after 1.0.0 MUST be tagged vX.Y.Z with X.Y.Z equal to its realm.version.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-21",
       "supersedes": null
@@ -297,6 +297,60 @@
       "body": "An init or a version change MUST record rule events only for fetched rules in state P or I.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-033",
+      "revision": 0,
+      "state": "D",
+      "body": "A dependency on sh.raci whose source tag is not v followed by its declared version MUST be refused without writing to the log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-034",
+      "revision": 0,
+      "state": "D",
+      "body": "Version 1.0.0 of sh.raci MUST NOT be pinned, since the realm.version at its tag is 0.1.0.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-035",
+      "revision": 0,
+      "state": "D",
+      "body": "The digest of a fetched realm MUST be blake3 over the canonical JSON of an object that maps the relative path of each of its JSON files to the blake3 of the canonical JSON of that file.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-036",
+      "revision": 0,
+      "state": "D",
+      "body": "A fetched realm that holds a symbolic link or a JSON file that is not I-JSON MUST be refused.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-037",
+      "revision": 0,
+      "state": "D",
+      "body": "The first pin of a version of a dependency realm in a log MUST be made from a fetch of its source and never from a cached copy.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIMGT-038",
+      "revision": 0,
+      "state": "D",
+      "body": "Content whose digest differs from that of an applied pin of the same realm and version in the log MUST be refused without writing to the log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
       "supersedes": null
     }
   ],
@@ -587,6 +641,60 @@
       "content": "SPEC.md section 6.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-033/01",
+      "rule_ref": "RACIMGT-033",
+      "type": "reference",
+      "content": "SPEC.md section 6.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-034/01",
+      "rule_ref": "RACIMGT-034",
+      "type": "reference",
+      "content": "SPEC.md section 6.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-035/01",
+      "rule_ref": "RACIMGT-035",
+      "type": "reference",
+      "content": "SPEC.md section 6.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-036/01",
+      "rule_ref": "RACIMGT-036",
+      "type": "reference",
+      "content": "SPEC.md section 6.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-037/01",
+      "rule_ref": "RACIMGT-037",
+      "type": "reference",
+      "content": "SPEC.md section 6.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIMGT-038/01",
+      "rule_ref": "RACIMGT-038",
+      "type": "reference",
+      "content": "SPEC.md section 6.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
       "revision": 0
     }
   ]

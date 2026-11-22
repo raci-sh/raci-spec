@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.145",
-    "timestamp": "2026-11-22T09:25:13Z",
-    "hash": "blake3:43bae16428db83f30412809e2a7b988ffb94a2ce03e10a9e683f68907a07ebb6"
+    "version": "0.1.166",
+    "timestamp": "2026-11-22T09:36:32Z",
+    "hash": "blake3:80daef446dfb42eaab30fd9aab4325afccf67dd1c5e2365b6fb0e8dabbcac6d7"
   },
   "rules": [
     {
@@ -247,9 +247,9 @@
     },
     {
       "id": "RACIAUD-027",
-      "revision": 0,
+      "revision": 1,
       "state": "D",
-      "body": "A constraint event MUST be limited to the operations enable and add-pair, so that a constraint is never disabled or removed.",
+      "body": "A constraint event MUST have a tightening operation, which in event format version 1 is only enable, so that a constraint is never disabled or removed.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -501,7 +501,7 @@
       "id": "RACIAUD-055",
       "revision": 0,
       "state": "D",
-      "body": "A constraint event MUST carry params exactly when its operation is add-pair, which is valid only for separation-of-duties.",
+      "body": "A constraint event of format version 1 MUST NOT add a conflict pair or enable separation-of-duties, as the selector syntax of pairs is not defined.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-21",
       "supersedes": null
@@ -555,7 +555,7 @@
       "id": "RACIAUD-061",
       "revision": 0,
       "state": "D",
-      "body": "Every audit event MUST be valid against schemas/raci-event-1.schema.json.",
+      "body": "Every audit event of format version 1 MUST be valid against schemas/raci-event-1.schema.json.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-21",
       "supersedes": null
@@ -603,6 +603,96 @@
       "body": "The to state of the transition of a rule event MUST equal its recorded state.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-21",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-067",
+      "revision": 0,
+      "state": "D",
+      "body": "Every audit event MUST carry its format version in the raci member, the string 1 for this format.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-068",
+      "revision": 0,
+      "state": "D",
+      "body": "A change to the set of valid events MUST be a new event format version.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-069",
+      "revision": 0,
+      "state": "D",
+      "body": "Every event format version MUST keep the raci, seq, prev_hash and hash members, the definition of the hash and the line format of the log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-070",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST read the format version of an event before validating the event against a schema.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-071",
+      "revision": 0,
+      "state": "D",
+      "body": "A log line whose raci member is not a string holding a positive decimal integer without leading zeros MUST be treated as not being an event.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-072",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST check the hash, prev_hash and seq of events whose format version it does not support.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-073",
+      "revision": 0,
+      "state": "D",
+      "body": "A log that holds an event of an unsupported format version MUST NOT be replayed.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-074",
+      "revision": 0,
+      "state": "D",
+      "body": "The CLI MUST NOT append to a log that holds an event of an unsupported format version, or rebuild its view.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-075",
+      "revision": 0,
+      "state": "D",
+      "body": "A rule event MUST carry the payload format of its body, which is raci/1 in event format version 1.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-076",
+      "revision": 0,
+      "state": "D",
+      "body": "A pin event MUST carry the digest of the content that the pinned version resolved to.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
       "supersedes": null
     }
   ],
@@ -1199,6 +1289,96 @@
       "content": "SPEC.md section 4.1",
       "added_by": "github:pleberre",
       "added_at": "2026-11-21",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-067/01",
+      "rule_ref": "RACIAUD-067",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-068/01",
+      "rule_ref": "RACIAUD-068",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-069/01",
+      "rule_ref": "RACIAUD-069",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-070/01",
+      "rule_ref": "RACIAUD-070",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-071/01",
+      "rule_ref": "RACIAUD-071",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-072/01",
+      "rule_ref": "RACIAUD-072",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-073/01",
+      "rule_ref": "RACIAUD-073",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-074/01",
+      "rule_ref": "RACIAUD-074",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-075/01",
+      "rule_ref": "RACIAUD-075",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-076/01",
+      "rule_ref": "RACIAUD-076",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-22",
       "revision": 0
     }
   ]

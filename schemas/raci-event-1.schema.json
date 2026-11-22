@@ -2,9 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raci.sh/schemas/raci-event-1.schema.json",
   "title": "raci audit event, version 1",
-  "description": "One line of a realm's JSONL audit log (SPEC.md section 4.1). A common envelope, a type discriminator, and one payload object per type. Draft.",
+  "description": "One line of a realm's JSONL audit log (SPEC.md section 4.1). A common envelope, a type discriminator, and one payload object per type. Draft. An event of another format version has its own schema: read the raci member first.",
   "type": "object",
   "properties": {
+    "raci": {
+      "description": "The event format version.",
+      "const": "1"
+    },
     "id": {
       "$ref": "#/$defs/uuid7"
     },
@@ -64,6 +68,7 @@
     }
   },
   "required": [
+    "raci",
     "id",
     "seq",
     "ts",
@@ -242,6 +247,15 @@
         "one-role-per-party",
         "min-ra",
         "separation-of-duties"
+      ]
+    },
+    "enableableConstraint": {
+      "description": "separation-of-duties cannot be enabled in format version 1: it needs conflict pairs, whose selector syntax is open (SPEC.md section 2.1).",
+      "enum": [
+        "single-accountable",
+        "single-responsible",
+        "one-role-per-party",
+        "min-ra"
       ]
     },
     "ruleState": {
@@ -475,51 +489,21 @@
       "additionalProperties": false
     },
     "constraintPayload": {
+      "description": "add-pair is reserved and invalid in format version 1 (SPEC.md section 4.1).",
       "type": "object",
       "properties": {
         "constraint": {
-          "$ref": "#/$defs/constraint"
+          "$ref": "#/$defs/enableableConstraint"
         },
         "op": {
-          "enum": [
-            "enable",
-            "add-pair"
-          ]
-        },
-        "params": {
-          "description": "The conflict pair of an add-pair. Its shape waits on the selector syntax (SPEC.md section 2.1).",
-          "type": "object"
+          "const": "enable"
         }
       },
       "required": [
         "constraint",
         "op"
       ],
-      "additionalProperties": false,
-      "if": {
-        "properties": {
-          "op": {
-            "const": "add-pair"
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "params"
-        ],
-        "properties": {
-          "constraint": {
-            "const": "separation-of-duties"
-          }
-        }
-      },
-      "else": {
-        "not": {
-          "required": [
-            "params"
-          ]
-        }
-      }
+      "additionalProperties": false
     },
     "rulePayload": {
       "type": "object",
@@ -549,10 +533,14 @@
             "to"
           ],
           "additionalProperties": false,
-          "description": "The lifecycle change this event records; its to equals state (checked by the CLI). Absent on an imported rule."
+          "description": "The lifecycle change this event records; its to equals state. Absent on an imported rule."
         },
         "supersedes": {
           "$ref": "#/$defs/ruleId"
+        },
+        "format": {
+          "description": "The payload format of body (SPEC.md section 6.1).",
+          "const": "raci/1"
         },
         "body": {
           "$ref": "https://raci.sh/schemas/raci-1.schema.json"
@@ -565,10 +553,151 @@
         "rule_id",
         "revision",
         "state",
+        "format",
         "body",
         "body_hash"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "D"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "D"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "A"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "A"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "P"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "P"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "I"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "I"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "R"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "R"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "T"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "transition": {
+                "properties": {
+                  "to": {
+                    "const": "T"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "pinPayload": {
       "type": "object",
@@ -581,12 +710,16 @@
         },
         "version": {
           "$ref": "#/$defs/semver"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
         }
       },
       "required": [
         "op",
         "dependency_realm",
-        "version"
+        "version",
+        "digest"
       ],
       "additionalProperties": false
     },

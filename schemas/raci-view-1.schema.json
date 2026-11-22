@@ -11,17 +11,14 @@
         "enabled": {
           "type": "array",
           "items": {
-            "$ref": "raci-event-1.schema.json#/$defs/constraint"
+            "$ref": "raci-event-1.schema.json#/$defs/enableableConstraint"
           },
           "uniqueItems": true
         },
         "pairs": {
-          "description": "Conflict pairs of separation-of-duties. Their shape follows the selector syntax, which is open (SPEC.md section 2.1).",
+          "description": "Empty in version 1: no conflict pair can be recorded until the selector syntax is defined (SPEC.md section 2.1).",
           "type": "array",
-          "items": {
-            "type": "object"
-          },
-          "uniqueItems": true
+          "maxItems": 0
         }
       },
       "required": [
@@ -90,12 +87,16 @@
           "dependency_realm": {
             "$ref": "raci-event-1.schema.json#/$defs/realmId"
           },
+          "digest": {
+            "$ref": "raci-event-1.schema.json#/$defs/digest"
+          },
           "version": {
             "$ref": "raci-event-1.schema.json#/$defs/semver"
           }
         },
         "required": [
           "dependency_realm",
+          "digest",
           "version"
         ],
         "additionalProperties": false

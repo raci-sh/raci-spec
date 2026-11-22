@@ -46,6 +46,8 @@
           "enum": [
             "hash-mismatch",
             "seq-mismatch",
+            "unsupported-version",
+            "pin-mismatch",
             "view-mismatch",
             "unrecorded-rule",
             "descendant-violation",
@@ -80,6 +82,8 @@
             "enum": [
               "hash-mismatch",
               "seq-mismatch",
+              "unsupported-version",
+              "pin-mismatch",
               "view-mismatch",
               "unrecorded-rule",
               "descendant-violation"

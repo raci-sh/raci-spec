@@ -42,7 +42,7 @@ A `separation-of-duties` constraint is a list of **conflict pairs**, each a stru
 - **Scope is the declaring realm and its descendants.** A conflict pair declared in a realm is evaluated among the entries of that realm and of its sub-realms (the effective realm path), so an inherited pair is enforced on entries created in a child. Comparisons between an entry in a parent and an entry in a descendant are allowed. Comparisons between sibling realms, or between unrelated realms, never happen.
 - **Deterministic.** The `raci` CLI evaluates conflict pairs itself, so a violating change is rejected like any other constraint violation.
 - **Tighten-only applies**: a sub-realm may add conflict pairs, never remove an inherited one.
-- Open: selector syntax for activities and resources in a pair (names, wildcards, resource types).
+- Open: selector syntax for activities and resources in a pair (names, wildcards, resource types). Until it is decided no pair can be recorded, so `separation-of-duties`, which needs pairs, cannot be enabled (section 4.1).
 
 `strict` is a preset that enables `single-accountable`, `single-responsible`, `one-role-per-party` and `min-ra`. `separation-of-duties` is opt-in because it needs a conflict list.
 
@@ -119,6 +119,7 @@ One JSON object per event. Every event has a common envelope, a `type` discrimin
 
 Envelope (all types). Every member is required except `cause`:
 
+- `raci`: the event format version, the string `"1"` for the format of this section (see **Format versions** below).
 - `id`: the event id, a UUIDv7 in lowercase canonical text form (`xxxxxxxx-xxxx-7xxx-yxxx-xxxxxxxxxxxx`).
 - `seq`: the per-realm sequence number. The first event of a realm has `seq` 1 and each later event the previous `seq` plus one, with no gap and no repeat, so a removed or reordered event is detectable even where the chain was re-linked, unless the events were also renumbered. Removing events from the end of the log leaves both `seq` and the chain valid: detecting that needs a head recorded outside the log, such as the view's `log` member (section 7).
 - `ts`: the time the CLI wrote the event, RFC 3339 in UTC with millisecond precision and the `Z` suffix, e.g. `2026-11-21T10:00:00.000Z`. It is informational: order is `seq`, never `ts`.
@@ -130,7 +131,7 @@ Envelope (all types). Every member is required except `cause`:
 - `constraints`: an object that maps the name of each enabled constraint that was evaluated to `pass` or `fail`, e.g. `{"min-ra":"pass"}`. Canonical JSON fixes the order of the names and allows none to repeat: a log line that repeats one is not an event (`hash-mismatch`, section 7.1). Always present; an empty object states that no constraint was evaluated (e.g. on a `pin` or `commit` event).
 - `outcome`: `{status, reason, detail}`. `status` is `applied` or `rejected`. `reason` is present exactly when the status is `rejected` and is one of: `constraint-violation` (this event failed an enabled constraint, including `min-ra` on a new target that no inference rule matched, section 3.1, and a failed revalidation of a descendant realm, section 2), `no-rules-in-force` (section 6), `invalid-change` (the change is malformed, e.g. it names an unknown resource), `change-rejected` (this event caused no rejection itself, but another event of the same change did). `detail` is optional free text on a rejected outcome, e.g. the descendant realm and the constraint of a failed revalidation.
 - `payload`: the type-specific object below.
-- `hash`, `prev_hash`: `hash` is blake3 over the canonical JSON of the event without the `hash` member and with `prev_hash` included. **Canonical JSON** throughout this specification is RFC 8785 (JCS): keys sorted, no insignificant whitespace, defined string escaping and number formatting. Every digest in the log and in the `.raci` file (`hash`, `prev_hash`, `body_hash`, `head_hash`) is the string `blake3:` followed by 64 lowercase hexadecimal characters, as in SteerSpec's `rule_set.hash`. The first event of a realm has the all-zero `prev_hash`, `blake3:` followed by 64 zeros.
+- `hash`, `prev_hash`: `hash` is blake3 over the canonical JSON of the event without the `hash` member and with `prev_hash` included. **Canonical JSON** throughout this specification is RFC 8785 (JCS): keys sorted, no insignificant whitespace, defined string escaping and number formatting. Every digest in the log and in the `.raci` file (`hash`, `prev_hash`, `body_hash`, `head_hash`, a pin's `digest`) is the string `blake3:` followed by 64 lowercase hexadecimal characters, as in SteerSpec's `rule_set.hash`. The first event of a realm has the all-zero `prev_hash`, `blake3:` followed by 64 zeros.
 
 Payload for `type: entry`:
 
@@ -157,20 +158,28 @@ Payload for `type: resource`:
 Payload for `type: constraint`:
 
 - `constraint`: the constraint name (e.g. `single-accountable`, `separation-of-duties`).
-- `op`: `enable` or `add-pair` (tighten-only, so there is no disable or remove).
-- `params`: present exactly for `add-pair`, which is valid only for `separation-of-duties`: the conflict pair. Its shape follows the selector syntax, which is open (section 2.1).
+- `op`: `enable` (tighten-only, so there is no disable or remove).
+- `add-pair`, with the conflict pair as `params`, is reserved: its shape follows the selector syntax, which is open (section 2.1), so it is invalid in format version 1. So is `enable` of `separation-of-duties`, which cannot take effect without pairs. Defining them is a new format version.
 
 Payload for `type: rule`:
 
 - `rule_id` (section 1.1), `revision` (the SteerSpec rule revision, an integer), `state` (the SteerSpec lifecycle state of the rule as of this event: `D`, `A`, `P`, `I`, `R` or `T`).
 - `transition` (optional): the lifecycle state change `{from, to}` this event records, with `to` equal to `state`. A rule imported by an init or a version change (section 6.2) records its state with no transition, since the change happened in the dependency realm.
 - `supersedes` (optional): the id of the rule this rule replaces, when it replaces one.
+- `format`: the payload format of `body`, `raci/1` in format version 1. `body_hash` does not cover it; the event's `hash` does. A structured source matches a `rule` event only if both its format and its payload are the same (`unrecorded-rule`, section 7.1).
 - `body`: the full structured rule body, the parsed `raci/1` payload object (section 6.1), so replay is self-contained, and `body_hash`, blake3 over the canonical JSON of `body` alone, to verify the rendered SteerSpec rule and the authoring source against it.
 
 Payload for `type: pin`:
 
 - `dependency_realm`, `version`: the dependency realm (e.g. `sh.raci`; distinct from the envelope's `realm`, which is the realm that owns the event) and the version, a semantic version `MAJOR.MINOR.PATCH`, that this realm's rules are evaluated against from this event on (section 6.2).
+- `digest`: the digest of the content that the version resolved to (section 6.2).
 - `op`: `set`. A later `pin` event for the same `dependency_realm` replaces the earlier one. Replay derives the realm's current pins from these events, so `pins` in the `.raci` file (section 7) is reconstructible and verifiable. The `rule` events that follow a version change record the structured rules that the pin brings in.
+
+**Format versions.** This section is version `1` of the event format. It is independent of the `raci` member of the `.raci` file (section 7) and of the payload format (section 6.1), though each event version names the payload formats it allows. Any change to the set of valid events is a new version, so defining `add-pair` or admitting `raci/2` payloads makes event version `2`. A log may hold events of several versions.
+
+- Every version keeps the members `raci`, `seq`, `prev_hash` and `hash`, the definition of `hash`, and the line format of the log file, so any verifier can check the chain of any log.
+- Verification reads `raci` before it validates the event against that version's schema. A line whose `raci` is missing, or is not a string holding a positive decimal integer without leading zeros, is not an event (`hash-mismatch`).
+- A version the verifier does not support is reported as `unsupported-version`, once, for the first such event. The verifier still checks `hash`, `prev_hash` and `seq` along the whole log, but does not replay it, so beside that finding it reports only `hash-mismatch`, `seq-mismatch` and `stale-view`. A CLI never appends to such a log and never rebuilds its view.
 
 **Log file.** The offline log of a realm is a file named after its view with `.jsonl` appended: `.raci` and `.raci.jsonl` side by side. It is UTF-8 without a byte order mark. Each line is one event in canonical JSON followed by a line feed (U+000A), including the last line, and there are no blank lines. A last line without its line feed is torn (a crash during a write) and is never applied: if it parses as an event, its change is reported as `incomplete-change`, otherwise the line is reported as `hash-mismatch`.
 
@@ -202,7 +211,7 @@ The structured source of a RACI.sh configuration rule is the content of a SteerS
 
 - **Payload.** A JSON object in RFC 8785 canonical form (the form of the `.raci` file, section 7): sorted members, no insignificant whitespace, no duplicate member. The CLI canonicalises on load. The `body_hash` of a `rule` event (section 4.1) is the blake3 of this canonical payload.
 - **Closed.** A payload has exactly the members its kind defines. An unknown kind, an unknown member or a missing required member makes the payload invalid: it is not evaluated, and loading it is an error, never silently skipped.
-- **Versioning.** `1` is the version of this payload format. It is independent of the `raci` member of the `.raci` file (section 7), which versions that file. Any change to the set of valid payloads, including a new kind or a new optional member, is a new format version (`raci/2`), because a closed evaluator rejects what it does not know.
+- **Versioning.** `1` is the version of this payload format. It is independent of the `raci` member of the `.raci` file (section 7), which versions that file, and of the `raci` member of an event (section 4.1), which versions the event. A `rule` event records the payload format as `format`. Any change to the set of valid payloads, including a new kind or a new optional member, is a new format version (`raci/2`), because a closed evaluator rejects what it does not know.
 - **Identity.** `kind` selects the payload shape. `name` labels the configuration item (a preset, a constraint, an inference rule, an activity set) and is a lowercase kebab-case word. In the audit log a rule is identified by its SteerSpec rule id (`rule_id`, section 4.1), qualified by the realm id when the rule comes from a dependency realm, as `<realm id>:<rule id>` (the form SteerSpec uses in `overrides`), so that two realms can each have an `-001`. A `name` is unique per kind among the in-force rules of a realm path, except where one rule overrides or supersedes another; the superseding rule keeps the name while its rule id changes.
 
 | Kind | Members (required unless marked optional) | Meaning |
@@ -224,16 +233,18 @@ An **inference** payload follows section 3.1:
 How a realm names the version of a dependency realm it is evaluated against, and where the CLI gets it. Draft.
 
 - **Id.** The default realm's id is `sh.raci`. Its source of truth is the `rules/` directory of `raci-sh/raci-spec`.
-- **Version.** A realm's version is the `realm.version` of its `realm.json`, a semantic version `MAJOR.MINOR.PATCH`. For `sh.raci`, every release of `raci-sh/raci-spec` is tagged `vX.Y.Z` with `X.Y.Z` equal to `realm.version`; the release tooling bumps both together. The `rule_set.version` of each entity is SteerSpec's per-entity version and is unrelated to the realm version.
+- **Version.** A realm's version is the `realm.version` of its `realm.json`, a semantic version `MAJOR.MINOR.PATCH`. For `sh.raci`, every release of `raci-sh/raci-spec` after `1.0.0` is tagged `vX.Y.Z` with `X.Y.Z` equal to `realm.version`; the release tooling bumps both together. The `rule_set.version` of each entity is SteerSpec's per-entity version and is unrelated to the realm version.
 - **What a bump means.** Versions describe the effect on the rules in force (section 3), which is what a pin commits a realm to:
   - MAJOR: a change that can reject a change the previous version accepted, such as a constraint rule entering force or being tightened, or a rule in force being superseded, retired or terminated.
   - MINOR: any other change to the rules in force, such as a new inference rule.
   - PATCH: no change to the rules in force: Draft rules, notes, prose and schema descriptions.
   - Before `1.0.0`, a MAJOR change bumps MINOR instead.
-  - No `sh.raci` version can be fetched before its first tagged release.
-- **Declaration.** A realm declares each dependency realm in the `dependencies` of its `realm.json`, as SteerSpec does: `realm_id`, `version` and `source`. For `sh.raci` the source is `github://raci-sh/raci-spec@vX.Y.Z/rules`.
-- **Fetch.** `raci init`, and every later change of a declared version, fetch each dependency realm from its declared `source` at its declared `version`. The CLI embeds no copy of any realm. A cached copy of the same source and version may stand in for a fetch. If a fetch fails, or the fetched `realm.json` has an `id` or `version` other than the declared one, the command fails, writes nothing, and exits with 2.
-- **Pin.** The `version` of the resulting `pin` event (section 4.1) is the declared version string, exactly.
+- **`v1.0.0` is not a pin target.** That release predates this section, and at its tag `realm.version` is `0.1.0`. Declaring `1.0.0` fails the version check below, and declaring `0.1.0` from that tag fails the tag check. The first version of `sh.raci` that can be pinned is the release after it.
+- **Declaration.** A realm declares each dependency realm in the `dependencies` of its `realm.json`, as SteerSpec does: `realm_id`, `version` and `source`. For `sh.raci` the source is `github://raci-sh/raci-spec@vX.Y.Z/rules`, and its tag must be `v` followed by the declared `version`.
+- **Fetch.** `raci init`, and every later change of a declared version, fetch each dependency realm from its declared `source` at its declared `version`. The CLI embeds no copy of any realm. The command fails, writes nothing and exits with 2 if a fetch fails, the source tag of `sh.raci` is not `v` followed by the declared version, the fetched `realm.json` has an `id` or `version` other than the declared one, or the content fails a digest check below.
+- **Digest.** The digest of a fetched realm covers every file whose name ends in `.json` in the source directory and, recursively, its subdirectories. Each file is parsed and hashed as blake3 over its canonical JSON. The digest is blake3 over the canonical JSON of the object that maps each file's path to that hash, the path being relative to the source directory, with `/` separators. So an archive, a checkout and a cache of the same content agree: line endings, indentation and files of other types do not count. A symbolic link, or a `.json` file that is not I-JSON (RFC 7493, e.g. one with a repeated member), fails the fetch.
+- **One content per version.** A declaration carries no digest, so the first pin of a version in a log trusts what its source serves, and is always made from a fetch, never from a cache. From then on, content for that realm and version, fetched or cached, must have the digest of the earlier applied `pin`, and a cached copy that has it may stand in for a fetch. A log with two applied pins of one realm and version but different digests is reported as `pin-mismatch` (section 7.1). Verification does not fetch, so a moved tag shows at the next fetch, or when two realms' pins are compared.
+- **Pin.** The `version` of the resulting `pin` event (section 4.1) is the declared version string, exactly, and its `digest` is the digest of the content that was used.
 - **Imported rules.** Each `rule` event that an init or a version change appends records the rule's `state` in the fetched realm, without a `transition`. Only rules in state `P` or `I` are recorded, since only they are in force (section 3). So while every default rule of `sh.raci` is still a Draft, an init records none of them and the realm stays at `no-rules-in-force` until it records rules of its own.
 - **One change.** The `pin` events and `rule` events that an init or a version change appends form one change, with one `change_id`, actor `via` `import`, and one commit marker, so a realm is never left half initialised.
 
@@ -252,12 +263,11 @@ Shape:
 {
   "constraints": {
     "enabled": [ "min-ra", "single-accountable" ],
-    "pairs": [ { "a": { "activity": "<selector>", "resource": "<selector>", "roles": "R" },
-                 "b": { "activity": "<selector>", "resource": "<selector>", "roles": "A" } } ]
+    "pairs": []
   },
   "entries": [ { "activity": "<activity>", "party": "<party>", "resource": "<id>", "roles": "AR" } ],
   "log": { "head_hash": "<hash of the head event>", "head_seq": 412 },
-  "pins": [ { "dependency_realm": "<dependency realm>", "version": "<pinned version>" } ],
+  "pins": [ { "dependency_realm": "<dependency realm>", "digest": "<digest>", "version": "<pinned version>" } ],
   "raci": "1",
   "realm": "<realm id>",
   "resources": [ { "id": "<id>", "parent": "<id or absent>", "type": "<type>" } ],
@@ -268,9 +278,9 @@ Shape:
 - `roles` is a string of the held roles in the fixed precedence order A, R, C, I (section 1), so `"AR"`, never `"RA"`. An entry with no roles is absent, not stored empty.
 - Object members are in the canonical (sorted) order, as in the example. Array ordering is canonical too: `resources` by `id`; `entries` by (`resource`, `activity`, `party`); `rules_in_force` by `rule_id`; `pins` by (`dependency_realm`, `version`); `enabled` alphabetically; `pairs` by their canonical JSON.
 - `rules_in_force` lists every rule recorded in force in this realm's log (section 6, including inherited ones) with its `body_hash`. Verification compares these with the log's `rule` events and with the structured rule sources without replaying the whole log.
-- `pins` is derived from the log's `pin` events (section 4.1): the current version of each dependency realm the log was evaluated against (e.g. the `sh.raci` version). Verification recomputes it by replay.
+- `pins` is derived from the log's `pin` events (section 4.1): the current version and digest of each dependency realm the log was evaluated against (e.g. the `sh.raci` version). Verification recomputes it by replay.
 - `constraints` lists the constraints recorded by this realm's own `constraint` events. The effective set (the union along the realm path, section 3) is computed at load and not embedded.
-- Selectors in `pairs` follow the selector syntax, which is open (section 2.1).
+- `pairs` is empty in version 1: no pair can be recorded until the selector syntax, which is open (section 2.1), is defined.
 - `resources` and `entries` use the identifier forms of section 1.1, `pins` the semantic versions of section 6.2. `schemas/raci-view-1.schema.json` is the machine-checkable form of this shape; the canonical array order above is checked by the CLI, not by the schema.
 
 ### 7.1 Verification report
@@ -286,9 +296,11 @@ Findings are not part of `.raci`. `raci verify` computes them on demand and emit
 | --- | --- | --- |
 | `hash-mismatch` | error | A recomputed `hash` or a `prev_hash` link of the log fails, or a line of the log is not an event (section 4.2). |
 | `seq-mismatch` | error | The `seq` of the log does not run from 1 without gap or repeat (section 4.1). |
+| `unsupported-version` | error | An event has a format version that the verifier does not support, so the log is not replayed (section 4.1). |
+| `pin-mismatch` | error | Two applied pins of the same dependency realm and version have different digests (section 6.2). |
 | `view-mismatch` | error | Replaying the log gives a different state than the `.raci` file. |
 | `stale-view` | warning | The view's log head differs from the log's; rebuild by replay. |
-| `unrecorded-rule` | error | A structured rule source differs from the latest `rule` event for the same rule id in the log, or for which the log has no `rule` event for that rule id, so it is not evaluated (section 6). |
+| `unrecorded-rule` | error | A structured rule source differs, in format or payload, from the latest `rule` event for the same rule id in the log, or for which the log has no `rule` event for that rule id, so it is not evaluated (section 6). |
 | `incomplete-change` | warning | A `change_id` has events but no commit marker (section 4.1). |
 | `no-matching-rule` | warning | A target was created with an empty RACI because no inference rule matched. |
 | `descendant-violation` | error | A realm outside the change's tree, which depends on this one, now violates a constraint (section 2). |
