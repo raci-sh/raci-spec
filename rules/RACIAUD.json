@@ -7,8 +7,8 @@
   },
   "rule_set": {
     "version": "0.1.145",
-    "timestamp": "2026-11-22T09:05:28Z",
-    "hash": "blake3:bc2253f55708531f8fae46da1b26231a44ae57e1c932577012ecd1587d6b2377"
+    "timestamp": "2026-11-22T09:25:13Z",
+    "hash": "blake3:43bae16428db83f30412809e2a7b988ffb94a2ce03e10a9e683f68907a07ebb6"
   },
   "rules": [
     {
@@ -465,7 +465,7 @@
       "id": "RACIAUD-051",
       "revision": 0,
       "state": "D",
-      "body": "The constraints of an event MUST list each evaluated constraint with the result pass or fail, sorted by name.",
+      "body": "The constraints of an event MUST be an object that maps the name of each evaluated constraint to the result pass or fail.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-21",
       "supersedes": null

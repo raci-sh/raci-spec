@@ -38,83 +38,17 @@
       "$ref": "#/$defs/cause"
     },
     "constraints": {
-      "description": "At most one result per constraint. The order by name is canonical and is checked by the CLI, not by this schema.",
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/constraintResult"
+      "description": "Each evaluated constraint, by name, with its result. An object, so canonical JSON fixes the order and allows no repeated name.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/constraint"
       },
-      "allOf": [
-        {
-          "contains": {
-            "properties": {
-              "name": {
-                "const": "single-accountable"
-              }
-            },
-            "required": [
-              "name"
-            ]
-          },
-          "minContains": 0,
-          "maxContains": 1
-        },
-        {
-          "contains": {
-            "properties": {
-              "name": {
-                "const": "single-responsible"
-              }
-            },
-            "required": [
-              "name"
-            ]
-          },
-          "minContains": 0,
-          "maxContains": 1
-        },
-        {
-          "contains": {
-            "properties": {
-              "name": {
-                "const": "one-role-per-party"
-              }
-            },
-            "required": [
-              "name"
-            ]
-          },
-          "minContains": 0,
-          "maxContains": 1
-        },
-        {
-          "contains": {
-            "properties": {
-              "name": {
-                "const": "min-ra"
-              }
-            },
-            "required": [
-              "name"
-            ]
-          },
-          "minContains": 0,
-          "maxContains": 1
-        },
-        {
-          "contains": {
-            "properties": {
-              "name": {
-                "const": "separation-of-duties"
-              }
-            },
-            "required": [
-              "name"
-            ]
-          },
-          "minContains": 0,
-          "maxContains": 1
-        }
-      ]
+      "additionalProperties": {
+        "enum": [
+          "pass",
+          "fail"
+        ]
+      }
     },
     "outcome": {
       "$ref": "#/$defs/outcome"
@@ -362,25 +296,6 @@
       "required": [
         "rule_id",
         "event_id"
-      ],
-      "additionalProperties": false
-    },
-    "constraintResult": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "$ref": "#/$defs/constraint"
-        },
-        "result": {
-          "enum": [
-            "pass",
-            "fail"
-          ]
-        }
-      },
-      "required": [
-        "name",
-        "result"
       ],
       "additionalProperties": false
     },
