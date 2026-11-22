@@ -165,44 +165,68 @@
   "$defs": {
     "uuid7": {
       "type": "string",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "timestamp": {
       "type": "string",
       "description": "RFC 3339 in UTC with millisecond precision and the Z suffix (SPEC.md section 4.1). The pattern fixes the form and the field ranges; format date-time, asserted where the validator supports it, rejects impossible dates such as 2026-02-30.",
       "format": "date-time",
-      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}Z$"
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}Z$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "digest": {
       "type": "string",
-      "pattern": "^blake3:[0-9a-f]{64}$"
+      "pattern": "^blake3:[0-9a-f]{64}$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "realmId": {
       "description": "A SteerSpec realm id, as in realm.v1.schema.json (SPEC.md section 1.1).",
       "type": "string",
-      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*$"
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "ruleId": {
       "description": "A SteerSpec rule id, qualified by its realm id when it comes from a dependency realm, as in entity.v1.schema.json overrides (SPEC.md section 1.1).",
       "type": "string",
-      "pattern": "^([a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*:)?[A-Z0-9]+-[0-9]{3}$"
+      "pattern": "^([a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*:)?[A-Z0-9]+-[0-9]{3}$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "name": {
       "description": "Kebab-case name: activities and resource types (SPEC.md section 1.1), as in raci-1.schema.json.",
       "type": "string",
-      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "opaqueId": {
       "description": "Party and resource ids: 1 to 256 code points, no control characters (SPEC.md section 1.1).",
       "type": "string",
       "minLength": 1,
       "maxLength": 256,
-      "pattern": "^[^\\x00-\\x1f\\x7f]+$"
+      "pattern": "^[^\\x00-\\x1f\\x7f]+$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "roles": {
       "description": "Held roles in the fixed order A, R, C, I; the empty string holds none.",
       "type": "string",
-      "pattern": "^A?R?C?I?$"
+      "pattern": "^A?R?C?I?$",
+      "not": {
+        "pattern": "\\n"
+      }
     },
     "constraint": {
       "enum": [
@@ -226,6 +250,9 @@
     "semver": {
       "type": "string",
       "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+      "not": {
+        "pattern": "\\n"
+      },
       "description": "A realm version, as in realm.v1.schema.json."
     },
     "actor": {

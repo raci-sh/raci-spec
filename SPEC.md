@@ -120,7 +120,7 @@ One JSON object per event. Every event has a common envelope, a `type` discrimin
 Envelope (all types). Every member is required except `cause`:
 
 - `id`: the event id, a UUIDv7 in lowercase canonical text form (`xxxxxxxx-xxxx-7xxx-yxxx-xxxxxxxxxxxx`).
-- `seq`: the per-realm sequence number. The first event of a realm has `seq` 1 and each later event the previous `seq` plus one, with no gap and no repeat, so a truncated or reordered log is detectable even where the hash chain is cut cleanly.
+- `seq`: the per-realm sequence number. The first event of a realm has `seq` 1 and each later event the previous `seq` plus one, with no gap and no repeat, so a removed or reordered event is detectable even where the chain was re-linked, unless the events were also renumbered. Removing events from the end of the log leaves both `seq` and the chain valid: detecting that needs a head recorded outside the log, such as the view's `log` member (section 7).
 - `ts`: the time the CLI wrote the event, RFC 3339 in UTC with millisecond precision and the `Z` suffix, e.g. `2026-11-21T10:00:00.000Z`. It is informational: order is `seq`, never `ts`.
 - `realm`: the id of the realm that owns the log (section 1.1).
 - `type`: the discriminator above.
