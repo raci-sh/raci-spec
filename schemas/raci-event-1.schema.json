@@ -559,7 +559,7 @@
           ]
         },
         "detail": {
-          "description": "Free text, e.g. the descendant realm and the constraint of a revalidation failure (SPEC.md section 2).",
+          "description": "Free text, e.g. the realm and the constraint of a revalidation failure (SPEC.md section 2).",
           "type": "string",
           "minLength": 1
         }

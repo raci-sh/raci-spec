@@ -6,9 +6,9 @@
     "description": "The named constraints that express strictness, and how a violating change is handled (SPEC.md section 2)."
   },
   "rule_set": {
-    "version": "0.1.70",
-    "timestamp": "2026-11-22T15:10:38Z",
-    "hash": "blake3:3abce2a452065930ecc75dc7387f5e02a07f98d7463a5cc5fb87918a772b6783"
+    "version": "0.1.80",
+    "timestamp": "2026-11-25T06:52:57Z",
+    "hash": "blake3:8910e77aac678983a2f8c5cb440570fcea65889e30e198ff37d8b82524f78f26"
   },
   "rules": [
     {
@@ -49,9 +49,9 @@
     },
     {
       "id": "RACICNS-005",
-      "revision": 2,
+      "revision": 3,
       "state": "D",
-      "body": "When min-ra is enabled, at least one R or A MUST remain per activity and resource, except on a resource that the change deletes, so removing the last one otherwise needs a named substitute.",
+      "body": "When min-ra is enabled, at least one R or A recorded by the realm that owns a resource MUST remain per activity on that resource, except on a resource that the change deletes, so removing the last one otherwise needs a named substitute.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
       "supersedes": null
@@ -85,9 +85,9 @@
     },
     {
       "id": "RACICNS-009",
-      "revision": 3,
+      "revision": 4,
       "state": "D",
-      "body": "A change to a parent entry, a resource created or deleted, a change of the effective conflict pairs, or a new or tightened constraint MUST also revalidate, read-only, the descendant realms of the same realm tree that its effective entries, resources or pairs reach.",
+      "body": "A change MUST also revalidate, read-only, every ancestor or descendant realm whose constraints count a grant that the change records, and every descendant realm that a resource, pair or constraint of the change reaches.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
       "supersedes": null
@@ -103,9 +103,9 @@
     },
     {
       "id": "RACICNS-011",
-      "revision": 0,
+      "revision": 1,
       "state": "D",
-      "body": "Conflict pairs MUST be evaluated among the entries of the declaring realm and its descendants, and never between sibling or unrelated realms.",
+      "body": "A conflict pair MUST be evaluated between every two grants recorded by the declaring realm, its ancestors or its descendants, sibling realms included, and between no others.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
       "supersedes": null
@@ -130,9 +130,9 @@
     },
     {
       "id": "RACICNS-014",
-      "revision": 0,
+      "revision": 1,
       "state": "D",
-      "body": "A change MUST be rejected, naming the descendant realm and the constraint, if revalidation leaves any descendant realm in violation.",
+      "body": "A change MUST be rejected, naming the realm and the constraint, if revalidation leaves an ancestor or descendant realm in violation.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
       "supersedes": null
@@ -270,6 +270,60 @@
       "body": "The delete and its removals MUST NOT record a result for min-ra.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-030",
+      "revision": 0,
+      "state": "D",
+      "body": "A grant MUST NOT be hidden from a conflict pair by a grant of another realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-031",
+      "revision": 0,
+      "state": "D",
+      "body": "The same grant recorded by several realms MUST count as one grant.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-032",
+      "revision": 0,
+      "state": "D",
+      "body": "The single-accountable, single-responsible and one-role-per-party constraints MUST count together the grants recorded by the realm that enables them, its ancestors and all its descendants, sibling realms included.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-033",
+      "revision": 0,
+      "state": "D",
+      "body": "A change MUST read, without writing, every log whose grants a constraint that the change evaluates or revalidates counts, and fail if one of those logs cannot be replayed.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-034",
+      "revision": 0,
+      "state": "D",
+      "body": "A conflict pair that names a resource MUST be rejected with invalid-change unless that resource is live in the declaring realm, an ancestor or a descendant when the pair is declared.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-035",
+      "revision": 0,
+      "state": "D",
+      "body": "A conflict pair with the relation same that names two different resources MUST be rejected with invalid-change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
       "supersedes": null
     }
   ],
