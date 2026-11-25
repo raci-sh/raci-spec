@@ -6,9 +6,9 @@
     "description": "The named constraints that express strictness, and how a violating change is handled (SPEC.md section 2)."
   },
   "rule_set": {
-    "version": "0.1.80",
-    "timestamp": "2026-11-25T06:52:57Z",
-    "hash": "blake3:8910e77aac678983a2f8c5cb440570fcea65889e30e198ff37d8b82524f78f26"
+    "version": "0.1.81",
+    "timestamp": "2026-11-25T07:14:03Z",
+    "hash": "blake3:f3c5ae7926314a3f3ca5781e16400f7b2fa00f7645f0f3a12140351664b563ac"
   },
   "rules": [
     {
@@ -322,6 +322,15 @@
       "revision": 0,
       "state": "D",
       "body": "A conflict pair with the relation same that names two different resources MUST be rejected with invalid-change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-036",
+      "revision": 0,
+      "state": "D",
+      "body": "The min-ra constraint MUST apply to a resource only when it is in the effective policy of the realm that owns that resource.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-25",
       "supersedes": null
