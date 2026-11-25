@@ -6,9 +6,9 @@
     "description": "Triggered inference rules, ESIS style: shape, actions, non-recursion, evaluation order and composition of deltas (SPEC.md section 3.1)."
   },
   "rule_set": {
-    "version": "0.1.71",
-    "timestamp": "2026-11-22T15:10:39Z",
-    "hash": "blake3:b4a4067bb1b4e01dbac81ed49579efd4284960d24b82b59edd318a51c8d8c4e3"
+    "version": "0.1.75",
+    "timestamp": "2026-11-25T06:54:26Z",
+    "hash": "blake3:1c28f5650cba407664dbd1dd4270f1b7be51fd184464cf009ef965f93c843ea3"
   },
   "rules": [
     {
@@ -22,9 +22,9 @@
     },
     {
       "id": "RACIINF-002",
-      "revision": 0,
+      "revision": 1,
       "state": "D",
-      "body": "The operations new and delete MUST denote resource events.",
+      "body": "The only resource operation of an inference rule MUST be new.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -324,6 +324,33 @@
       "body": "An inference action MUST NOT produce a delta on a resource that the change deletes.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-036",
+      "revision": 0,
+      "state": "D",
+      "body": "A rule fired by an entry event MUST apply its map and strip actions only to the party of that event.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-037",
+      "revision": 0,
+      "state": "D",
+      "body": "A strip action fired by a remove MUST read the roles that the party held on the source before the change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-038",
+      "revision": 0,
+      "state": "D",
+      "body": "A replace event MUST fire inference rules as the add, update or remove that its roles before and after amount to.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
       "supersedes": null
     }
   ],

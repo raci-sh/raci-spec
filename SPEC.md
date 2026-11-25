@@ -89,8 +89,8 @@ A change that violates an enabled constraint is **rejected**. There is no silent
 A rule has:
 
 - **target type**: the resource type whose RACI is being derived (e.g. audit), or the wildcard `*`, which matches a resource of any type (used by default rules, which cannot name customer-defined types).
-- **operation**: the change that fires the rule. `new` or `delete` are resource events; `add`, `update` or `remove` are entry events (on the trigger type, or on the target itself when there is no trigger type).
-- **trigger type** (optional): the resource type whose entry change fires the rule (e.g. module, location). Absent for a change on the target itself. A rule with a trigger type must have an entry operation (`add`, `update` or `remove`), never `new` or `delete`, and fires on entry events of that type with that operation, for each target whose source (below) binds to the changed resource.
+- **operation**: the change that fires the rule. `new` is the one resource operation; `add`, `update` or `remove` are entry events (on the trigger type, or on the target itself when there is no trigger type). A deleted resource fires no rule: its removals fire none, and nothing is inferred onto it (section 1.2). ESIS's `DELETE` operation meant a party removed from the trigger, which is `remove` here.
+- **trigger type** (optional): the resource type whose entry change fires the rule (e.g. module, location). Absent for a change on the target itself. A rule with a trigger type must have an entry operation (`add`, `update` or `remove`), never `new`, and fires on entry events of that type with that operation, for each target whose source (below) binds to the changed resource.
 - **selector** (optional): `{"realm": <realm id>, "id": <resource id>}`, names the one source resource explicitly, instead of the default search below. Valid only on a rule with a `map` or `strip` action.
 - **actions**, from a small vocabulary (taken from ESIS):
   - `map(source-type, from-role, to-role)`: parties holding `from-role` on the source get `to-role` on the target. ESIS example: module R becomes audit A, module A becomes audit I.
@@ -102,6 +102,12 @@ An action may name an **activity**; an action that names none applies to every a
 Any action may carry the attribute `add-only`: it then adds missing entries and never changes an existing one.
 
 **Source binding.** `map` and `strip` locate their source as the nearest resource of the action's `source-type`, searching the target itself first and then its parent links. So an action whose source type is the target's own type reads the target (the case of an entry event on the target with no trigger type), and `map(module, R, A)` on a new audit reads the audit's parent module. A rule that names a selector uses that resource instead, for each of its `map` and `strip` actions. Its realm is the realm in whose log the rule is in force or one of that realm's ancestors, never a descendant, and only that resource matches, so no other realm can substitute one of its own. A rule imported from a dependency realm has no selector (section 6.2). If it does not exist, or is not of an action's `source-type`, a change that fires the rule is rejected with `invalid-change`, so a `strip` is never skipped silently.
+
+**Which party.** On `new`, `map` and `strip` read every party on the source. A rule fired by an entry event applies its `map` and `strip` actions only to the party of that event, as ESIS feeds only the changed entry to its rules. So a change on the source never grants again a role that was removed by hand from another party.
+
+- A `strip` fired by a `remove` reads the roles that the party held on the source before the change, since none are left after it: `strip(module, R, A)` on `remove` takes the audit A from the party that lost module R. A `map`, and a `strip` fired by an `add` or `update`, read the roles after the change, so a `map` fired by a `remove` grants nothing.
+- A `replace` event fires rules as the `add`, `update` or `remove` that its roles before and after amount to: from none to some is `add`, from some to none is `remove`, otherwise `update`.
+- Propagating a removal fully takes one `strip` per pair of held role and role (up to 16). A `strip` removes the role whatever granted it, including a grant made by hand.
 
 **Default rules.** The `sh.raci` realm ships a minimal default set that customer realms inherit and may override (section 6). It has one rule: on `new` of any type (`*`), `add-issuer(A)`, so the party that creates a resource is Accountable for it. This satisfies `min-ra` and the strict preset on a resource with no parent. Rules that map roles from another resource depend on customer-defined types or ids and are left to customer realms.
 
@@ -265,7 +271,7 @@ The structured source of a RACI.sh configuration rule is the content of a SteerS
 
 An **inference** payload follows section 3.1:
 
-- `target-type` is a resource type or the wildcard `*` (only here). `operation` is `new`, `delete`, `add`, `update` or `remove`. `trigger-type`, a concrete type, is allowed only with `add`, `update` or `remove`. `selector`, optional and allowed only with a `map` or `strip` action, is `{"realm": <realm id>, "id": <resource id>}` (section 3.1).
+- `target-type` is a resource type or the wildcard `*` (only here). `operation` is `new`, `add`, `update` or `remove`. `trigger-type`, a concrete type, is allowed only with `add`, `update` or `remove`. `selector`, optional and allowed only with a `map` or `strip` action, is `{"realm": <realm id>, "id": <resource id>}` (section 3.1).
 - `actions` is a non-empty list, in order. Each action has `action` (`map`, `add-issuer` or `strip`), an optional `activity` (absent means every activity on the target, section 3.1), and an optional boolean `add-only`. `map` also has `source-type`, `from-role` and `to-role`; `add-issuer` has `role` and is valid only when `operation` is `new`; `strip` has `source-type`, `held-role` and `role`. A `source-type` is a concrete type, never `*`. Roles are `R`, `A`, `C` or `I`.
 
 **Not defined here.** The mapping from a payload to the prose body of a rendered rule (the rendering of section 6) is not defined yet: the default rules' bodies are authored by hand beside their payloads, and the rule that a rendered rule is never hand-edited takes effect with the renderer.
