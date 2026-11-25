@@ -6,9 +6,9 @@
     "description": "Tighten-only inheritance of constraint policy, the override lint, and entry resolution across realm levels (SPEC.md section 3)."
   },
   "rule_set": {
-    "version": "0.1.23",
-    "timestamp": "2026-11-25T06:52:57Z",
-    "hash": "blake3:844eac78b48143b76d85b60ca53287d8b72753ea7189a05ea7011d1888fd5a83"
+    "version": "0.1.25",
+    "timestamp": "2026-11-25T16:08:53Z",
+    "hash": "blake3:9bffe93ba0d296a0cc4f716cde6cbee33176b69c2a508cf34fefefcc1b038cbb"
   },
   "rules": [
     {
@@ -209,6 +209,24 @@
       "content": "SPEC.md section 3",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-011/01",
+      "rule_ref": "RACIINH-011",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-012/01",
+      "rule_ref": "RACIINH-012",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
       "revision": 0
     }
   ]

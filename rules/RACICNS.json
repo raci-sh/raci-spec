@@ -6,9 +6,9 @@
     "description": "The named constraints that express strictness, and how a violating change is handled (SPEC.md section 2)."
   },
   "rule_set": {
-    "version": "0.1.81",
-    "timestamp": "2026-11-25T07:14:03Z",
-    "hash": "blake3:f3c5ae7926314a3f3ca5781e16400f7b2fa00f7645f0f3a12140351664b563ac"
+    "version": "0.1.88",
+    "timestamp": "2026-11-25T16:08:53Z",
+    "hash": "blake3:b1fed0fb1b542ac321d223251483e5131cdcbb51c704bce7527a0cd8a58e5446"
   },
   "rules": [
     {
@@ -614,6 +614,69 @@
       "content": "SPEC.md section 1.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-030/01",
+      "rule_ref": "RACICNS-030",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-031/01",
+      "rule_ref": "RACICNS-031",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-032/01",
+      "rule_ref": "RACICNS-032",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-033/01",
+      "rule_ref": "RACICNS-033",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-036/01",
+      "rule_ref": "RACICNS-036",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-034/01",
+      "rule_ref": "RACICNS-034",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-035/01",
+      "rule_ref": "RACICNS-035",
+      "type": "reference",
+      "content": "SPEC.md section 2.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
       "revision": 0
     }
   ]

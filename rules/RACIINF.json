@@ -6,9 +6,9 @@
     "description": "Triggered inference rules, ESIS style: shape, actions, non-recursion, evaluation order and composition of deltas (SPEC.md section 3.1)."
   },
   "rule_set": {
-    "version": "0.1.75",
-    "timestamp": "2026-11-25T06:54:26Z",
-    "hash": "blake3:1c28f5650cba407664dbd1dd4270f1b7be51fd184464cf009ef965f93c843ea3"
+    "version": "0.1.80",
+    "timestamp": "2026-11-25T16:08:53Z",
+    "hash": "blake3:80237b663955677be6ca7ee161a41175b5f304414cab4d8238ebc4b630a70633"
   },
   "rules": [
     {
@@ -668,6 +668,51 @@
       "content": "SPEC.md section 1.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-036/01",
+      "rule_ref": "RACIINF-036",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-037/01",
+      "rule_ref": "RACIINF-037",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-038/01",
+      "rule_ref": "RACIINF-038",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-004/02",
+      "rule_ref": "RACIINF-004",
+      "type": "clarification",
+      "content": "Fired by an entry event, the map action applies only to the party of that event (RACIINF-036).",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-006/02",
+      "rule_ref": "RACIINF-006",
+      "type": "clarification",
+      "content": "Fired by an entry event, the strip action applies only to the party of that event (RACIINF-036), and fired by a remove it reads the roles that party held on the source before the change (RACIINF-037).",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
       "revision": 0
     }
   ]
