@@ -6,9 +6,9 @@
     "description": "Triggered inference rules, ESIS style: shape, actions, non-recursion, evaluation order and composition of deltas (SPEC.md section 3.1)."
   },
   "rule_set": {
-    "version": "0.1.71",
-    "timestamp": "2026-11-22T15:10:39Z",
-    "hash": "blake3:b4a4067bb1b4e01dbac81ed49579efd4284960d24b82b59edd318a51c8d8c4e3"
+    "version": "0.1.80",
+    "timestamp": "2026-11-25T16:08:53Z",
+    "hash": "blake3:80237b663955677be6ca7ee161a41175b5f304414cab4d8238ebc4b630a70633"
   },
   "rules": [
     {
@@ -22,9 +22,9 @@
     },
     {
       "id": "RACIINF-002",
-      "revision": 0,
+      "revision": 1,
       "state": "D",
-      "body": "The operations new and delete MUST denote resource events.",
+      "body": "The only resource operation of an inference rule MUST be new.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -324,6 +324,33 @@
       "body": "An inference action MUST NOT produce a delta on a resource that the change deletes.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-036",
+      "revision": 0,
+      "state": "D",
+      "body": "A rule fired by an entry event MUST apply its map and strip actions only to the party of that event.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-037",
+      "revision": 0,
+      "state": "D",
+      "body": "A strip action fired by a remove MUST read the roles that the party held on the source before the change.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINF-038",
+      "revision": 0,
+      "state": "D",
+      "body": "A replace event MUST fire inference rules as the add, update or remove that its roles before and after amount to.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
       "supersedes": null
     }
   ],
@@ -641,6 +668,51 @@
       "content": "SPEC.md section 1.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-036/01",
+      "rule_ref": "RACIINF-036",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-037/01",
+      "rule_ref": "RACIINF-037",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-038/01",
+      "rule_ref": "RACIINF-038",
+      "type": "reference",
+      "content": "SPEC.md section 3.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-004/02",
+      "rule_ref": "RACIINF-004",
+      "type": "clarification",
+      "content": "Fired by an entry event, the map action applies only to the party of that event (RACIINF-036).",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACIINF-006/02",
+      "rule_ref": "RACIINF-006",
+      "type": "clarification",
+      "content": "Fired by an entry event, the strip action applies only to the party of that event (RACIINF-036), and fired by a remove it reads the roles that party held on the source before the change (RACIINF-037).",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
       "revision": 0
     }
   ]

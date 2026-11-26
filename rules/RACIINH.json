@@ -6,9 +6,9 @@
     "description": "Tighten-only inheritance of constraint policy, the override lint, and entry resolution across realm levels (SPEC.md section 3)."
   },
   "rule_set": {
-    "version": "0.1.20",
-    "timestamp": "2026-11-07T08:35:11Z",
-    "hash": "blake3:e55bc2cb33aaa13a2f98d559b743d715d77f7ce62fbbf05fb2efe3a3f2e7545d"
+    "version": "0.1.25",
+    "timestamp": "2026-11-25T16:08:53Z",
+    "hash": "blake3:9bffe93ba0d296a0cc4f716cde6cbee33176b69c2a508cf34fefefcc1b038cbb"
   },
   "rules": [
     {
@@ -94,11 +94,29 @@
     },
     {
       "id": "RACIINH-010",
-      "revision": 0,
+      "revision": 1,
       "state": "D",
-      "body": "RACI entries MUST resolve most-specific-first across realm levels.",
+      "body": "The grants of a realm MUST be the union of the grants that the realm and its ancestors record, with no override.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-011",
+      "revision": 0,
+      "state": "D",
+      "body": "A change MUST NOT update, remove or replace an entry that another realm recorded.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACIINH-012",
+      "revision": 0,
+      "state": "D",
+      "body": "A change MUST be rejected with invalid-change when a role that its inference strips is still granted by an ancestor realm.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
       "supersedes": null
     }
   ],
@@ -191,6 +209,24 @@
       "content": "SPEC.md section 3",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-011/01",
+      "rule_ref": "RACIINH-011",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACIINH-012/01",
+      "rule_ref": "RACIINH-012",
+      "type": "reference",
+      "content": "SPEC.md section 3",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-25",
       "revision": 0
     }
   ]
