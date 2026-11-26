@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.2](https://github.com/raci-sh/raci-spec/compare/v1.0.1...v1.0.2) (2026-11-26)
+
+
+### Bug Fixes
+
+* **spec:** close review gaps in realm grants and removal inference ([f19e9c0](https://github.com/raci-sh/raci-spec/commit/f19e9c075c95a789e8c4595a5b6e36cf132bb05a))
+* **spec:** count every grant across realms, fire inference on removals ([9525ac4](https://github.com/raci-sh/raci-spec/commit/9525ac4fade2b1b7eda62c8eb9f91bfcbfb12c29))
+* **spec:** count every grant across realms, sibling realms included ([2118c75](https://github.com/raci-sh/raci-spec/commit/2118c752ebfb74e28175f6d412fd2f671d0fd00d))
+* **spec:** fire inference on the changed party, drop delete rules ([8a9bfdd](https://github.com/raci-sh/raci-spec/commit/8a9bfddc8ad1c240765ce44b1371c58c6e10bd31))
+
+
+### Documentation
+
+* **spec:** add rule references and narrow four passages ([e559c46](https://github.com/raci-sh/raci-spec/commit/e559c469fca3493bcba353715a8b7f661ef4988b))
+
 ## [1.0.1](https://github.com/raci-sh/raci-spec/compare/v1.0.0...v1.0.1) (2026-11-22)
 
 
