@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.227",
-    "timestamp": "2026-11-27T15:25:25Z",
-    "hash": "blake3:1e0cf5862e7a02d88d7b7b581c65b6b26acae41be481ada0be38a04eaea0ef03"
+    "version": "0.1.229",
+    "timestamp": "2026-11-27T15:26:01Z",
+    "hash": "blake3:00365c78ee405538df48c47b2dadb640516aeea9343cc660fb1a7c46a4162e76"
   },
   "rules": [
     {
@@ -952,6 +952,15 @@
       "revision": 0,
       "state": "D",
       "body": "The lock of a log MUST be an advisory whole-file lock on a file named after the log with .lock appended, created when missing, never deleted, its content ignored.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-106",
+      "revision": 0,
+      "state": "D",
+      "body": "A command that evaluates a change MUST fail without writing when a commit marker in a log that it reads records a head of another log that it reads which is not in that log.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-27",
       "supersedes": null
@@ -1908,6 +1917,15 @@
       "rule_ref": "RACIAUD-051",
       "type": "clarification",
       "content": "The result pass means that the change does not violate the constraint (RACICNS-037), even where the tree already violates it.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-106/01",
+      "rule_ref": "RACIAUD-106",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
       "added_by": "github:pleberre",
       "added_at": "2026-11-27",
       "revision": 0
