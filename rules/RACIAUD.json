@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.216",
-    "timestamp": "2026-11-27T15:24:08Z",
-    "hash": "blake3:e8b39f75359f3d886c2be1f1ed5f901fc9a49e0d0c95d253a92c07e5911d1713"
+    "version": "0.1.226",
+    "timestamp": "2026-11-27T15:24:54Z",
+    "hash": "blake3:a16100ce6e7a6ddb1ae168ed2d591d03ba8b0930a0603da23c079cd02c63a94c"
   },
   "rules": [
     {
@@ -907,6 +907,51 @@
       "revision": 0,
       "state": "D",
       "body": "A commit marker whose record of logs read names the realm of its own log MUST NOT be a valid event.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-101",
+      "revision": 0,
+      "state": "D",
+      "body": "A command that appends to a log, reverts it or rebuilds its view MUST hold an exclusive lock on that log from before its first read until it ends.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-102",
+      "revision": 0,
+      "state": "D",
+      "body": "A command MUST hold at least a shared lock on every log that it reads, from before its first read until it ends.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-103",
+      "revision": 0,
+      "state": "D",
+      "body": "A change MUST lock every log of its realm tree.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-104",
+      "revision": 0,
+      "state": "D",
+      "body": "A command MUST take all its log locks before its first read, in code point order of realm id.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-105",
+      "revision": 0,
+      "state": "D",
+      "body": "The lock of a log MUST be an advisory whole-file lock on a file named after the log with .lock appended, created when missing, never deleted, its content ignored.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-27",
       "supersedes": null
@@ -1809,6 +1854,51 @@
       "rule_ref": "RACIAUD-100",
       "type": "reference",
       "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-101/01",
+      "rule_ref": "RACIAUD-101",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-102/01",
+      "rule_ref": "RACIAUD-102",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-103/01",
+      "rule_ref": "RACIAUD-103",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-104/01",
+      "rule_ref": "RACIAUD-104",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-105/01",
+      "rule_ref": "RACIAUD-105",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-27",
       "revision": 0
