@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.229",
-    "timestamp": "2026-11-27T15:26:01Z",
-    "hash": "blake3:00365c78ee405538df48c47b2dadb640516aeea9343cc660fb1a7c46a4162e76"
+    "version": "0.1.230",
+    "timestamp": "2026-11-27T15:40:07Z",
+    "hash": "blake3:03236eb239ae08c10fd34a9eb64ff11bfa7ac28fd70bae3c689dcf5397ee00ec"
   },
   "rules": [
     {
@@ -924,7 +924,7 @@
       "id": "RACIAUD-102",
       "revision": 0,
       "state": "D",
-      "body": "A command MUST hold at least a shared lock on every log that it reads, from before its first read until it ends.",
+      "body": "A command MUST hold at least a shared lock on every log that it reads, from before its first read until it ends, except a log that it only reads and whose lock file it cannot create.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-27",
       "supersedes": null
@@ -951,7 +951,7 @@
       "id": "RACIAUD-105",
       "revision": 0,
       "state": "D",
-      "body": "The lock of a log MUST be an advisory whole-file lock on a file named after the log with .lock appended, created when missing, never deleted, its content ignored.",
+      "body": "The lock of a log MUST be an advisory whole-file lock on a file named after the log with .lock appended, created when missing without counting as a write, never deleted, its content ignored.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-27",
       "supersedes": null
@@ -1926,6 +1926,15 @@
       "rule_ref": "RACIAUD-106",
       "type": "reference",
       "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-015/02",
+      "rule_ref": "RACIAUD-015",
+      "type": "clarification",
+      "content": "A change violates a constraint only where the violation involves one of its events (RACICNS-037).",
       "added_by": "github:pleberre",
       "added_at": "2026-11-27",
       "revision": 0

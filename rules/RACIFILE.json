@@ -6,9 +6,9 @@
     "description": "The .raci materialised view and the raci verify report (SPEC.md sections 7 and 7.1)."
   },
   "rule_set": {
-    "version": "0.1.115",
-    "timestamp": "2026-11-27T15:26:01Z",
-    "hash": "blake3:eaea6eeab516a23dbed833d1685e9ece516a1f55de015eee1801aa3e86de6227"
+    "version": "0.1.116",
+    "timestamp": "2026-11-27T15:40:07Z",
+    "hash": "blake3:00fdad16962efc0e8837500db4770aff103c7ffb663f3f4e5048080c08b29771"
   },
   "rules": [
     {
@@ -139,9 +139,9 @@
     },
     {
       "id": "RACIFILE-015",
-      "revision": 1,
+      "revision": 2,
       "state": "D",
-      "body": "A view whose log head is an earlier event of the log MUST be treated as stale and rebuilt by replay.",
+      "body": "A view whose log head is an earlier event of the log MUST be treated as stale and rebuilt by replay, by a command that holds that log exclusively.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
