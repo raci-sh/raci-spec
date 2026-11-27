@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.226",
-    "timestamp": "2026-11-27T15:24:54Z",
-    "hash": "blake3:a16100ce6e7a6ddb1ae168ed2d591d03ba8b0930a0603da23c079cd02c63a94c"
+    "version": "0.1.227",
+    "timestamp": "2026-11-27T15:25:25Z",
+    "hash": "blake3:1e0cf5862e7a02d88d7b7b581c65b6b26acae41be481ada0be38a04eaea0ef03"
   },
   "rules": [
     {
@@ -1899,6 +1899,15 @@
       "rule_ref": "RACIAUD-105",
       "type": "reference",
       "content": "SPEC.md section 4.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-051/02",
+      "rule_ref": "RACIAUD-051",
+      "type": "clarification",
+      "content": "The result pass means that the change does not violate the constraint (RACICNS-037), even where the tree already violates it.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-27",
       "revision": 0
