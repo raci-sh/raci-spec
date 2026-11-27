@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.210",
-    "timestamp": "2026-11-22T15:10:38Z",
-    "hash": "blake3:b28b018058a740b535d426e2d6516ec432081a9703c13d6a1a4ec6b51579fe80"
+    "version": "0.1.216",
+    "timestamp": "2026-11-27T15:24:08Z",
+    "hash": "blake3:e8b39f75359f3d886c2be1f1ed5f901fc9a49e0d0c95d253a92c07e5911d1713"
   },
   "rules": [
     {
@@ -882,6 +882,33 @@
       "body": "An applied creation that reuses an id in its realm MUST be treated as not being a valid event.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-098",
+      "revision": 0,
+      "state": "D",
+      "body": "A commit marker MUST record, for every log of another realm that its change read, the seq and hash of the last event of that log as read, and an empty record when the change read no other log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-099",
+      "revision": 0,
+      "state": "D",
+      "body": "A commit marker MUST record a log that was empty when read with seq 0 and the all-zero digest.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-100",
+      "revision": 0,
+      "state": "D",
+      "body": "A commit marker whose record of logs read names the realm of its own log MUST NOT be a valid event.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
       "supersedes": null
     }
   ],
@@ -1757,6 +1784,33 @@
       "content": "SPEC.md section 1.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-098/01",
+      "rule_ref": "RACIAUD-098",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-099/01",
+      "rule_ref": "RACIAUD-099",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-100/01",
+      "rule_ref": "RACIAUD-100",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
       "revision": 0
     }
   ]
