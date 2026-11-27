@@ -6,9 +6,9 @@
     "description": "Triggered inference rules, ESIS style: shape, actions, non-recursion, evaluation order and composition of deltas (SPEC.md section 3.1)."
   },
   "rule_set": {
-    "version": "0.1.80",
-    "timestamp": "2026-11-25T16:08:53Z",
-    "hash": "blake3:80237b663955677be6ca7ee161a41175b5f304414cab4d8238ebc4b630a70633"
+    "version": "0.1.82",
+    "timestamp": "2026-11-27T15:40:07Z",
+    "hash": "blake3:080b1a3cbc589ffa9777dcf7507a9b4f9d85fbb12037d502c5d4e79417338802"
   },
   "rules": [
     {
@@ -193,18 +193,18 @@
     },
     {
       "id": "RACIINF-021",
-      "revision": 0,
+      "revision": 1,
       "state": "D",
-      "body": "If the composed result violates an enabled constraint, the whole change MUST be rejected.",
+      "body": "If a change with its composed inference violates an enabled constraint, the whole change MUST be rejected.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
     },
     {
       "id": "RACIINF-022",
-      "revision": 0,
+      "revision": 1,
       "state": "D",
-      "body": "The result of a strip action MUST satisfy every enabled constraint.",
+      "body": "A strip action MUST NOT make its change violate an enabled constraint.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null

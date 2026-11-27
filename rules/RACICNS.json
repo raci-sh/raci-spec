@@ -6,9 +6,9 @@
     "description": "The named constraints that express strictness, and how a violating change is handled (SPEC.md section 2)."
   },
   "rule_set": {
-    "version": "0.1.88",
-    "timestamp": "2026-11-25T16:08:53Z",
-    "hash": "blake3:b1fed0fb1b542ac321d223251483e5131cdcbb51c704bce7527a0cd8a58e5446"
+    "version": "0.1.102",
+    "timestamp": "2026-11-27T15:40:07Z",
+    "hash": "blake3:6b7606e9d36617d131daca1cefd89f28dc38a3b82977f6f2724f60c9406a17c6"
   },
   "rules": [
     {
@@ -130,9 +130,9 @@
     },
     {
       "id": "RACICNS-014",
-      "revision": 1,
+      "revision": 2,
       "state": "D",
-      "body": "A change MUST be rejected, naming the realm and the constraint, if revalidation leaves an ancestor or descendant realm in violation.",
+      "body": "A change MUST be rejected, naming the realm and the constraint, if it violates a constraint of an ancestor or descendant realm that it revalidates.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-06",
       "supersedes": null
@@ -333,6 +333,60 @@
       "body": "The min-ra constraint MUST apply to a resource only when it is in the effective policy of the realm that owns that resource.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-25",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-037",
+      "revision": 0,
+      "state": "D",
+      "body": "A change MUST be taken to violate a constraint only when the violation involves an event of the change: a grant or a removal that it records, a resource that it creates, or a constraint or conflict pair that it brings into force.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-038",
+      "revision": 0,
+      "state": "D",
+      "body": "A violation that does not involve an event of the change MUST NOT reject it.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-039",
+      "revision": 0,
+      "state": "D",
+      "body": "A change MUST be taken to record a grant that it records again, whether by an update that keeps the role or as a grant that another realm already records.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-040",
+      "revision": 0,
+      "state": "D",
+      "body": "Every role that a change takes away, by a remove, an update, a replace or a strip, MUST count as a removal that it records.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-041",
+      "revision": 0,
+      "state": "D",
+      "body": "A removal MUST take part only in a min-ra violation, as the loss of the last R or A that the realm owning the resource records on that activity and resource.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACICNS-042",
+      "revision": 0,
+      "state": "D",
+      "body": "A constraint or conflict pair MUST be taken as brought into force by a change only when it is in force after the whole change and was not before it.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
       "supersedes": null
     }
   ],
@@ -677,6 +731,69 @@
       "content": "SPEC.md section 2.1",
       "added_by": "github:pleberre",
       "added_at": "2026-11-25",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-037/01",
+      "rule_ref": "RACICNS-037",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-038/01",
+      "rule_ref": "RACICNS-038",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-007/02",
+      "rule_ref": "RACICNS-007",
+      "type": "clarification",
+      "content": "A change violates a constraint only where the violation involves one of its events (RACICNS-037).",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-039/01",
+      "rule_ref": "RACICNS-039",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-040/01",
+      "rule_ref": "RACICNS-040",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-041/01",
+      "rule_ref": "RACICNS-041",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACICNS-042/01",
+      "rule_ref": "RACICNS-042",
+      "type": "reference",
+      "content": "SPEC.md section 2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
       "revision": 0
     }
   ]

@@ -1013,6 +1013,53 @@
           "minItems": 1,
           "uniqueItems": true
         },
+        "reads": {
+          "description": "For every log of another realm that the change read, by realm id, the seq and hash of its last event as read; seq 0 and the all-zero digest for an empty log; an empty object when the change read no other log (SPEC.md section 4.1, RACIAUD-098).",
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/realmId"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "seq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "hash": {
+                "$ref": "#/$defs/digest"
+              }
+            },
+            "required": [
+              "seq",
+              "hash"
+            ],
+            "additionalProperties": false,
+            "if": {
+              "properties": {
+                "seq": {
+                  "const": 0
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "hash": {
+                  "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "hash": {
+                  "not": {
+                    "const": "blake3:0000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                }
+              }
+            }
+          }
+        },
         "findings": {
           "type": "array",
           "minItems": 1,
@@ -1037,7 +1084,8 @@
         }
       },
       "required": [
-        "events"
+        "events",
+        "reads"
       ],
       "additionalProperties": false
     }

@@ -82,6 +82,8 @@
             "view-mismatch",
             "unrecorded-rule",
             "descendant-violation",
+            "tree-violation",
+            "read-mismatch",
             "stale-view",
             "no-matching-rule"
           ]
@@ -121,7 +123,9 @@
               "dangling-reference",
               "view-mismatch",
               "unrecorded-rule",
-              "descendant-violation"
+              "descendant-violation",
+              "tree-violation",
+              "read-mismatch"
             ]
           }
         }

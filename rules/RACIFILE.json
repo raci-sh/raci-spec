@@ -6,9 +6,9 @@
     "description": "The .raci materialised view and the raci verify report (SPEC.md sections 7 and 7.1)."
   },
   "rule_set": {
-    "version": "0.1.111",
-    "timestamp": "2026-11-22T15:10:39Z",
-    "hash": "blake3:0729b2dc6911c29d568a5ebc56c8fa165089619e4cbda96e61019ee87ad37c63"
+    "version": "0.1.116",
+    "timestamp": "2026-11-27T15:40:07Z",
+    "hash": "blake3:00fdad16962efc0e8837500db4770aff103c7ffb663f3f4e5048080c08b29771"
   },
   "rules": [
     {
@@ -139,9 +139,9 @@
     },
     {
       "id": "RACIFILE-015",
-      "revision": 1,
+      "revision": 2,
       "state": "D",
-      "body": "A view whose log head is an earlier event of the log MUST be treated as stale and rebuilt by replay.",
+      "body": "A view whose log head is an earlier event of the log MUST be treated as stale and rebuilt by replay, by a command that holds that log exclusively.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-07",
       "supersedes": null
@@ -477,6 +477,24 @@
       "body": "Verification MUST report a dangling-reference finding of severity error when an entry or a parent link references a resource that is not live in the realm of the log or an ancestor.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-053",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST report a tree-violation finding of severity error, with the realm that enables or declares the constraint, for each violation of a constraint in the effective policy of the verified realm by the grants that the constraint counts.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIFILE-054",
+      "revision": 0,
+      "state": "D",
+      "body": "Verification MUST report a read-mismatch finding of severity error, with the realm of the log read, when a commit marker records a head of another log that is not in that log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
       "supersedes": null
     }
   ],
@@ -947,6 +965,24 @@
       "content": "SPEC.md section 7.1",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-053/01",
+      "rule_ref": "RACIFILE-053",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIFILE-054/01",
+      "rule_ref": "RACIFILE-054",
+      "type": "reference",
+      "content": "SPEC.md section 7.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
       "revision": 0
     }
   ]

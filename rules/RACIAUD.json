@@ -6,9 +6,9 @@
     "description": "The append-only audit log: event shape, change transactions, hash chain and offline storage (SPEC.md section 4)."
   },
   "rule_set": {
-    "version": "0.1.210",
-    "timestamp": "2026-11-22T15:10:38Z",
-    "hash": "blake3:b28b018058a740b535d426e2d6516ec432081a9703c13d6a1a4ec6b51579fe80"
+    "version": "0.1.230",
+    "timestamp": "2026-11-27T15:40:07Z",
+    "hash": "blake3:03236eb239ae08c10fd34a9eb64ff11bfa7ac28fd70bae3c689dcf5397ee00ec"
   },
   "rules": [
     {
@@ -882,6 +882,87 @@
       "body": "An applied creation that reuses an id in its realm MUST be treated as not being a valid event.",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-098",
+      "revision": 0,
+      "state": "D",
+      "body": "A commit marker MUST record, for every log of another realm that its change read, the seq and hash of the last event of that log as read, and an empty record when the change read no other log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-099",
+      "revision": 0,
+      "state": "D",
+      "body": "A commit marker MUST record a log that was empty when read with seq 0 and the all-zero digest.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-100",
+      "revision": 0,
+      "state": "D",
+      "body": "A commit marker whose record of logs read names the realm of its own log MUST NOT be a valid event.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-101",
+      "revision": 0,
+      "state": "D",
+      "body": "A command that appends to a log, reverts it or rebuilds its view MUST hold an exclusive lock on that log from before its first read until it ends.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-102",
+      "revision": 0,
+      "state": "D",
+      "body": "A command MUST hold at least a shared lock on every log that it reads, from before its first read until it ends, except a log that it only reads and whose lock file it cannot create.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-103",
+      "revision": 0,
+      "state": "D",
+      "body": "A change MUST lock every log of its realm tree.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-104",
+      "revision": 0,
+      "state": "D",
+      "body": "A command MUST take all its log locks before its first read, in code point order of realm id.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-105",
+      "revision": 0,
+      "state": "D",
+      "body": "The lock of a log MUST be an advisory whole-file lock on a file named after the log with .lock appended, created when missing without counting as a write, never deleted, its content ignored.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "supersedes": null
+    },
+    {
+      "id": "RACIAUD-106",
+      "revision": 0,
+      "state": "D",
+      "body": "A command that evaluates a change MUST fail without writing when a commit marker in a log that it reads records a head of another log that it reads which is not in that log.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
       "supersedes": null
     }
   ],
@@ -1757,6 +1838,105 @@
       "content": "SPEC.md section 1.2",
       "added_by": "github:pleberre",
       "added_at": "2026-11-22",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-098/01",
+      "rule_ref": "RACIAUD-098",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-099/01",
+      "rule_ref": "RACIAUD-099",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-100/01",
+      "rule_ref": "RACIAUD-100",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-101/01",
+      "rule_ref": "RACIAUD-101",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-102/01",
+      "rule_ref": "RACIAUD-102",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-103/01",
+      "rule_ref": "RACIAUD-103",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-104/01",
+      "rule_ref": "RACIAUD-104",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-105/01",
+      "rule_ref": "RACIAUD-105",
+      "type": "reference",
+      "content": "SPEC.md section 4.2",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-051/02",
+      "rule_ref": "RACIAUD-051",
+      "type": "clarification",
+      "content": "The result pass means that the change does not violate the constraint (RACICNS-037), even where the tree already violates it.",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-106/01",
+      "rule_ref": "RACIAUD-106",
+      "type": "reference",
+      "content": "SPEC.md section 4.1",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
+      "revision": 0
+    },
+    {
+      "id": "RACIAUD-015/02",
+      "rule_ref": "RACIAUD-015",
+      "type": "clarification",
+      "content": "A change violates a constraint only where the violation involves one of its events (RACICNS-037).",
+      "added_by": "github:pleberre",
+      "added_at": "2026-11-27",
       "revision": 0
     }
   ]
